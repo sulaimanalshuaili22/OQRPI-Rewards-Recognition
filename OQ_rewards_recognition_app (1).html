@@ -1,0 +1,538 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .app-shell { display: flex; height: 700px; background: var(--color-background-tertiary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; }
+  .sidebar { width: 200px; background: #1a2744; flex-shrink: 0; display: flex; flex-direction: column; padding: 0; }
+  .sidebar-logo { padding: 20px 16px 16px; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+  .oq-logo { font-size: 22px; font-weight: 700; color: #E8841A; letter-spacing: -0.5px; }
+  .oq-sub { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  .nav-section { padding: 16px 0; flex: 1; }
+  .nav-label { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1px; padding: 0 16px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; color: rgba(255,255,255,0.55); font-size: 13px; transition: all 0.15s; border-left: 2px solid transparent; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(232,132,26,0.12); color: #E8841A; border-left-color: #E8841A; }
+  .nav-item i { font-size: 16px; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .topbar-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .topbar-breadcrumb { font-size: 12px; color: var(--color-text-secondary); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: #1a2744; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #E8841A; }
+  .screen { flex: 1; overflow-y: auto; padding: 20px 24px; display: none; }
+  .screen.active { display: block; }
+  .form-header { background: linear-gradient(135deg, #1a2744 0%, #243560 100%); border-radius: var(--border-radius-lg); padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .form-header-left h1 { font-size: 18px; font-weight: 600; color: #fff; }
+  .form-header-left p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+  .award-badge { background: rgba(232,132,26,0.2); border: 1px solid rgba(232,132,26,0.4); border-radius: 20px; padding: 6px 14px; font-size: 12px; color: #E8841A; font-weight: 500; }
+  .progress-bar { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 0; }
+  .step { display: flex; align-items: center; flex: 1; }
+  .step-dot { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .step-dot.done { background: #1a2744; color: #fff; }
+  .step-dot.current { background: #E8841A; color: #fff; }
+  .step-dot.todo { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .step-line { flex: 1; height: 1px; background: var(--color-border-tertiary); margin: 0 6px; }
+  .step-line.done { background: #1a2744; }
+  .step-label { font-size: 10px; color: var(--color-text-secondary); margin-top: 4px; white-space: nowrap; }
+  .step-wrap { display: flex; flex-direction: column; align-items: center; }
+  .section-card { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 18px 20px; margin-bottom: 16px; }
+  .section-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .section-title i { font-size: 16px; color: #E8841A; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid.single { grid-template-columns: 1fr; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field-label .req { color: #E8841A; }
+  .field-input { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 11px; font-size: 13px; color: var(--color-text-primary); font-family: var(--font-sans); width: 100%; }
+  .field-input:focus { outline: none; border-color: #E8841A; }
+  .field-input.filled { border-color: var(--color-border-secondary); }
+  .field-input.error { border-color: var(--color-border-danger); background: var(--color-background-danger); }
+  textarea.field-input { resize: none; line-height: 1.5; }
+  .select-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+  .categories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .cat-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); cursor: pointer; transition: all 0.15s; background: var(--color-background-secondary); }
+  .cat-item:hover { border-color: #E8841A; }
+  .cat-item.selected { border-color: #E8841A; background: rgba(232,132,26,0.08); }
+  .cat-item input[type=checkbox] { width: 14px; height: 14px; accent-color: #E8841A; }
+  .cat-item label { font-size: 12px; color: var(--color-text-primary); cursor: pointer; line-height: 1.3; }
+  .emp-search-wrap { position: relative; }
+  .emp-search-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--color-text-secondary); }
+  .emp-search-wrap input { padding-left: 32px; }
+  .emp-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); z-index: 10; margin-top: 3px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); display: none; }
+  .emp-dropdown.show { display: block; }
+  .emp-option { display: flex; align-items: center; gap: 10px; padding: 9px 12px; cursor: pointer; transition: background 0.1s; }
+  .emp-option:hover { background: var(--color-background-secondary); }
+  .emp-avatar { width: 28px; height: 28px; border-radius: 50%; background: #1a2744; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #E8841A; flex-shrink: 0; }
+  .emp-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .emp-role { font-size: 11px; color: var(--color-text-secondary); }
+  .selected-emp { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(26,39,68,0.06); border-radius: var(--border-radius-md); border: 0.5px solid #1a2744; margin-bottom: 12px; }
+  .selected-emp-avatar { width: 36px; height: 36px; border-radius: 50%; background: #1a2744; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #E8841A; flex-shrink: 0; }
+  .selected-emp-info { flex: 1; }
+  .selected-emp-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .selected-emp-role { font-size: 11px; color: var(--color-text-secondary); }
+  .clear-btn { background: none; border: none; cursor: pointer; color: var(--color-text-secondary); padding: 4px; }
+  .readonly-field { background: var(--color-background-secondary); border: 0.5px dashed var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 11px; font-size: 13px; color: var(--color-text-secondary); }
+  .attach-zone { border: 1px dashed var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 20px; text-align: center; background: var(--color-background-secondary); cursor: pointer; transition: all 0.15s; }
+  .attach-zone:hover { border-color: #E8841A; background: rgba(232,132,26,0.04); }
+  .attach-zone i { font-size: 28px; color: var(--color-text-secondary); display: block; margin-bottom: 6px; }
+  .attach-zone p { font-size: 12px; color: var(--color-text-secondary); }
+  .attach-zone span { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; display: block; }
+  .attached-file { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); margin-top: 8px; }
+  .attached-file i { color: #E8841A; font-size: 16px; }
+  .attached-file span { font-size: 12px; color: var(--color-text-primary); flex: 1; }
+  .attached-file .rm { background: none; border: none; cursor: pointer; color: var(--color-text-secondary); font-size: 14px; }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+  .btn { padding: 9px 20px; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; font-family: var(--font-sans); }
+  .btn-primary { background: #E8841A; color: #fff; }
+  .btn-primary:hover { background: #d4741a; }
+  .btn-secondary { background: var(--color-background-secondary); color: var(--color-text-primary); border: 0.5px solid var(--color-border-secondary); }
+  .btn-secondary:hover { background: var(--color-background-tertiary); }
+  .btn-outline { background: transparent; color: #1a2744; border: 0.5px solid #1a2744; }
+  .error-msg { font-size: 11px; color: var(--color-text-danger); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+  .loading-overlay { display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.7); z-index: 20; align-items: center; justify-content: center; border-radius: var(--border-radius-md); }
+  .loading-overlay.show { display: flex; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--color-border-tertiary); border-top-color: #E8841A; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .success-screen { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; text-align: center; padding: 40px; }
+  .success-screen.show { display: flex; }
+  .success-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(15,110,86,0.1); display: flex; align-items: center; justify-content: center; font-size: 28px; color: #0F6E56; margin-bottom: 4px; }
+  .success-screen h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+  .success-screen p { font-size: 13px; color: var(--color-text-secondary); max-width: 300px; }
+  .unauth { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 8px; text-align: center; padding: 40px; }
+  .unauth.show { display: flex; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+  .tag-required { background: rgba(232,132,26,0.1); color: #854F0B; }
+  .tag-info { background: var(--color-background-info); color: var(--color-text-info); }
+  .char-count { font-size: 11px; color: var(--color-text-tertiary); text-align: right; }
+  .nominator-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); }
+  .nominator-avatar { width: 32px; height: 32px; border-radius: 50%; background: #E8841A; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .list-screen { display: none; }
+  .list-screen.active { display: block; }
+</style>
+
+<h2 class="sr-only">OQ Rewards and Recognition Power App – Above and Beyond Award nomination form interactive preview</h2>
+
+<div class="app-shell">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="oq-logo">OQ</div>
+      <div class="oq-sub">Rewards & Recognition</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" onclick="showScreen('form')" id="nav-form">
+        <i class="ti ti-award" aria-hidden="true"></i> New Nomination
+      </div>
+      <div class="nav-item" onclick="showScreen('my')" id="nav-my">
+        <i class="ti ti-list" aria-hidden="true"></i> My Submissions
+      </div>
+      <div class="nav-item" onclick="showScreen('team')" id="nav-team">
+        <i class="ti ti-users" aria-hidden="true"></i> Team Awards
+      </div>
+    </div>
+    <div style="padding: 14px 16px; border-top: 0.5px solid rgba(255,255,255,0.1);">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="avatar">SA</div>
+        <div>
+          <div style="font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85);">Sulaiman A.</div>
+          <div style="font-size: 10px; color: rgba(255,255,255,0.4);">Sr Specialist, TM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-breadcrumb" style="color: var(--color-text-secondary);">Rewards & Recognition <span style="margin: 0 4px;">›</span> New Nomination</div>
+      </div>
+      <div class="topbar-right">
+        <span class="tag tag-info"><i class="ti ti-database" style="font-size:12px"></i> OQ_Rewards</span>
+        <div class="avatar" style="background: #E8841A; color: #fff; font-size: 11px;">SA</div>
+      </div>
+    </div>
+
+    <div id="screen-form" class="screen active" style="padding-bottom: 30px;">
+      <div class="form-header">
+        <div class="form-header-left">
+          <h1><i class="ti ti-trophy" style="font-size: 20px; vertical-align: -3px; margin-right: 6px;" aria-hidden="true"></i>Above and Beyond Award</h1>
+          <p>OQ Rewards & Recognition — Nomination Form · OQRPI Asset</p>
+        </div>
+        <div class="award-badge"><i class="ti ti-star" style="font-size: 12px; vertical-align: -1px;" aria-hidden="true"></i> Above & Beyond</div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="step-wrap"><div class="step-dot done"><i class="ti ti-check" style="font-size:12px"></i></div><div class="step-label" style="color:#1a2744; font-weight:500;">Award</div></div>
+        <div class="step-line done"></div>
+        <div class="step-wrap"><div class="step-dot current">2</div><div class="step-label" style="color:#E8841A; font-weight:500;">Employee</div></div>
+        <div class="step-line"></div>
+        <div class="step-wrap"><div class="step-dot todo">3</div><div class="step-label">Details</div></div>
+        <div class="step-line"></div>
+        <div class="step-wrap"><div class="step-dot todo">4</div><div class="step-label">Review</div></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-forms" aria-hidden="true"></i> Award Details
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <div class="field-label">Asset</div>
+            <select class="field-input select-input filled">
+              <option>OQRPI</option>
+              <option>OQ Trading</option>
+              <option>OQ Alternative Energy</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Reward type <span class="req">*</span></div>
+            <select class="field-input select-input filled">
+              <option>Above and Beyond Award</option>
+              <option>Spot Award</option>
+              <option>Team Award</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top: 14px;">
+          <div class="field-label" style="margin-bottom: 8px;">Award category <span class="req">*</span> <span class="tag tag-required">multi-select</span></div>
+          <div class="categories-grid" id="cat-grid">
+          </div>
+          <div class="error-msg" id="cat-error" style="display:none;"><i class="ti ti-alert-circle" style="font-size:12px"></i> Please select at least one category</div>
+        </div>
+      </div>
+
+      <div class="section-card" style="position: relative;">
+        <div class="loading-overlay" id="emp-loader">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="spinner"></div>
+            <span style="font-size: 13px; color: var(--color-text-secondary);">Fetching employee data...</span>
+          </div>
+        </div>
+        <div class="section-title">
+          <i class="ti ti-user-search" aria-hidden="true"></i> Employee Information
+          <span class="tag tag-info" style="margin-left: auto; font-size: 10px;">Office 365 Users</span>
+        </div>
+        <div id="selected-emp-block" style="display: none; margin-bottom: 14px;">
+          <div class="selected-emp">
+            <div class="selected-emp-avatar" id="s-avatar">MK</div>
+            <div class="selected-emp-info">
+              <div class="selected-emp-name" id="s-name">Mohammed Al-Kindi</div>
+              <div class="selected-emp-role" id="s-role">Process Engineer · Engineering</div>
+            </div>
+            <button class="clear-btn" onclick="clearEmployee()" title="Remove employee"><i class="ti ti-x"></i></button>
+          </div>
+        </div>
+        <div id="emp-search-section">
+          <div class="field-group" style="margin-bottom: 12px;">
+            <div class="field-label">Search employee <span class="req">*</span></div>
+            <div class="emp-search-wrap">
+              <i class="ti ti-search" aria-hidden="true"></i>
+              <input type="text" class="field-input" placeholder="Type name or employee ID..." id="emp-search" oninput="searchEmployee(this.value)" style="padding-left: 32px;" />
+              <div class="emp-dropdown" id="emp-dropdown">
+                <div class="emp-option" onclick="selectEmp('Mohammed Al-Kindi','MK','Process Engineer','Engineering','ENG-4421','m.alkindi@oq.com','Maintenance Dept')">
+                  <div class="emp-avatar">MK</div>
+                  <div><div class="emp-name">Mohammed Al-Kindi</div><div class="emp-role">Process Engineer · ENG-4421</div></div>
+                </div>
+                <div class="emp-option" onclick="selectEmp('Fatma Al-Rashdi','FR','Sr Analyst, HR','Human Resources','HR-2210','f.alrashdi@oq.com','HR Dept')">
+                  <div class="emp-avatar" style="background:#243560;">FR</div>
+                  <div><div class="emp-name">Fatma Al-Rashdi</div><div class="emp-role">Sr Analyst, HR · HR-2210</div></div>
+                </div>
+                <div class="emp-option" onclick="selectEmp('Khalid Al-Balushi','KB','Operations Lead','Operations','OPS-3312','k.albalushi@oq.com','Ops Dept')">
+                  <div class="emp-avatar" style="background:#854F0B;">KB</div>
+                  <div><div class="emp-name">Khalid Al-Balushi</div><div class="emp-role">Operations Lead · OPS-3312</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-grid" id="emp-fields">
+          <div class="field-group">
+            <div class="field-label">Employee ID</div>
+            <div class="readonly-field" id="f-empid">—</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Employee name</div>
+            <div class="readonly-field" id="f-empname">—</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Email</div>
+            <div class="readonly-field" id="f-email">—</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Job title</div>
+            <div class="readonly-field" id="f-title">—</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Function / Business unit</div>
+            <div class="readonly-field" id="f-bu">—</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Department</div>
+            <div class="readonly-field" id="f-dept">—</div>
+          </div>
+        </div>
+        <div class="error-msg" id="emp-error" style="display:none; margin-top: 6px;"><i class="ti ti-alert-circle" style="font-size:12px"></i> Please select an employee</div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-calendar-event" aria-hidden="true"></i> Nomination Details
+        </div>
+        <div class="form-grid">
+          <div class="field-group">
+            <div class="field-label">Nomination date</div>
+            <input type="date" class="field-input filled" id="nom-date" />
+          </div>
+          <div class="field-group">
+            <div class="field-label">Nominated by</div>
+            <div class="nominator-row">
+              <div class="nominator-avatar">SA</div>
+              <div>
+                <div style="font-size: 12px; font-weight: 500; color: var(--color-text-primary);">Sulaiman Al Shaaili</div>
+                <div style="font-size: 11px; color: var(--color-text-secondary);">Sr Specialist, Talent Management</div>
+              </div>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Manager (auto-fetched)</div>
+            <div class="readonly-field"><i class="ti ti-user-check" style="font-size:13px; vertical-align:-2px; margin-right:4px; color:#E8841A;" aria-hidden="true"></i>Ahmed Al-Siyabi · Director, HR</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Approver</div>
+            <div class="readonly-field" style="color: var(--color-text-tertiary); font-style: italic; font-size: 12px;">Auto-routed from SharePoint workflow</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-writing" aria-hidden="true"></i> Justification
+          <span class="tag tag-required" style="margin-left: auto;">Required</span>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Justification <span class="req">*</span></div>
+          <textarea class="field-input" id="justification" rows="4" placeholder="Describe the employee's contribution and why they deserve this award. Include specific examples, impact, and outcomes..." oninput="updateCharCount(this)"></textarea>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 3px;">
+            <div class="error-msg" id="just-error" style="display:none;"><i class="ti ti-alert-circle" style="font-size:12px"></i> Please provide justification</div>
+            <div class="char-count" id="char-count" style="margin-left: auto;">0 / 1000 characters</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">
+          <i class="ti ti-paperclip" aria-hidden="true"></i> Attachments
+          <span style="font-size: 11px; color: var(--color-text-secondary); margin-left: auto; font-weight: 400;">Optional · PDF, DOCX, PNG, JPG (max 10MB)</span>
+        </div>
+        <div class="attach-zone" onclick="addFile()">
+          <i class="ti ti-cloud-upload" aria-hidden="true"></i>
+          <p>Click to upload supporting documents</p>
+          <span>Drag and drop files here or click to browse</span>
+        </div>
+        <div id="file-list"></div>
+      </div>
+
+      <div class="section-card" style="background: var(--color-background-secondary);">
+        <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px;">
+          <i class="ti ti-shield-check" style="font-size: 20px; color: #0F6E56;" aria-hidden="true"></i>
+          <div>
+            <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary);">Authorization check</div>
+            <div style="font-size: 12px; color: var(--color-text-secondary); margin-top: 2px;">Access verified via SharePoint OQ_AllowedUsers group · Sulaiman Al Shaaili — Authorized</div>
+          </div>
+          <span class="tag" style="background: var(--color-background-success); color: var(--color-text-success); margin-left: auto;"><i class="ti ti-check" style="font-size:11px"></i> Authorized</span>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="resetForm()"><i class="ti ti-x" style="font-size: 13px; vertical-align: -1px;" aria-hidden="true"></i> Cancel</button>
+          <button class="btn btn-outline" onclick="saveDraft()"><i class="ti ti-device-floppy" style="font-size: 13px; vertical-align: -1px;" aria-hidden="true"></i> Save draft</button>
+          <button class="btn btn-primary" onclick="submitForm()"><i class="ti ti-send" style="font-size: 13px; vertical-align: -1px;" aria-hidden="true"></i> Submit nomination</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-success" class="screen">
+      <div class="success-screen show">
+        <div class="success-icon"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+        <h2>Submission successful</h2>
+        <p>The nomination has been saved to the OQ_Rewards SharePoint list and routed to the approver.</p>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <button class="btn btn-primary" onclick="showScreen('form')">Submit another</button>
+          <button class="btn btn-secondary" onclick="showScreen('my')">View my submissions</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-my" class="screen">
+      <div style="font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px;">My submissions</div>
+      <div class="section-card">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 0;">
+          <div class="nominator-avatar" style="background: #1a2744;">MK</div>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary);">Mohammed Al-Kindi</div>
+            <div style="font-size: 11px; color: var(--color-text-secondary);">Innovation Initiatives · 14 Apr 2025</div>
+          </div>
+          <span class="tag" style="background: var(--color-background-warning); color: var(--color-text-warning);">Pending</span>
+        </div>
+        <div style="border-top: 0.5px solid var(--color-border-tertiary); padding-top: 10px; margin-top: 4px; display: flex; align-items: center; gap: 10px;">
+          <div class="nominator-avatar" style="background: #854F0B;">KB</div>
+          <div style="flex: 1;">
+            <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary);">Khalid Al-Balushi</div>
+            <div style="font-size: 11px; color: var(--color-text-secondary);">Quick Wins · 02 Mar 2025</div>
+          </div>
+          <span class="tag" style="background: var(--color-background-success); color: var(--color-text-success);">Approved</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-team" class="screen">
+      <div style="font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px;">Team awards</div>
+      <div class="section-card" style="text-align: center; padding: 30px;">
+        <i class="ti ti-users" style="font-size: 32px; color: var(--color-text-tertiary); display: block; margin-bottom: 8px;" aria-hidden="true"></i>
+        <div style="font-size: 13px; color: var(--color-text-secondary);">Team award nominations are managed by your section lead.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const categories = [
+  'Impact on HSSE','Impact on OQ Behaviors','Quick Wins','Innovation Initiatives',
+  'Promoting OQ Learning Culture','Developing Others','Lean Initiatives',
+  'Integration Initiatives','Managing Unique Circumstances','Impact on Sustainability',
+  'Reliability Improvement','Integration & Harmonization','Process Safety','Others'
+];
+const selected = new Set();
+
+const catGrid = document.getElementById('cat-grid');
+categories.forEach(cat => {
+  const id = 'cat-' + cat.replace(/\s+/g,'_');
+  const div = document.createElement('div');
+  div.className = 'cat-item';
+  div.id = 'item-' + id;
+  div.innerHTML = `<input type="checkbox" id="${id}" onchange="toggleCat('${cat}', this, '${id}')"><label for="${id}">${cat}</label>`;
+  catGrid.appendChild(div);
+});
+
+function toggleCat(cat, cb, id) {
+  const item = document.getElementById('item-' + id);
+  if (cb.checked) { selected.add(cat); item.classList.add('selected'); }
+  else { selected.delete(cat); item.classList.remove('selected'); }
+}
+
+function searchEmployee(val) {
+  const dd = document.getElementById('emp-dropdown');
+  dd.classList.toggle('show', val.length > 1);
+}
+
+function selectEmp(name, initials, title, bu, empid, email, dept) {
+  document.getElementById('emp-dropdown').classList.remove('show');
+  document.getElementById('emp-search-section').style.display = 'none';
+  const block = document.getElementById('selected-emp-block');
+  block.style.display = 'block';
+  document.getElementById('s-avatar').textContent = initials;
+  document.getElementById('s-name').textContent = name;
+  document.getElementById('s-role').textContent = title + ' · ' + bu;
+  const loader = document.getElementById('emp-loader');
+  loader.classList.add('show');
+  setTimeout(() => {
+    loader.classList.remove('show');
+    document.getElementById('f-empid').textContent = empid;
+    document.getElementById('f-empname').textContent = name;
+    document.getElementById('f-email').textContent = email;
+    document.getElementById('f-title').textContent = title;
+    document.getElementById('f-bu').textContent = bu;
+    document.getElementById('f-dept').textContent = dept;
+    ['f-empid','f-empname','f-email','f-title','f-bu','f-dept'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.color = 'var(--color-text-primary)';
+      el.style.background = 'rgba(26,39,68,0.04)';
+      el.style.border = '0.5px solid #1a2744';
+      el.style.borderStyle = 'solid';
+    });
+    document.getElementById('emp-error').style.display = 'none';
+  }, 900);
+}
+
+function clearEmployee() {
+  document.getElementById('selected-emp-block').style.display = 'none';
+  document.getElementById('emp-search-section').style.display = 'block';
+  document.getElementById('emp-search').value = '';
+  ['f-empid','f-empname','f-email','f-title','f-bu','f-dept'].forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = '—';
+    el.style.color = '';
+    el.style.background = '';
+    el.style.border = '';
+    el.style.borderStyle = '';
+  });
+}
+
+function updateCharCount(el) {
+  document.getElementById('char-count').textContent = el.value.length + ' / 1000 characters';
+  if (el.value.length > 0) document.getElementById('just-error').style.display = 'none';
+}
+
+const files = [];
+const mockFiles = ['Nomination_Supporting_Doc.pdf','Evidence_Q1_2025.docx'];
+let fIdx = 0;
+function addFile() {
+  if (fIdx >= mockFiles.length) return;
+  const fn = mockFiles[fIdx++];
+  files.push(fn);
+  renderFiles();
+}
+function removeFile(i) {
+  files.splice(i,1);
+  renderFiles();
+}
+function renderFiles() {
+  const list = document.getElementById('file-list');
+  list.innerHTML = files.map((f,i) => `
+    <div class="attached-file">
+      <i class="ti ti-file-description" aria-hidden="true"></i>
+      <span>${f}</span>
+      <button class="rm" onclick="removeFile(${i})"><i class="ti ti-x"></i></button>
+    </div>
+  `).join('');
+}
+
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('nom-date').value = today;
+
+function submitForm() {
+  let valid = true;
+  if (selected.size === 0) { document.getElementById('cat-error').style.display = 'flex'; valid = false; } else document.getElementById('cat-error').style.display = 'none';
+  if (document.getElementById('f-empid').textContent === '—') { document.getElementById('emp-error').style.display = 'flex'; valid = false; } else document.getElementById('emp-error').style.display = 'none';
+  const jt = document.getElementById('justification');
+  if (!jt.value.trim()) { document.getElementById('just-error').style.display = 'flex'; jt.classList.add('error'); valid = false; } else { document.getElementById('just-error').style.display = 'none'; jt.classList.remove('error'); }
+  if (valid) showScreen('success');
+}
+
+function saveDraft() {
+  const btn = event.target;
+  btn.textContent = '✓ Draft saved';
+  btn.style.color = '#0F6E56';
+  setTimeout(() => { btn.innerHTML = '<i class="ti ti-device-floppy" style="font-size:13px; vertical-align:-1px;"></i> Save draft'; btn.style.color = ''; }, 2000);
+}
+
+function resetForm() {
+  selected.clear();
+  catGrid.querySelectorAll('.cat-item').forEach(el => { el.classList.remove('selected'); el.querySelector('input').checked = false; });
+  clearEmployee();
+  document.getElementById('justification').value = '';
+  document.getElementById('char-count').textContent = '0 / 1000 characters';
+  files.length = 0; fIdx = 0; renderFiles();
+  ['cat-error','emp-error','just-error'].forEach(id => document.getElementById(id).style.display = 'none');
+}
+
+function showScreen(name) {
+  ['form','success','my','team'].forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if (el) el.classList.remove('active');
+  });
+  const target = document.getElementById('screen-' + name);
+  if (target) target.classList.add('active');
+  ['nav-form','nav-my','nav-team'].forEach(id => document.getElementById(id)?.classList.remove('active'));
+  const navMap = { form: 'nav-form', my: 'nav-my', team: 'nav-team', success: 'nav-form' };
+  if (navMap[name]) document.getElementById(navMap[name])?.classList.add('active');
+}
+</script>
