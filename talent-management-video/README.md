@@ -1,107 +1,121 @@
 # OQ RPI · Talent Management — cinematic brand film
 
-A ≈3:17 corporate motion-graphics film introducing the OQ RPI Talent Management
-ecosystem, built in [Remotion](https://www.remotion.dev) (React → video).
-Fourteen scenes, OQ brand palette, glassmorphism HUDs, a pseudo-3D workforce
-network, animated dashboards, cinematic camera moves and light-leak cuts.
+A ~4-minute executive documentary introducing the OQ RPI Talent Management
+ecosystem, built in [Remotion](https://www.remotion.dev) with real-time 3D
+(Three.js / React Three Fiber).
+
+The film is one continuous camera journey through a digital twin of OQ RPI —
+no slides, no cuts between static layouts. Every scene has foreground,
+midground and background motion, real depth of field, bloom, film grain and
+AR-style interface elements locked to 3D objects.
+
+| # | Scene | What you see |
+|---|-------|--------------|
+| 01 | The future begins with people | A single particle in the dark bursts into a living constellation of the workforce |
+| 02 | Why Talent Management | The camera dives into a holographic digital twin of the refinery; the right talent, role and time light up on real workers |
+| 03 | The ecosystem | Twelve programmes orbit a central hub, linked by light |
+| 04 | Performance Management | **Talent DNA** — an employee dissolves into data streams: skills, performance, potential, certifications, readiness, leadership |
+| 05 | The 9-Box Matrix | Employees stream in and settle by performance × potential; the hero lands in *Future Leaders* |
+| 06 | Critical Roles | A scan sweeps a 3D organisation; critical positions ignite |
+| 07 | Succession Planning | A vacancy opens; the successor spirals up the pipeline tower to fill it |
+| 08 | Leadership Development | A chase shot through five gates of the leadership journey |
+| 09 | Nationalization | National talent rising through terraces from graduate to leader |
+| 10 | Secondment | People and knowledge travel between organisations on bridges of light |
+| 11 | Rewards & Recognition | Spotlights find the people behind success |
+| 12 | Intelligent Talent Platform | Inside the AI core, surrounded by live dashboards and an AI assistant |
+| 13 | How everything connects | The camera rises over the whole **living workforce ecosystem**; flows connect |
+| 14 | The future of OQ RPI | At sunrise the refinery transforms into the workforce; logo reveal |
+
+The **workforce journey** runs through scenes 4–8: the same employee
+(Talent ID 0147) becomes data, lands in Future Leaders, is identified as a
+successor and passes through the leadership gates.
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev          # opens Remotion Studio — scrub, edit and preview every scene
+npm run dev          # Remotion Studio
 ```
-
-In Studio, `TalentManagement` is the full film. The `Scenes` folder holds each
-scene as its own composition so it can be previewed and timed in isolation.
 
 ## Rendering
 
 ```bash
-# Full HD master (1920×1080, H.264)
-npx remotion render TalentManagement out/talent-management-1080p.mp4
+# Full HD master
+npx remotion render TalentManagement out/talent-management-1080p.mp4 --gl=angle
 
-# 4K UHD master (3840×2160) — same film, scaled from the 1080p layout
-npx remotion render TalentManagement-4K out/talent-management-4k.mp4 --crf 16
-
-# ProRes for the edit suite
-npx remotion render TalentManagement-4K out/talent-management-4k.mov --codec=prores --prores-profile=4444
+# 4K UHD master (real 4K 3D render; overlays scale with it)
+npx remotion render TalentManagement-4K out/talent-management-4k.mp4 --gl=angle --crf 16
 
 # Fast half-size preview
-npx remotion render TalentManagement out/preview.mp4 --scale=0.5
+npx remotion render TalentManagement out/preview.mp4 --scale=0.5 --gl=angle
+
+# Without on-screen captions
+npx remotion render TalentManagement out/film.mp4 --gl=angle --props='{"captions":false}'
 ```
 
-Expect roughly 10–20 minutes for a 1080p render on a modern laptop and
-3–4× that for 4K. Renders are fully offline — fonts are bundled in
-`public/fonts`.
+`--gl=angle` is required (WebGL). On a machine with a GPU, 1080p renders in
+roughly 15–30 minutes; on CPU-only machines expect 2–3 hours.
 
-### Audio
+## Sound
 
-The film ships with sound: a generated cinematic score (`tools/make-music.py`)
-and a neural-TTS narrator reading the script (`tools/make-voiceover.py`,
-Piper *en-US Ryan*). Both live in `public/audio/` and are the composition
-defaults, and the score ducks automatically under the narrator.
+`public/audio/soundtrack.mp3` is the final mix: narrator + original score +
+sound design, mastered to −16 LUFS. It was benchmarked on the reference
+corporate track's characteristics only (not its script or audio):
 
-They are production-quality placeholders, not the final mix: swap in the
-studio narrator and the composer's track by replacing the two files (see
-`public/audio/README.md`). `VOICEOVER-SCRIPT.md` has the full narration with
-timecodes and the music brief. Turn the on-screen captions off with
-`--props='{"subtitles":false}'` once the human read is in.
+| Characteristic | Reference | This film |
+|---|---|---|
+| Narrator | deep male baritone (≈85–130 Hz) | neural voice blend chosen by speaker-embedding similarity (≈112 Hz) |
+| Delivery | mean phrase 1.30 s, median pause 0.53 s | mean phrase 1.31 s, median pause 0.53 s |
+| Voice above music | ≈12 dB | 12.1 dB |
+| Loudness / range | −16.4 LUFS, LRA 5.7 | −15.9 LUFS, LRA 5.0 |
+| Music | harmonic-led, light percussion, G major, ~76/152 BPM, brightening build, soft resolve | same palette and arc: piano, strings, warm pad, horns, choir, timpani, light electronic arpeggio |
 
-### Chromium
-
-Remotion downloads its own headless Chrome on first render. On a locked-down
-network, point it at an installed browser instead:
+### Regenerating the audio
 
 ```bash
-npx remotion render TalentManagement out/film.mp4 --browser-executable=/path/to/chrome
+python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
+sudo apt-get install fluidsynth musescore-general-soundfont espeak-ng
+# Kokoro voice model files: https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0
+.venv/bin/python tools/voiceover.py --model kokoro-v1.0.onnx --voices voices-v1.0.bin
+.venv/bin/python tools/score.py
 ```
+
+`tools/voiceover.py` reads `src/film/script.json` (narration + pacing),
+synthesises the narrator and writes `src/film/timeline.json`. **The picture is
+cut to the voice**: scene lengths, caption timings and the camera all follow
+that timeline, so a re-read re-times the whole film automatically.
+`tools/score.py` composes and mixes the music to the same timeline and writes
+`src/film/music.json` (the logo hit lands on a musical downbeat).
+
+To use a human narrator, record against `VOICEOVER-SCRIPT.md`, then replace
+`audio-src/voice_raw.wav` and re-run `tools/score.py` (adjust the line
+timings in `src/film/timeline.json` to the new read).
 
 ## Project layout
 
 ```
 src/
-  Root.tsx                   composition registry (film, 4K film, per-scene comps)
-  TalentManagementVideo.tsx  the timeline: TransitionSeries of 14 scenes + audio
-  theme.ts                   OQ palette, typography, easing curves
-  components/                reusable motion pieces
-    Background.tsx           deep-navy backdrop, grid, particles, vignette
-    NetworkField.tsx         pseudo-3D "living organisation" network
-    GlassPanel.tsx           glassmorphism container
-    Charts.tsx               bars, trend line, donut, KPI tile
-    Text.tsx                 WordReveal, FadeUp, Kicker
-    Narration.tsx            lower-third narration captions
-    Refinery.tsx             line-art refinery skyline with animated flows
-    Logo.tsx                 OQ RPI wordmark (vector)
-    LightStreak.tsx          orange light streak
-    LightLeakOverlay.tsx     warm light-leak cut (WebGL)
-    FlowChips.tsx            "A → B → C" output animations
-    Icons.tsx                outline icon set in the OQ iconography style
-    Camera.tsx               slow push / drift camera wrapper
-  scenes/                    Scene01Opening … Scene14Future
-public/
-  fonts/                     Inter (stand-in for Aktiv Grotesk), bundled offline
-  audio/                     music.mp3 (generated score), voiceover.mp3 (neural narrator)
+  Root.tsx                 compositions (1080p, 4K)
+  film/
+    Film.tsx               3D world + AR overlay + grade + captions + soundtrack
+    script.json            narration & pacing (source of truth)
+    timeline.json          generated: scene windows and caption timings
+    music.json             generated: musical landmarks
+    camera.ts              continuous camera path (Hermite spline + hand-held drift)
+    geometry.ts            set geometry shared by 3D and overlay
+    layout.ts              set positions in the digital twin, brand colours
+    world/                 Three.js scene: sets, constellation, refinery twin, post FX
+    overlay/               AR tags, glass cards, titles, captions, grade, transitions
+  components/              logo, icons, charts
 tools/
-  make-music.py              procedural three-movement score, numpy only
-  make-voiceover.py          Piper TTS narrator, placed at caption timecodes
+  voiceover.py             narrator + timeline
+  score.py                 score, sound design, mix & master
 ```
 
 ## Brand notes
 
-- Colours follow the OQ Brand Guidelines screen values: Midnight Blue `#081F2C`,
-  OQ Orange `#FF8200`, Light Blue `#9CDBD9`, Turquoise `#00B0B9`, White, plus
-  light metallic grey accents. OQ Orange is used as the single highlight
-  colour, as the data-visualisation guidance prescribes.
-- Typography: the brand typeface Aktiv Grotesk is licensed; the film ships with
-  Inter, a close grotesk. To switch, drop the Aktiv Grotesk `.woff2` files into
-  `public/fonts/` and update the URLs in `src/theme.ts`.
-- The OQ RPI wordmark is redrawn as vector in `src/components/Logo.tsx`. Swap in
-  the official SVG if a brand-approved file is available.
-
-## Editing
-
-Every scene exports a `SCENE_xx_DURATION` constant; change it to re-time the
-scene and the full film re-flows automatically. Narration timing lives at the
-top of each scene file. Animations are driven by `useCurrentFrame()` and are
-fully deterministic, so renders are reproducible frame for frame.
+- Colours: OQ Orange `#FF8200`, Midnight Blue `#081F2C`, Light Blue `#9CDBD9`,
+  Turquoise `#00B0B9`, white and metallic greys (OQ Brand Guidelines 7.1).
+- Typography: Inter (bundled) stands in for the licensed Aktiv Grotesk; swap
+  the files in `public/fonts/` and `src/theme.ts` to use the brand font.
+- Figures shown in dashboards are illustrative.
