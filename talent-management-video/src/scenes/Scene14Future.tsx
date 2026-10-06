@@ -16,17 +16,17 @@ const narration = [
   {
     text: "The future is not built by systems. It is built by people.",
     from: 30,
-    to: 150,
+    to: 145,
   },
   {
     text: "By investing in talent today, we create the leaders, capabilities, and opportunities that will shape tomorrow.",
     from: 165,
-    to: 340,
+    to: 346,
   },
   {
     text: "Talent Management. Building the workforce of the future.",
     from: 360,
-    to: 470,
+    to: 465,
   },
 ];
 

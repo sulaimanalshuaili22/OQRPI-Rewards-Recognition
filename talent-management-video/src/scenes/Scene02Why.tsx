@@ -16,12 +16,12 @@ const narration = [
   {
     text: "In an increasingly competitive and rapidly changing world, organisations must ensure the right talent is available, in the right roles, at the right time.",
     from: 20,
-    to: 230,
+    to: 276,
   },
   {
     text: "Talent Management exists to build sustainable workforce capability, strengthen leadership pipelines, and secure the future of the business.",
-    from: 245,
-    to: 470,
+    from: 277,
+    to: 504,
   },
 ];
 

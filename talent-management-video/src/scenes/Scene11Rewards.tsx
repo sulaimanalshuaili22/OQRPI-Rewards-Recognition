@@ -15,7 +15,7 @@ const narration = [
   {
     text: "Recognition reinforces desired behaviours, increases engagement, and celebrates the people who make success possible.",
     from: 20,
-    to: 280,
+    to: 225,
   },
 ];
 

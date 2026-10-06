@@ -15,12 +15,12 @@ const narration = [
   {
     text: "Performance Management enables the organisation to understand contribution, recognise achievement, and identify future potential.",
     from: 20,
-    to: 200,
+    to: 250,
   },
   {
     text: "It creates the foundation for all talent decisions.",
-    from: 215,
-    to: 370,
+    from: 252,
+    to: 342,
   },
 ];
 

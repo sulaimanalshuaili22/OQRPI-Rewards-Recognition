@@ -16,7 +16,7 @@ const narration = [
   {
     text: "By bringing talent data together, leaders gain visibility into workforce capabilities, bench strength, succession readiness, leadership pipelines, and strategic talent risks.",
     from: 20,
-    to: 330,
+    to: 340,
   },
 ];
 

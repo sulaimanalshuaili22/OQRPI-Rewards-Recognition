@@ -12,7 +12,7 @@ const narration = [
   {
     text: "The 9-Box Matrix combines performance and potential to identify future leaders, accelerate talent development, and support succession planning decisions.",
     from: 20,
-    to: 260,
+    to: 294,
   },
 ];
 

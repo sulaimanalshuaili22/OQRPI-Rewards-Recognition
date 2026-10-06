@@ -11,6 +11,7 @@ import { TransitionSeries, linearTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
 import { LightLeakOverlay } from "./components/LightLeakOverlay";
+import voiceTiming from "./voiceover-timing.json";
 import { Scene01Opening, SCENE_01_DURATION } from "./scenes/Scene01Opening";
 import { Scene02Why, SCENE_02_DURATION } from "./scenes/Scene02Why";
 import { Scene03Ecosystem, SCENE_03_DURATION } from "./scenes/Scene03Ecosystem";
@@ -95,13 +96,18 @@ export const TalentManagementVideo: React.FC<TalentManagementVideoProps> = ({
   const frame = useCurrentFrame();
   // Scenes are authored on a 1920x1080 canvas; larger outputs (e.g. 4K UHD) scale it uniformly.
   const canvasScale = Math.min(width / 1920, height / 1080);
-  // Music: gentle rise at the start, duck under the final logo, fade on the tail.
-  const musicVolume = interpolate(
+  // Music: gentle rise at the start, fade on the tail, and ducked under the narrator.
+  const musicBed = interpolate(
     frame,
     [0, 2 * fps, durationInFrames - 6 * fps, durationInFrames - 1],
-    [0, 0.8, 0.8, 0],
+    [0, 0.85, 0.85, 0],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
+  const t = frame / fps;
+  const speaking = voiceFile
+    ? voiceTiming.some((w) => t >= w.start - 0.4 && t <= w.end + 0.6)
+    : false;
+  const musicVolume = musicBed * (speaking ? 0.38 : 1);
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#02080D" }}>

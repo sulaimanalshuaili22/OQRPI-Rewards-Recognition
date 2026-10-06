@@ -14,7 +14,7 @@ const narration = [
   {
     text: "Secondment programmes create broader exposure, accelerate learning, and strengthen organisational capability through strategic experience opportunities.",
     from: 20,
-    to: 300,
+    to: 298,
   },
 ];
 

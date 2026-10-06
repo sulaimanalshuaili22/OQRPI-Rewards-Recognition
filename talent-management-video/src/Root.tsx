@@ -106,7 +106,11 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
-        defaultProps={{ subtitles: true, musicFile: "", voiceFile: "" }}
+        defaultProps={{
+          subtitles: true,
+          musicFile: "music.mp3",
+          voiceFile: "voiceover.mp3",
+        }}
       />
       {/* Same film at 4K UHD. Every scene is authored in 1080p units and scaled 2x. */}
       <Composition
@@ -116,7 +120,11 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={WIDTH * 2}
         height={HEIGHT * 2}
-        defaultProps={{ subtitles: true, musicFile: "", voiceFile: "" }}
+        defaultProps={{
+          subtitles: true,
+          musicFile: "music.mp3",
+          voiceFile: "voiceover.mp3",
+        }}
       />
       <Folder name="Scenes">
         {scenes.map((s) => (

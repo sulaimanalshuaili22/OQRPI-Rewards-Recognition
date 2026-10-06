@@ -14,7 +14,7 @@ const narration = [
   {
     text: "Leadership Development equips employees with the capabilities, mindsets, and experiences required to lead teams, functions, and future business transformation.",
     from: 20,
-    to: 300,
+    to: 321,
   },
 ];
 

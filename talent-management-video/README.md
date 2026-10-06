@@ -37,13 +37,16 @@ Expect roughly 10–20 minutes for a 1080p render on a modern laptop and
 
 ### Audio
 
-Music and voice-over are not bundled. Place `music.mp3` and `voiceover.mp3` in
-`public/audio/` and pass them as props (see `public/audio/README.md`). The
-narrator's lines are shown as on-screen captions until the voice track is laid
-in; turn them off with `"subtitles": false`.
+The film ships with sound: a generated cinematic score (`tools/make-music.py`)
+and a neural-TTS narrator reading the script (`tools/make-voiceover.py`,
+Piper *en-US Ryan*). Both live in `public/audio/` and are the composition
+defaults, and the score ducks automatically under the narrator.
 
-`VOICEOVER-SCRIPT.md` contains the complete narration with timecodes and the
-music brief for the composer.
+They are production-quality placeholders, not the final mix: swap in the
+studio narrator and the composer's track by replacing the two files (see
+`public/audio/README.md`). `VOICEOVER-SCRIPT.md` has the full narration with
+timecodes and the music brief. Turn the on-screen captions off with
+`--props='{"subtitles":false}'` once the human read is in.
 
 ### Chromium
 
@@ -78,7 +81,10 @@ src/
   scenes/                    Scene01Opening … Scene14Future
 public/
   fonts/                     Inter (stand-in for Aktiv Grotesk), bundled offline
-  audio/                     drop music.mp3 / voiceover.mp3 here
+  audio/                     music.mp3 (generated score), voiceover.mp3 (neural narrator)
+tools/
+  make-music.py              procedural three-movement score, numpy only
+  make-voiceover.py          Piper TTS narrator, placed at caption timecodes
 ```
 
 ## Brand notes

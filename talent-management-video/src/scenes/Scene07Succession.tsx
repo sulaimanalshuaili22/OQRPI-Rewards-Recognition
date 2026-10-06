@@ -14,8 +14,8 @@ export const SCENE_07_DURATION = 420;
 const narration = [
   {
     text: "Succession Planning ensures that future leaders are identified, developed, and prepared before business-critical vacancies occur.",
-    from: 20,
-    to: 250,
+    from: 25,
+    to: 240,
   },
 ];
 

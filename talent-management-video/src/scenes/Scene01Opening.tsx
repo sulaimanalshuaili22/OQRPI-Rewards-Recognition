@@ -18,12 +18,12 @@ const narration = [
   {
     text: "Every successful organisation shares one common strength… its people.",
     from: 50,
-    to: 190,
+    to: 168,
   },
   {
     text: "Behind every operation, every innovation, and every achievement, lies talent.",
     from: 200,
-    to: 330,
+    to: 321,
   },
 ];
 

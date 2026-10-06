@@ -14,12 +14,12 @@ const narration = [
   {
     text: "Not all positions carry the same level of organisational risk.",
     from: 20,
-    to: 120,
+    to: 132,
   },
   {
     text: "Critical Roles identify positions whose vacancy would significantly impact safety, operations, leadership continuity, or business performance.",
-    from: 130,
-    to: 370,
+    from: 136,
+    to: 384,
   },
 ];
 

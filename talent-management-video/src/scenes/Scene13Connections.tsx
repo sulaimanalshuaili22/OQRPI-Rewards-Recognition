@@ -14,7 +14,7 @@ const narration = [
   {
     text: "Together, these initiatives create a powerful talent ecosystem that transforms data into decisions, potential into capability, and employees into future leaders.",
     from: 200,
-    to: 460,
+    to: 474,
   },
 ];
 

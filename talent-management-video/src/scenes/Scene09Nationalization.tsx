@@ -15,7 +15,7 @@ const narration = [
   {
     text: "Nationalization strengthens sustainable workforce capability by developing and advancing national talent across critical business areas and leadership positions.",
     from: 20,
-    to: 300,
+    to: 292,
   },
 ];
 

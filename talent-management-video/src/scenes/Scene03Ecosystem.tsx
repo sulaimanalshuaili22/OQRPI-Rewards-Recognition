@@ -28,13 +28,13 @@ export const PROGRAMS: ReadonlyArray<{ label: string; icon: IconName }> = [
 const narration = [
   {
     text: "Talent Management is not a collection of separate programmes. It is one integrated ecosystem.",
-    from: 30,
-    to: 200,
+    from: 33,
+    to: 206,
   },
   {
     text: "Each programme generates insights, actions and data that strengthen the next.",
     from: 300,
-    to: 470,
+    to: 440,
   },
 ];
 
