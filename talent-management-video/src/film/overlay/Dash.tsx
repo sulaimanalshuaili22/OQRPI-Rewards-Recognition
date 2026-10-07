@@ -250,7 +250,7 @@ export const CommandCenterHome: React.FC<{ readonly from: number; readonly highl
 }) => {
   const frame = useCurrentFrame();
   const head = ramp(frame, from, from + 24);
-  const hl = ramp(frame, highlightFrom, highlightFrom + 14);
+  const hl = Number.isFinite(highlightFrom) ? ramp(frame, highlightFrom, highlightFrom + 14) : 0;
   return (
     <div
       style={{
