@@ -112,10 +112,12 @@ const KEYS: Key[] = [
   k("platform", 1.3, A, [0, 4, 25], [0, 4, 0], 40, { bokeh: 2.5 }),
   k("platform", 7.5, A, [0, 4.4, 13], [0, 4, 0], 40, { bokeh: 3 }),
   k("platform", 14.6, A, [-8, 6, 8.5], [0, 4, 0], 40, { bokeh: 3.5 }),
+  k("platform", 22.4, A, [-11, 7, 5], [0, 4, 0], 40, { bokeh: 3.5 }),
   // 13 — rise above the whole digital twin
   k("connections", 2.2, M, [0, 88, 106], [0, 0, 12], 46, { bokeh: 0.6, fog: 0.002 }),
   k("connections", 9.5, M, [20, 100, 82], [0, 0, 10], 46, { bokeh: 0.6 }),
   k("connections", 17.4, M, [0, 112, 60], [0, 0, 8], 46, { bokeh: 0.6, fog: 0.0024 }),
+  k("connections", 25.8, M, [-12, 118, 52], [0, 0, 6], 46, { bokeh: 0.6, fog: 0.0024 }),
   // 14 — the future: refinery becomes the workforce; camera rises
   k("future", 2.4, F, [16, 9, 38], [0, 5, 0], 36, { bokeh: 2, fog: 0.009 }),
   k("future", 8, F, [7, 7, 31], [0, 6, 0], 36, { bokeh: 2.5 }),

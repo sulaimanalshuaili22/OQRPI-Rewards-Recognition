@@ -261,16 +261,19 @@ export const Title: React.FC<{
 
 export const Chapter: React.FC<{ readonly id: SceneId; readonly index: string; readonly label: string }> = ({ id, index, label }) => {
   const frame = useCurrentFrame();
-  const a = SCENES[id].start + 24;
-  const b = a + 150;
+  const a = SCENES[id].start + 20;
+  const b = a + 160;
   if (frame < a || frame > b) return null;
   const o = window01(frame, a, b, 18, 24);
   const line = ramp(frame, a, a + 30);
+  // top-right, clear of the OQ RPI watermark
   return (
-    <div style={{ position: "absolute", left: 120, top: 92, display: "flex", alignItems: "center", gap: 16, fontFamily: FONT, opacity: o }}>
-      <div style={{ fontSize: 20, fontWeight: 600, color: COLORS.orange, letterSpacing: 4 }}>{index}</div>
-      <div style={{ width: 54 * line, height: 1.5, background: "rgba(255,255,255,0.6)" }} />
-      <div style={{ fontSize: 20, fontWeight: 500, color: COLORS.white, letterSpacing: 6, textTransform: "uppercase", opacity: 0.88 }}>{label}</div>
+    <div style={{ position: "absolute", right: 70, top: 46, textAlign: "right", fontFamily: FONT, opacity: o, textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
+      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.orange, letterSpacing: 3 }}>OQ RPI TALENT MANAGEMENT / {index}</div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14, marginTop: 6 }}>
+        <div style={{ width: 46 * line, height: 1.5, background: "rgba(255,255,255,0.6)" }} />
+        <div style={{ fontSize: 24, fontWeight: 600, color: COLORS.white, letterSpacing: 0.5 }}>{label}</div>
+      </div>
     </div>
   );
 };

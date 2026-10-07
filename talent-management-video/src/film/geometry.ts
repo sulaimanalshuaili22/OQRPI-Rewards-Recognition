@@ -7,18 +7,18 @@ import { SET } from "./layout";
 
 /* 03 — ecosystem: 12 programmes on a tilted ring around the hub */
 export const PROGRAMS = [
-  { label: "Performance Management", icon: "performance" },
-  { label: "Succession Planning", icon: "succession" },
-  { label: "Critical Roles", icon: "critical" },
-  { label: "Leadership Development", icon: "leadership" },
-  { label: "Learning & Development", icon: "learning" },
-  { label: "Individual Development Plans", icon: "idp" },
+  { label: "Performance & Potential", icon: "performance" },
+  { label: "Succession & Critical Roles", icon: "succession" },
+  { label: "9-Box Talent Matrix", icon: "ninebox" },
+  { label: "Leadership Development · MASAR · ROBBAN", icon: "leadership" },
   { label: "Nationalization", icon: "nationalization" },
-  { label: "Talent Review", icon: "review" },
-  { label: "9-Box Matrix", icon: "ninebox" },
-  { label: "Rewards & Recognition", icon: "rewards" },
+  { label: "Individual Development Plans", icon: "idp" },
   { label: "Secondment Management", icon: "secondment" },
-  { label: "Talent Analytics", icon: "analytics" },
+  { label: "Rewards & Recognition", icon: "rewards" },
+  { label: "BU Talent Scorecard", icon: "analytics" },
+  { label: "Talent Assistant", icon: "ai" },
+  { label: "Executive Talent Overview", icon: "people" },
+  { label: "Learning & Development", icon: "learning" },
 ] as const;
 
 export const ECO_RADIUS = 11;
@@ -53,8 +53,10 @@ export const DNA_FLOW: V3[] = [
 
 /* 05 — 9-box */
 export const TILE = 4;
+// As on the Talent Command Center: runway (potential) runs left→right,
+// performance runs bottom→top (far edge = exceeds target).
 export const tilePos = (perf: number, pot: number): V3 =>
-  add(SET.ninebox as V3, [(perf - 1) * TILE, 0, (1 - pot) * TILE]);
+  add(SET.ninebox as V3, [(pot - 1) * TILE, 0, (1 - perf) * TILE]);
 
 /* 06 — critical roles: a radial organisation (cone of tiers) */
 export const TIERS = [
@@ -102,15 +104,15 @@ export const SUCCESSION_FLOW = ["Position", "Successor", "Development", "Readine
 
 /* 08 — leadership gates along the path */
 export const GATES = [
-  { t: 0.12, label: "Masar Programmes" },
-  { t: 0.31, label: "Assessments" },
-  { t: 0.5, label: "Development Centres" },
-  { t: 0.69, label: "Executive Coaching" },
-  { t: 0.88, label: "Leadership Journeys" },
+  { t: 0.12, label: "Key ICs & HiPos", step: "Step 1", programmes: "MASAR · JCCP Women in Leadership" },
+  { t: 0.31, label: "First-line leaders", step: "Step 2", programmes: "MASAR · ROBBAN · Takatuf Lead" },
+  { t: 0.5, label: "Managers", step: "Step 3", programmes: "ROBBAN · MASAR" },
+  { t: 0.69, label: "Heads", step: "Step 4", programmes: "MASAR · CCL SLP London" },
+  { t: 0.88, label: "Executives", step: "Step 5", programmes: "SLT Effectiveness · JCCP Next Tech" },
 ];
 
 /* 09 — national talent terraces */
-export const STAGES = ["Graduate", "Professional", "Specialist", "Manager", "Leader"];
+export const STAGES = ["2026", "2027", "2028", "2029", "2030"];
 export const TERRACE = { cols: 14, gapX: 1.6, depth: 4.2, rise: 1.7 };
 export const terraceBase = (row: number, col: number): V3 =>
   add(SET.nationalization as V3, [
@@ -130,10 +132,10 @@ export const stagePos = (k: number, n: number): V3 => {
   return add(SET.rewards as V3, [Math.cos(a) * STAGE_R, 0, Math.sin(a) * STAGE_R]);
 };
 export const AWARDS = [
-  { title: "Spot Award", sub: "Immediate recognition" },
-  { title: "Quarterly Star", sub: "Consistent excellence" },
-  { title: "Annual Excellence", sub: "The year's defining achievements" },
-  { title: "Team Award", sub: "Collaboration that moves the business" },
+  { title: "Testahal", sub: "1,111 rewarded · 2026" },
+  { title: "Above & Beyond", sub: "149 rewarded · 2026" },
+  { title: "HSSE Award", sub: "65 rewarded · 2026" },
+  { title: "Reliability Award", sub: "44 rewarded · 2026" },
 ];
 export const awardPos = (k: number, spin: number): V3 => {
   const a = (k / AWARDS.length) * Math.PI * 2 + spin;
@@ -155,19 +157,19 @@ const mapPos = (p: V3): V3 => [
   SET.overview[2] + (p[2] - SET.overview[2]) * MAP_SCALE,
 ];
 const WORLD_BEACONS = {
-  performance: { label: "Performance", pos: SET.performance as V3 },
-  ninebox: { label: "9-Box", pos: SET.ninebox as V3 },
+  performance: { label: "Performance & Potential", pos: SET.performance as V3 },
+  ninebox: { label: "9-Box Talent Matrix", pos: SET.ninebox as V3 },
   critical: { label: "Critical Roles", pos: SET.critical as V3 },
   succession: { label: "Succession", pos: SET.succession as V3 },
-  leadership: { label: "Leadership Programmes", pos: SET.leadership as V3 },
+  leadership: { label: "MASAR · ROBBAN", pos: SET.leadership as V3 },
   readiness: { label: "Readiness", pos: [70, -26, -282] as V3 },
   idp: { label: "IDPs", pos: [20, -24, -118] as V3 },
   capability: { label: "Capability", pos: SET.ecosystem as V3 },
   nationalization: { label: "Nationalization", pos: SET.nationalization as V3 },
   future: { label: "Future Workforce", pos: [-40, -26, -290] as V3 },
   secondment: { label: "Secondment", pos: SET.secondment as V3 },
-  rewards: { label: "Recognition", pos: SET.rewards as V3 },
-  platform: { label: "Talent Intelligence", pos: SET.platform as V3 },
+  rewards: { label: "Rewards & Recognition", pos: SET.rewards as V3 },
+  platform: { label: "Talent Command Center", pos: SET.platform as V3 },
 } as const;
 export type BeaconId = keyof typeof WORLD_BEACONS;
 export const BEACONS = Object.fromEntries(

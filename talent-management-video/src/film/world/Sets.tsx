@@ -20,6 +20,7 @@ import { HDR, SET } from "../layout";
 import { add, arc, clamp, EASE, lerp3, ramp, type V3 } from "../math";
 import { at, cue, FPS, LOGO_HIT, SCENES } from "../timeline";
 import { leadershipPath } from "../camera";
+import { NATIONALIZATION, NINE_BOX } from "../data";
 import {
   AWARDS,
   BEACONS,
@@ -142,7 +143,7 @@ export const EcosystemSet: React.FC = () => {
   const frame = useCurrentFrame();
   const E = SET.ecosystem as V3;
   const hubIn = ramp(frame, at("ecosystem", 0.2), at("ecosystem", 2.2));
-  const ringCue = cue("ecosystem", 1, "Each programme");
+  const ringCue = cue("ecosystem", 1, "each programme");
   const ringLink = ramp(frame, ringCue, ringCue + 90, EASE.inOut);
   const spin = frame * 0.004;
   const nodes = PROGRAMS.map((_, i) => programPos(i));
@@ -209,7 +210,7 @@ export const PerformanceSet: React.FC = () => {
   const dissolve = ramp(frame, at("performance", 3.0), at("performance", 6.5), EASE.inOut);
   const grow = ramp(frame, at("performance", 3.4), at("performance", 10.5), EASE.inOut);
   const spin = frame * 0.01;
-  const flowCue = cue("performance", 1, "It creates");
+  const flowCue = cue("performance", 1, "It is the foundation");
   const flow1 = ramp(frame, flowCue, flowCue + 40, EASE.inOut);
   const flow2 = ramp(frame, flowCue + 35, flowCue + 75, EASE.inOut);
   const rungs = 30;
@@ -284,22 +285,32 @@ export const PerformanceSet: React.FC = () => {
 };
 
 /* =================================================================== 05 */
-const NB_COUNT = 150;
+const NB_COUNT = 170;
+// Points are distributed exactly as the 2026 ranking (680 rated employees).
+const NB_CUM = (() => {
+  const out: Array<{ c: number; perf: number; pot: number }> = [];
+  let acc = 0;
+  const total = NINE_BOX.cells.flat().reduce((a, b) => a + b.n, 0);
+  NINE_BOX.cells.forEach((row, perf) =>
+    row.forEach((cell, pot) => {
+      acc += cell.n / total;
+      out.push({ c: acc, perf, pot });
+    }),
+  );
+  return out;
+})();
 const nbTarget = (i: number): [number, number] => {
   if (i === 0) return [2, 2];
-  const r = hash(i, 41);
-  // distribution skewed to the centre (core talent) with a healthy top-right
-  const perf = r < 0.2 ? 0 : r < 0.72 ? 1 : 2;
-  const r2 = hash(i, 42);
-  const pot = r2 < 0.25 ? 0 : r2 < 0.75 ? 1 : 2;
-  return [perf, pot];
+  const r = (i - 0.5) / NB_COUNT;
+  const hit = NB_CUM.find((x) => r <= x.c) ?? NB_CUM[NB_CUM.length - 1];
+  return [hit.perf, hit.pot];
 };
 
 export const NineBoxSet: React.FC = () => {
   const frame = useCurrentFrame();
   const N = SET.ninebox as V3;
   const tilesIn = (k: number) => ramp(frame, at("ninebox", 0.2) + k * 4, at("ninebox", 1.4) + k * 4);
-  const heroLand = cue("ninebox", 0, "identify future leaders");
+  const heroLand = cue("ninebox", 0, "identify our future leaders");
   const hot = ramp(frame, heroLand, heroLand + 20);
   const tileMat = useMemo(
     () => new THREE.MeshStandardMaterial({ color: "#0f2a38", metalness: 0.4, roughness: 0.15, transparent: true, opacity: 0.55 }),
@@ -606,12 +617,16 @@ export const NationalizationSet: React.FC = () => {
   const growth = ramp(frame, at("nationalization", 0.0), at("nationalization", 12), (t) => t);
   const m = useMemo(() => new THREE.Matrix4(), []);
   const c = useMemo(() => new THREE.Color(), []);
+  const maxPlan = Math.max(...NATIONALIZATION.plan.map((p) => p.n));
   for (let row = 0; row < STAGES.length; row++) {
+    // one terrace per plan year; column count ∝ roles planned that year
+    const active = Math.max(1, Math.round((TERRACE.cols * NATIONALIZATION.plan[row].n) / maxPlan));
     for (let col = 0; col < TERRACE.cols; col++) {
       const i = row * TERRACE.cols + col;
-      const base = terraceBase(row, col);
+      const centred = terraceBase(row, col);
+      const base: V3 = [Q[0] + (col - (active - 1) / 2) * TERRACE.gapX, centred[1], centred[2]];
       const delay = row * 0.12 + hash(i, 81) * 0.25;
-      const h = (0.5 + 2.2 * hash(i, 82) + row * 0.5) * clamp((growth - delay) / 0.45);
+      const h = col < active ? (0.6 + 2.2 * hash(i, 82) + row * 0.4) * clamp((growth - delay) / 0.45) : 0;
       m.makeScale(0.72, Math.max(0.001, h), 0.72);
       m.setPosition(base[0], base[1] + h / 2, base[2]);
       mesh.setMatrixAt(i, m);

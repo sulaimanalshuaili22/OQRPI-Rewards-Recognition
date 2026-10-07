@@ -1,15 +1,18 @@
 {
   "fps": 30,
-  "note": "Single source of truth for narration and scene pacing. Times are seconds. leadIn = picture before the first line; tail = picture after the last line; gaps = pause before each line after the first.",
+  "note": "Single source of truth for narration and pacing. `text` is the on-screen caption; optional `say` is the pronunciation sent to the narrator voice. Times are seconds: leadIn = picture before the first line, tail = picture after the last line, gap = pause before a line.",
   "scenes": [
     {
       "id": "opening",
       "name": "01 The future begins with people",
-      "leadIn": 4.2,
-      "tail": 3.6,
+      "leadIn": 4.6,
+      "tail": 4.4,
       "lines": [
         { "text": "Every successful organisation shares one common strength… its people.", "gap": 0 },
-        { "text": "Behind every operation, every innovation, and every achievement, lies talent.", "gap": 1.1 }
+        {
+          "text": "At OQ RPI, behind every operation, every innovation, and every achievement, lies talent.",
+          "gap": 1.0
+        }
       ]
     },
     {
@@ -18,18 +21,30 @@
       "leadIn": 1.6,
       "tail": 1.6,
       "lines": [
-        { "text": "In an increasingly competitive and rapidly changing world, organisations must ensure the right talent is available, in the right roles, at the right time.", "gap": 0 },
-        { "text": "Talent Management exists to build sustainable workforce capability, strengthen leadership pipelines, and secure the future of the business.", "gap": 1.0 }
+        {
+          "text": "In a fast-changing energy sector, OQ RPI must have the right talent, in the right roles, at the right time.",
+          "gap": 0
+        },
+        {
+          "text": "OQ RPI Talent Management exists to build sustainable workforce capability, strengthen our leadership pipeline, and secure the future of our business.",
+          "gap": 0.9
+        }
       ]
     },
     {
       "id": "ecosystem",
       "name": "03 The ecosystem",
       "leadIn": 2.0,
-      "tail": 2.0,
+      "tail": 1.8,
       "lines": [
-        { "text": "Talent Management is not a collection of separate programmes. It is one integrated ecosystem.", "gap": 0 },
-        { "text": "Each programme generates insights, actions and data that strengthen the next.", "gap": 2.2 }
+        {
+          "text": "At OQ RPI, Talent Management is not a collection of separate programmes. It is one integrated ecosystem.",
+          "gap": 0
+        },
+        {
+          "text": "Brought together in our Talent Command Center, each programme generates insights, actions and data that strengthen the next.",
+          "gap": 1.6
+        }
       ]
     },
     {
@@ -38,17 +53,24 @@
       "leadIn": 1.8,
       "tail": 1.6,
       "lines": [
-        { "text": "Performance Management enables the organisation to understand contribution, recognise achievement, and identify future potential.", "gap": 0 },
-        { "text": "It creates the foundation for all talent decisions.", "gap": 0.9 }
+        {
+          "text": "At OQ RPI Talent Management, Performance Management enables us to assess, measure, and recognise employee contribution while supporting strategic talent decisions.",
+          "gap": 0
+        },
+        { "text": "It is the foundation for every talent decision we make.", "gap": 0.9 }
       ]
     },
     {
       "id": "ninebox",
       "name": "05 The 9-Box Matrix",
       "leadIn": 1.4,
-      "tail": 2.2,
+      "tail": 2.0,
       "lines": [
-        { "text": "The 9-Box Matrix combines performance and potential to identify future leaders, accelerate talent development, and support succession planning decisions.", "gap": 0 }
+        {
+          "text": "Through our annual Talent Review, the OQ RPI 9-Box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
+          "say": "Through our annual Talent Review, the OQ RPI nine-box matrix combines performance and potential to identify our future leaders and accelerate their development.",
+          "gap": 0
+        }
       ]
     },
     {
@@ -57,17 +79,23 @@
       "leadIn": 1.4,
       "tail": 1.6,
       "lines": [
-        { "text": "Not all positions carry the same level of organisational risk.", "gap": 0 },
-        { "text": "Critical Roles identify positions whose vacancy would significantly impact safety, operations, leadership continuity, or business performance.", "gap": 0.9 }
+        { "text": "Not every position at OQ RPI carries the same level of risk.", "gap": 0 },
+        {
+          "text": "Our Critical Roles framework identifies the positions whose vacancy would impact safety, operations, leadership continuity, or business performance.",
+          "gap": 0.9
+        }
       ]
     },
     {
       "id": "succession",
       "name": "07 Succession Planning",
       "leadIn": 1.4,
-      "tail": 2.4,
+      "tail": 2.2,
       "lines": [
-        { "text": "Succession Planning ensures that future leaders are identified, developed, and prepared before business-critical vacancies occur.", "gap": 0 }
+        {
+          "text": "At OQ RPI Talent Management, Succession Planning ensures critical positions have identified and developed successors to support business continuity.",
+          "gap": 0
+        }
       ]
     },
     {
@@ -76,7 +104,11 @@
       "leadIn": 1.4,
       "tail": 1.8,
       "lines": [
-        { "text": "Leadership Development equips employees with the capabilities, mindsets, and experiences required to lead teams, functions, and future business transformation.", "gap": 0 }
+        {
+          "text": "At OQ RPI Talent Management, leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
+          "say": "At OQ RPI Talent Management, leadership development programmes such as Masaar and Robbaan build future leaders and strengthen organisational capability.",
+          "gap": 0
+        }
       ]
     },
     {
@@ -85,7 +117,10 @@
       "leadIn": 1.4,
       "tail": 1.8,
       "lines": [
-        { "text": "Nationalization strengthens sustainable workforce capability by developing and advancing national talent across critical business areas and leadership positions.", "gap": 0 }
+        {
+          "text": "At OQ RPI, Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize.",
+          "gap": 0
+        }
       ]
     },
     {
@@ -94,34 +129,54 @@
       "leadIn": 1.4,
       "tail": 1.6,
       "lines": [
-        { "text": "Secondment programmes create broader exposure, accelerate learning, and strengthen organisational capability through strategic experience opportunities.", "gap": 0 }
+        {
+          "text": "Through Secondment Management, OQ RPI employees gain broader exposure across OQ and national institutions, accelerating their learning and bringing new capability home.",
+          "gap": 0
+        }
       ]
     },
     {
       "id": "rewards",
       "name": "11 Rewards & Recognition",
       "leadIn": 1.4,
-      "tail": 2.0,
+      "tail": 1.8,
       "lines": [
-        { "text": "Recognition reinforces desired behaviours, increases engagement, and celebrates the people who make success possible.", "gap": 0 }
+        {
+          "text": "OQ RPI Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible.",
+          "gap": 0
+        }
       ]
     },
     {
       "id": "platform",
-      "name": "12 The Intelligent Talent Platform",
+      "name": "12 The Talent Command Center",
       "leadIn": 1.8,
       "tail": 2.0,
       "lines": [
-        { "text": "By bringing talent data together, leaders gain visibility into workforce capabilities, bench strength, succession readiness, leadership pipelines, and strategic talent risks.", "gap": 0 }
+        {
+          "text": "The OQ RPI Talent Command Center brings our talent data together, giving leaders real-time visibility of critical roles, bench strength, succession readiness, and leadership pipelines.",
+          "gap": 0
+        },
+        {
+          "text": "And our Talent Assistant answers any question on talent data, in English or Arabic.",
+          "gap": 0.8
+        }
       ]
     },
     {
       "id": "connections",
       "name": "13 How everything connects",
-      "leadIn": 4.4,
+      "leadIn": 3.6,
       "tail": 1.6,
       "lines": [
-        { "text": "Together, these initiatives create a powerful talent ecosystem that transforms data into decisions, potential into capability, and employees into future leaders.", "gap": 0 }
+        {
+          "text": "Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders.",
+          "gap": 0
+        },
+        {
+          "text": "For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI.",
+          "gap": 0.9
+        }
       ]
     },
     {
@@ -131,8 +186,11 @@
       "tail": 10.5,
       "lines": [
         { "text": "The future is not built by systems. It is built by people.", "gap": 0 },
-        { "text": "By investing in talent today, we create the leaders, capabilities, and opportunities that will shape tomorrow.", "gap": 1.3 },
-        { "text": "Talent Management. Building the workforce of the future.", "gap": 1.4 }
+        {
+          "text": "By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow.",
+          "gap": 1.3
+        },
+        { "text": "OQ RPI Talent Management. Building tomorrow's talent, together.", "gap": 1.4 }
       ]
     }
   ]

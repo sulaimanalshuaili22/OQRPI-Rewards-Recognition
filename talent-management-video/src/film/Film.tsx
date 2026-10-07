@@ -1,7 +1,9 @@
 import type React from "react";
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { World } from "./world/World";
-import { Overlays } from "./overlay/Overlays";
+import { Overlays, TopLayer } from "./overlay/Overlays";
+import { Plates } from "./overlay/Plates";
+import { EndCard, LogoIntro, Watermark } from "./overlay/Brand";
 import { Captions, Grade, H, Transitions, W, whipBlur } from "./overlay/ui";
 import "../theme";
 
@@ -36,9 +38,14 @@ export const Film: React.FC<FilmProps> = ({ captions, soundtrack }) => {
         }}
       >
         <Overlays />
+        <Plates />
+        <TopLayer />
         <Transitions />
         <Grade />
+        <Watermark />
         {captions ? <Captions /> : null}
+        <EndCard />
+        <LogoIntro />
       </div>
     </AbsoluteFill>
   );

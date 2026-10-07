@@ -100,7 +100,7 @@ li = 0
 for sc in script["scenes"]:
     for line in sc["lines"]:
         chunks = []
-        for si, (sent, after) in enumerate(sentences(line["text"])):
+        for si, (sent, after) in enumerate(sentences(line.get("say", line["text"]))):
             speed = args.speed + PACE[li % len(PACE)]
             a, s = k.create(sent, voice=style, speed=speed, lang="en-us")
             a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)

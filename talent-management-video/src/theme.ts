@@ -31,8 +31,8 @@ export const COLORS = {
 // Aktiv Grotesk .woff2 files into /public/fonts and point these URLs at them.
 const INTER_WEIGHTS = ["300", "400", "500", "600", "700", "800"] as const;
 
-export const fontsReady = Promise.all(
-  INTER_WEIGHTS.map((weight) =>
+export const fontsReady = Promise.all([
+  ...INTER_WEIGHTS.map((weight) =>
     loadFont({
       family: "Inter",
       url: staticFile(`fonts/inter-latin-${weight}-normal.woff2`),
@@ -40,9 +40,13 @@ export const fontsReady = Promise.all(
       format: "woff2",
     }),
   ),
-);
+  // Arabic (Talent Assistant answers in English or Arabic)
+  loadFont({ family: "Noto Sans Arabic", url: staticFile("fonts/NotoSansArabic-Regular.ttf"), weight: "400", format: "truetype" }),
+  loadFont({ family: "Noto Sans Arabic", url: staticFile("fonts/NotoSansArabic-Bold.ttf"), weight: "700", format: "truetype" }),
+]);
 
-export const FONT = `Inter, "Aktiv Grotesk", Arial, Helvetica, sans-serif`;
+export const FONT = `Inter, "Aktiv Grotesk", "Noto Sans Arabic", Arial, Helvetica, sans-serif`;
+export const FONT_AR = `"Noto Sans Arabic", Inter, sans-serif`;
 
 export const EASE = {
   out: Easing.bezier(0.16, 1, 0.3, 1),
