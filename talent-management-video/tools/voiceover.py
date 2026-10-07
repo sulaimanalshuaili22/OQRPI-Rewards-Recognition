@@ -92,6 +92,23 @@ def trim(y, sr, thr=0.008):
     return y[max(0, nz[0] - int(0.03 * sr)): nz[-1] + int(0.12 * sr)]
 
 
+# House pronunciations, applied to every line. "OQ" is always two letters
+# (O-Q, never "ock"); RPI is spelled out; ROBBAN is "Roh-bahn".
+LEXICON = [
+    (r"\bOQ\b", "O Q"),
+    (r"\bRPI\b", "R P I"),
+    (r"\bROBBAN\b|\bRobban\b", "Robahn"),
+    (r"\bMASAR\b", "Masaar"),
+]
+
+
+def spoken(line):
+    text = line.get("say", line["text"])
+    for pat, rep in LEXICON:
+        text = re.sub(pat, rep, text)
+    return text
+
+
 # Slight, deterministic pace variation keeps the read from sounding mechanical.
 PACE = [0.0, -0.02, 0.01, -0.01, 0.02, -0.015, 0.0, 0.015, -0.02, 0.01]
 
@@ -100,7 +117,7 @@ li = 0
 for sc in script["scenes"]:
     for line in sc["lines"]:
         chunks = []
-        for si, (sent, after) in enumerate(sentences(line.get("say", line["text"]))):
+        for si, (sent, after) in enumerate(sentences(spoken(line))):
             speed = args.speed + PACE[li % len(PACE)]
             a, s = k.create(sent, voice=style, speed=speed, lang="en-us")
             a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)

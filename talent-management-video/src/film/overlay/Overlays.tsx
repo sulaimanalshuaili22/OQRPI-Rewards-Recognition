@@ -1,5 +1,5 @@
 import type React from "react";
-import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { Anchored, Chapter, Tag, Title } from "./ui";
 import {
   ACCENT,
@@ -24,7 +24,6 @@ import {
   GATES,
   HOME,
   HOST,
-  CORE,
   PROGRAMS,
   SEATS,
   STAGES,
@@ -315,16 +314,9 @@ const SuccessionOverlay: React.FC = () => {
 };
 
 /* 08 ---------------------------------------------------------------- */
+/** The official ROBBAN identity (from the programme's brand sheet). */
 const RobbanMark: React.FC = () => (
-  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-    <svg width={42} height={30} viewBox="0 0 42 30">
-      <polygon points="0,0 26,0 42,30 16,30" fill={COLORS.orange} />
-    </svg>
-    <div>
-      <div style={{ fontSize: 34, fontWeight: 800, letterSpacing: 6 }}>ROBBAN</div>
-      <div style={{ fontSize: 13, color: "#C9D6DB", letterSpacing: 1 }}>{LEADERSHIP.robban.strap}</div>
-    </div>
-  </div>
+  <Img src={staticFile("brand/robban-logo-white.png")} style={{ width: 300, height: 300 / (1750 / 577), display: "block" }} />
 );
 
 const LeadershipOverlay: React.FC = () => {
