@@ -41,7 +41,7 @@ const PHOTOS: Record<string, Photo> = {
   "engineer-tablet": { mode: "frame", side: "right", label: "Omani talent · Future leaders" },
   "digital-talent": { mode: "frame", side: "right", label: "OQ · Digital talent" },
   "office-colleagues": { mode: "frame", side: "left", label: "OQ RPI · Growing together" },
-  "night-panorama": { mode: "frame", side: "center", label: "OQ RPI · Sohar" },
+  "night-panorama": { mode: "cover", focus: "50% 55%", label: "OQ RPI · Sohar" },
 };
 
 type Shot = {
@@ -122,13 +122,9 @@ export const SHOTS: Shot[] = [
   single("digital-talent", S("platform"), 2.4),
   // 13 — what it means for every employee
   single("office-colleagues", cue("connections", 1, "For every employee"), 2.8),
-  // 14 — the site at night, then its people
-  ...montage(
-    [cue("future", 0, "The future"), cue("future", 0, "It is built by people")],
-    ["night-panorama", "employees"],
-    lineEnd("future", 0) + 10,
-  ),
-  single("glass-building", cue("future", 1, "By investing"), 2.6),
+  // 14 — the site at night under the title; then the people we invest in
+  single("night-panorama", cue("future", 0, "The future"), (lineEnd("future", 0) + 10 - cue("future", 0, "The future")) / FPS, [1.04, 1.12]),
+  single("employees", cue("future", 1, "By investing"), 3.0),
 ];
 
 const PhotoPlate: React.FC<{
@@ -150,6 +146,7 @@ const PhotoPlate: React.FC<{
     return (
       <AbsoluteFill>
         <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: photo.focus ?? "50% 50%", scale: String(z), translate: `${dx}px ${dy}px` }} />
+        <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,18,28,0) 55%, rgba(4,18,28,0.55) 100%)" }} />
         <div style={{ position: "absolute", left: 96, top: 170 }}>{label}</div>
       </AbsoluteFill>
     );

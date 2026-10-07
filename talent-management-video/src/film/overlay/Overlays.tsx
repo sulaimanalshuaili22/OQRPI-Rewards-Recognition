@@ -79,6 +79,14 @@ const Floating: React.FC<{
   );
 };
 
+/** A Command Center card pinned to the right of the frame, sliding in on its cue. */
+const ScreenCard: React.FC<{ readonly top: number; readonly from: number; readonly to: number; readonly children: React.ReactNode }> = ({ top, from, to, children }) => {
+  const frame = useCurrentFrame();
+  const t = ramp(frame, from, from + 20, EASE.out) * (1 - ramp(frame, to - 14, to));
+  if (t <= 0) return null;
+  return <div style={{ position: "absolute", right: 90, top, opacity: t, translate: `${(1 - t) * 60}px 0px` }}>{children}</div>;
+};
+
 /* 01 ---------------------------------------------------------------- */
 const OpeningOverlay: React.FC = () => (
   <Title
@@ -341,7 +349,7 @@ const LeadershipOverlay: React.FC = () => {
           </Anchored>
         );
       })}
-      <Floating at={add(leadershipPath(0.42), [-3, 6.5, -6])} from={masarCue - 6} to={end("leadership", 10)} refDepth={16}>
+      <ScreenCard top={150} from={masarCue - 6} to={end("leadership", 10)}>
         <DashCard title={LEADERSHIP.masar.name} sub="OQ RPI's in-house leadership journey" accent="purple" width={420}>
           <div style={{ display: "flex", gap: 28 }}>
             {[
@@ -357,8 +365,8 @@ const LeadershipOverlay: React.FC = () => {
           </div>
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>{LEADERSHIP.masar.themes.map(chip)}</div>
         </DashCard>
-      </Floating>
-      <Floating at={add(leadershipPath(0.7), [1, 6.5, -7])} from={robbanCue - 4} to={end("leadership", 10)} refDepth={16}>
+      </ScreenCard>
+      <ScreenCard top={470} from={robbanCue - 4} to={end("leadership", 10)}>
         <DashCard title="" accent="orange" width={430}>
           <RobbanMark />
           <div style={{ fontSize: 18, fontWeight: 700, marginTop: 12 }}>Robban Leadership Development Program 2026</div>
@@ -374,7 +382,7 @@ const LeadershipOverlay: React.FC = () => {
             </div>
           </div>
         </DashCard>
-      </Floating>
+      </ScreenCard>
     </>
   );
 };
