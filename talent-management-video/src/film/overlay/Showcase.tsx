@@ -247,41 +247,65 @@ const Nationalization: React.FC = () => {
 
 /* ---------------------------------------------- 11 Rewards & Recognition */
 
-type Award = { readonly title: string; readonly line: string; readonly accent: Accent; readonly kind: "medal" | "trophy" | "star" };
+type Award = { readonly title: string; readonly line: string; readonly accent: Accent; readonly kind: "medal" | "shield" | "star" | "photo" };
 
-const Emblem: React.FC<{ readonly kind: Award["kind"]; readonly color: string; readonly size: number }> = ({ kind, color, size }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: "visible", filter: `drop-shadow(0 0 18px ${color}88)` }}>
+/** The OQ RPI presentation plaque, redrawn as a shield: navy velvet, cream panel, gold plate. */
+const Shield: React.FC<{ readonly size: number }> = ({ size }) => (
+  <svg width={size} height={size * 1.12} viewBox="0 0 100 112" style={{ overflow: "visible", filter: "drop-shadow(0 0 22px rgba(247,197,72,0.55))" }}>
     <defs>
-      <linearGradient id={`g-${kind}-${color.slice(1)}`} x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
-        <stop offset="0.35" stopColor={color} />
-        <stop offset="1" stopColor={color} stopOpacity="0.7" />
+      <linearGradient id="shield-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#FFF1B8" />
+        <stop offset="0.45" stopColor="#F7C548" />
+        <stop offset="1" stopColor="#B8860B" />
+      </linearGradient>
+      <linearGradient id="shield-navy" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#13324A" />
+        <stop offset="1" stopColor="#081F2C" />
       </linearGradient>
     </defs>
-    {kind === "trophy" ? (
-      <g fill={`url(#g-${kind}-${color.slice(1)})`}>
-        <path d="M28 10 H72 V36 C72 52 62 62 50 62 C38 62 28 52 28 36 Z" />
-        <path d="M28 16 H14 C14 34 22 42 32 44 L31 38 C24 36 21 30 20 22 H28 Z" />
-        <path d="M72 16 H86 C86 34 78 42 68 44 L69 38 C76 36 79 30 80 22 H72 Z" />
-        <rect x="45" y="60" width="10" height="14" />
-        <rect x="32" y="74" width="36" height="8" rx="2" />
-        <rect x="26" y="84" width="48" height="10" rx="3" />
-      </g>
-    ) : kind === "medal" ? (
-      <g>
-        <path d="M30 4 L44 40 L36 44 L22 8 Z" fill={COLORS.orange} opacity="0.9" />
-        <path d="M70 4 L56 40 L64 44 L78 8 Z" fill={COLORS.turquoise} opacity="0.9" />
-        <circle cx="50" cy="64" r="28" fill={`url(#g-${kind}-${color.slice(1)})`} />
-        <circle cx="50" cy="64" r="20" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="2" />
-        <path d="M50 50 L54 60 L65 60 L56 67 L59 78 L50 71 L41 78 L44 67 L35 60 L46 60 Z" fill="#ffffff" fillOpacity="0.9" />
-      </g>
-    ) : (
-      <g>
-        <path d="M50 4 L62 36 L96 38 L70 60 L79 94 L50 75 L21 94 L30 60 L4 38 L38 36 Z" fill={`url(#g-${kind}-${color.slice(1)})`} />
-      </g>
-    )}
+    <path d="M50 2 L94 14 V54 C94 80 74 100 50 110 C26 100 6 80 6 54 V14 Z" fill="url(#shield-gold)" />
+    <path d="M50 7 L89 18 V54 C89 77 71 95 50 104 C29 95 11 77 11 54 V18 Z" fill="url(#shield-navy)" />
+    <path d="M50 14 L82 23 V54 C82 73 67 88 50 96 C33 88 18 73 18 54 V23 Z" fill="#EDE4D3" />
+    <rect x="30" y="34" width="40" height="30" rx="3" fill="url(#shield-gold)" />
+    <text x="50" y="47" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="9.5" fill="#081F2C" letterSpacing="0.3">OQ RPI</text>
+    <text x="50" y="58" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="5.2" fill="#081F2C" letterSpacing="1.2">GRAND WINNER</text>
+    <rect x="34" y="70" width="32" height="6" rx="1.5" fill="url(#shield-gold)" />
+    <text x="50" y="86" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="800" fontSize="7" fill="#081F2C">OQ<tspan fill="#FF8200">RPI</tspan></text>
   </svg>
 );
+
+const Emblem: React.FC<{ readonly kind: Award["kind"]; readonly color: string; readonly size: number }> = ({ kind, color, size }) => {
+  if (kind === "shield") return <Shield size={size} />;
+  if (kind === "photo") {
+    return (
+      <div style={{ width: size, height: size * 1.25, overflow: "hidden", borderRadius: 10, filter: "drop-shadow(0 0 22px rgba(247,197,72,0.5))", maskImage: "radial-gradient(ellipse 60% 70% at 50% 50%, black 55%, transparent 100%)" }}>
+        <Img src={staticFile("photos/excellence-award.png")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      </div>
+    );
+  }
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: "visible", filter: `drop-shadow(0 0 18px ${color}88)` }}>
+      <defs>
+        <linearGradient id={`g-${kind}-${color.slice(1)}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
+          <stop offset="0.35" stopColor={color} />
+          <stop offset="1" stopColor={color} stopOpacity="0.7" />
+        </linearGradient>
+      </defs>
+      {kind === "medal" ? (
+        <g>
+          <path d="M30 4 L44 40 L36 44 L22 8 Z" fill={COLORS.orange} opacity="0.9" />
+          <path d="M70 4 L56 40 L64 44 L78 8 Z" fill={COLORS.turquoise} opacity="0.9" />
+          <circle cx="50" cy="64" r="28" fill={`url(#g-${kind}-${color.slice(1)})`} />
+          <circle cx="50" cy="64" r="20" fill="none" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="2" />
+          <path d="M50 50 L54 60 L65 60 L56 67 L59 78 L50 71 L41 78 L44 67 L35 60 L46 60 Z" fill="#ffffff" fillOpacity="0.9" />
+        </g>
+      ) : (
+        <path d="M50 4 L62 36 L96 38 L70 60 L79 94 L50 75 L21 94 L30 60 L4 38 L38 36 Z" fill={`url(#g-${kind}-${color.slice(1)})`} />
+      )}
+    </svg>
+  );
+};
 
 const Rewards: React.FC = () => {
   const frame = useCurrentFrame();
@@ -293,9 +317,9 @@ const Rewards: React.FC = () => {
   const awards: Array<Award & { readonly at: number; readonly x: number; readonly y: number; readonly hero?: boolean }> = [
     { title: "HSSE Award", line: `${hsse.rewarded} recognised for safety excellence`, accent: "purple", kind: "medal", at: cue("rewards", 0, "reinforces the behaviours"), x: 250, y: 560 },
     { title: "Above & Beyond", line: `${aab.rewarded} recognised in 2026`, accent: "orange", kind: "medal", at: cue("rewards", 0, "Above and Beyond"), x: 610, y: 500 },
-    { title: "Grand Winner Award", line: "OQ RPI's highest annual honour", accent: "gold", kind: "trophy", at: cue("rewards", 0, "celebrates the people"), x: 960, y: 440, hero: true },
+    { title: "Grand Winner Award", line: `${REWARDS.grandWinner.total} certificates · OQ RPI's highest honour`, accent: "gold", kind: "shield", at: cue("rewards", 0, "celebrates the people"), x: 960, y: 420, hero: true },
     { title: "Testahal", line: `${fmt(testahal.rewarded)} employees recognised`, accent: "green", kind: "medal", at: cue("rewards", 0, "Testahal"), x: 1310, y: 500 },
-    { title: "Special Achievement", line: "Recognition for exceptional contribution", accent: "teal", kind: "star", at: cue("rewards", 0, "we value") + 6, x: 1670, y: 560 },
+    { title: "OQ Excellence Award", line: "Outstanding contributions across OQ", accent: "gold", kind: "photo", at: cue("rewards", 0, "we value") + 6, x: 1670, y: 540 },
   ];
   const hero = awards[2].at;
   const burst = ramp(frame, hero, hero + 30, EASE.out);
@@ -314,7 +338,7 @@ const Rewards: React.FC = () => {
         })}
         <Headline kicker="REWARDS & RECOGNITION" title="Celebrating the people behind our success" from={from + 4} />
         {/* pedestal line */}
-        <div style={{ position: "absolute", left: 160, right: 160, top: 800, height: 2, background: "linear-gradient(90deg, transparent, rgba(247,197,72,0.5), transparent)", opacity: ramp(frame, from + 10, from + 40) }} />
+        <div style={{ position: "absolute", left: 160, right: 160, top: 760, height: 2, background: "linear-gradient(90deg, transparent, rgba(247,197,72,0.5), transparent)", opacity: ramp(frame, from + 10, from + 40) }} />
         {awards.map((a) => {
           const t = ramp(frame, a.at - 4, a.at + 18, EASE.out);
           const set = ramp(frame, from + 10, from + 34, EASE.out);
@@ -349,8 +373,18 @@ const Rewards: React.FC = () => {
             </div>
           );
         })}
+        {/* Grand Winner tiers */}
+        <div style={{ position: "absolute", left: 960 - 260, top: 772, width: 520, display: "flex", justifyContent: "center", gap: 18, fontFamily: FONT, opacity: ramp(frame, hero + 16, hero + 36) }}>
+          {REWARDS.grandWinner.tiers.map((t, i) => (
+            <div key={t.tier} style={{ textAlign: "center", opacity: ramp(frame, hero + 16 + i * 5, hero + 30 + i * 5), translate: `0px ${(1 - ramp(frame, hero + 16 + i * 5, hero + 30 + i * 5)) * 10}px` }}>
+              <div style={{ width: 14, height: 14, margin: "0 auto 6px", rotate: "45deg", background: t.color, boxShadow: `0 0 12px ${t.color}` }} />
+              <div style={{ fontSize: 24, fontWeight: 800, color: COLORS.white, lineHeight: 1 }}>{t.n}</div>
+              <div style={{ fontSize: 12, letterSpacing: 2, color: MUTED, marginTop: 3 }}>{t.tier.toUpperCase()}</div>
+            </div>
+          ))}
+        </div>
         {/* the year in recognition */}
-        <div style={{ position: "absolute", left: 0, right: 0, top: 836, display: "flex", justifyContent: "center", gap: 46, fontFamily: FONT, color: COLORS.white, opacity: ramp(frame, hero + 20, hero + 44) }}>
+        <div style={{ position: "absolute", left: 0, right: 0, top: 868, display: "flex", justifyContent: "center", gap: 46, fontFamily: FONT, color: COLORS.white, opacity: ramp(frame, hero + 20, hero + 44) }}>
           <div style={{ fontSize: 22 }}>
             <b style={{ fontSize: 30 }}>
               <Count value={REWARDS.granted} from={hero + 20} />

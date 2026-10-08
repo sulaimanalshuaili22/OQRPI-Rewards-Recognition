@@ -152,6 +152,15 @@ export const REWARDS = {
   budgetOMR: 221750,
   usedOMR: 90800,
   per100: 47.5,
+  grandWinner: {
+    total: 288,
+    tiers: [
+      { tier: "Diamond", n: 4, color: "#BFEFFF" },
+      { tier: "Gold", n: 56, color: "#F7C548" },
+      { tier: "Silver", n: 115, color: "#D9DEE3" },
+      { tier: "Bronze", n: 113, color: "#D08A4A" },
+    ],
+  },
   programmes: [
     { name: "Testahal", rewarded: 1111, accent: "green" },
     { name: "Above & Beyond", rewarded: 149, accent: "orange" },
