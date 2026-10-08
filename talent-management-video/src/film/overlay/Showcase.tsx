@@ -12,6 +12,7 @@
  */
 import type React from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { Video } from "@remotion/media";
 import { ACCENT, IconTile, type Accent } from "./Dash";
 import type { IconName } from "../../components/Icons";
 import { cue, linesOf, SCENES, type SceneId } from "../timeline";
@@ -608,9 +609,12 @@ const Investing: React.FC = () => {
     <Window from={from} to={to}>
       <AbsoluteFill style={{ background: COLORS.midnightDeep }}>
         {/* our people, full frame */}
-        <Img
-          src={staticFile("photos/employees.jpg")}
-          style={{ position: "absolute", width: "100%", height: "100%", objectFit: "cover", objectPosition: "60% 30%", filter: "blur(1.2px) saturate(1.05)", scale: String(1.06 + 0.06 * t), translate: `${-20 * t}px 0px` }}
+        <Video
+          src={staticFile("footage/employees-live.mp4")}
+          muted
+          playbackRate={0.4}
+          objectFit="cover"
+          style={{ position: "absolute", width: "100%", height: "100%", objectPosition: "60% 30%", filter: "blur(1.2px) saturate(1.05)", scale: String(1.06 + 0.06 * t), translate: `${-20 * t}px 0px` }}
         />
         <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(4,15,23,0.94) 0%, rgba(4,15,23,0.86) 38%, rgba(4,15,23,0.35) 70%, rgba(4,15,23,0.25) 100%)" }} />
         <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,15,23,0.5) 0%, rgba(4,15,23,0) 30%, rgba(4,15,23,0) 70%, rgba(4,15,23,0.7) 100%)" }} />

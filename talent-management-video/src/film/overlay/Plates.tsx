@@ -21,6 +21,8 @@ const CLIP_SECONDS: Record<string, number> = {
   "strategy-glass": 2.3, "talent-review": 2.18, "refinery-aerial": 0.94, "eyes-1": 2.74, "eyes-2": 0.54,
   "eyes-3": 0.86, "eyes-4": 0.86, "eyes-5": 1.58, "eyes-6": 1.06, "eyes-7": 0.94,
   "sunrise-drone": 10.0,
+  // Corporate Communications photographs brought to life (image-to-video, subtle camera moves)
+  "robban-cohort-live": 5.03, "masar-cohort-live": 5.03, "boardroom-live": 5.03, "team-meeting-live": 5.03, "employees-live": 5.03,
 };
 
 /** High-resolution Corporate Communications stills that hold up full frame. */
@@ -99,13 +101,13 @@ export const SHOTS: Shot[] = [
       cue("opening", 1, "every achievement"),
       cue("opening", 1, "lies talent"),
     ],
-    ["eyes-1", "wall", "sunrise-drone", "control-room", "scientist", "field-engineers", "strategy-glass"],
+    ["eyes-1", "wall", "sunrise-drone", "control-room", "scientist", "field-engineers", "boardroom-live"],
     lineEnd("opening", 1) + 4,
     30,
   ),
   // 02 — the real site, then the teams who run it
   single("refinery-aerial", S("why"), 2.6, [1.0, 1.12]),
-  single("team-meeting", cue("why", 1, "OQ RPI Talent Management exists"), 3.4),
+  single("team-meeting-live", cue("why", 1, "OQ RPI Talent Management exists"), 3.4, [1.0, 1.04]),
   // 03 — OQ
   single("oq-lobby", S("ecosystem"), 2.6),
   // 04 — a performance conversation
@@ -117,8 +119,8 @@ export const SHOTS: Shot[] = [
   // 07 — leaders in discussion
   single("leadership-call", S("succession"), 2.4),
   // 08 — the MASAR cohort at work; the ROBBAN cohort on its name
-  single("masar-cohort", S("leadership"), 2.6),
-  single("robban-cohort", cue("leadership", 0, "ROBBAN") - 6, 2.4, [1.0, 1.08], 16),
+  single("masar-cohort-live", S("leadership"), 2.6, [1.0, 1.03]),
+  single("robban-cohort-live", cue("leadership", 0, "ROBBAN") - 6, 2.4, [1.0, 1.03], 16),
   // 10 — OQ's reach
   single("world-map", S("secondment"), 3.4, [1.0, 1.06]),
   // 14 — dawn over the site under the closing title (the drone shot, sun breaking)
