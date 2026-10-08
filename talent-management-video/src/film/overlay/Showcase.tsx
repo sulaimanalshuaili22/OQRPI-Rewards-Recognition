@@ -15,7 +15,7 @@ import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "rem
 import { Video } from "@remotion/media";
 import { ACCENT, IconTile, type Accent } from "./Dash";
 import type { IconName } from "../../components/Icons";
-import { cue, linesOf, SCENES, type SceneId } from "../timeline";
+import { cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import { EASE, ramp } from "../math";
 import { COLORS, FONT } from "../../theme";
 import { LEADERSHIP, NATIONALIZATION, PERFORMANCE, REWARDS, SECONDMENT, SUCCESSION, fmt } from "../data";
@@ -110,7 +110,7 @@ const ROLES: Array<{ readonly role: string; readonly tier: "Technical" | "Leader
 
 const Nationalization: React.FC = () => {
   const frame = useCurrentFrame();
-  const from = S("nationalization") + 4;
+  const from = S("nationalization") + 2.4 * FPS - 10; // after the on-site plate
   const to = end("nationalization", 12);
   const develops = cue("nationalization", 0, "develops and advances");
   const critical = cue("nationalization", 0, "critical roles");
@@ -415,7 +415,7 @@ const MODULES: Array<{ readonly name: string; readonly say: string; readonly ico
 
 const CommandHub: React.FC = () => {
   const frame = useCurrentFrame();
-  const from = S("platform") + 4;
+  const from = S("platform") + 2.2 * FPS - 10; // after the on-site plate
   const to = lineEnd("platform", 0) + 18;
   const hubAt = cue("platform", 0, "Talent Command Center");
   const visibility = cue("platform", 0, "real-time visibility");

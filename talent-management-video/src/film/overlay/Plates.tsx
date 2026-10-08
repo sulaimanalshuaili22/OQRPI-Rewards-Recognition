@@ -33,13 +33,21 @@ const PHOTOS: Record<string, { readonly focus: string }> = {
   "masar-cohort": { focus: "50% 45%" },
   "night-panorama": { focus: "50% 55%" },
   "robban-cohort": { focus: "50% 45%" },
+  "site-engineer-drawings": { focus: "50% 40%" },
+  "sunset-pointing": { focus: "55% 45%" },
+  "control-room-operator": { focus: "45% 45%" },
+  "tablet-dusk-plant": { focus: "50% 40%" },
+  "office-walk-laptop": { focus: "45% 45%" },
+  "engineers-walking": { focus: "50% 40%" },
+  "tablet-sunset": { focus: "50% 45%" },
+  "walk-glass": { focus: "40% 45%" },
 };
 
 /** OQ RPI people, for the photo wall ("its people"). */
 const WALL = [
-  "employees", "field-team", "masar-cohort", "lab-engineer",
-  "collaboration", "boardroom", "engineer-tablet", "control-room",
-  "colleagues-laptop", "operator", "team-meeting", "office-colleagues",
+  "employees", "site-engineer-drawings", "masar-cohort", "tablet-sunset",
+  "engineers-walking", "boardroom", "engineer-tablet", "control-room-operator",
+  "walk-glass", "field-team", "team-meeting", "office-walk-laptop",
 ];
 
 type Shot = {
@@ -101,7 +109,7 @@ export const SHOTS: Shot[] = [
       cue("opening", 1, "every achievement"),
       cue("opening", 1, "lies talent"),
     ],
-    ["eyes-1", "wall", "sunrise-drone", "control-room", "scientist", "field-engineers", "boardroom-live"],
+    ["eyes-1", "wall", "sunrise-drone", "control-room", "tablet-sunset", "field-engineers", "boardroom-live"],
     lineEnd("opening", 1) + 4,
     30,
   ),
@@ -110,19 +118,26 @@ export const SHOTS: Shot[] = [
   single("team-meeting-live", cue("why", 1, "OQ RPI Talent Management exists"), 3.4, [1.0, 1.04]),
   // 03 — OQ
   single("oq-lobby", S("ecosystem"), 2.6),
-  // 04 — a performance conversation
-  single("coaching", S("performance"), 2.4),
+  // 04 — contribution, recognised: an engineer on site with the work in hand
+  single("site-engineer-drawings", S("performance"), 2.6, [1.0, 1.08]),
   // 05 — a talent review in session
   single("talent-review", S("ninebox"), 2.5),
-  // 06 — the plant whose safety depends on critical roles
-  single("plant-equipment", S("critical"), 2.3),
-  // 07 — leaders in discussion
-  single("leadership-call", S("succession"), 2.4),
+  // 06 — the control room: the roles whose vacancy would impact safety and operations
+  single("control-room-operator", S("critical"), 2.5, [1.0, 1.08]),
+  // 07 — a leader shows a successor the way
+  single("sunset-pointing", S("succession"), 2.6, [1.0, 1.08]),
   // 08 — the MASAR cohort at work; the ROBBAN cohort on its name
   single("masar-cohort-live", S("leadership"), 2.6, [1.0, 1.03]),
   single("robban-cohort-live", cue("leadership", 0, "ROBBAN") - 6, 2.4, [1.0, 1.03], 16),
-  // 10 — OQ's reach
+  // 09 — Omani talent on site, before the nationalization sequence
+  single("engineers-walking", S("nationalization"), 2.4, [1.0, 1.07], 16),
+  // 10 — OQ's reach; capability coming home
   single("world-map", S("secondment"), 3.4, [1.0, 1.06]),
+  single("walk-glass", cue("secondment", 0, "bringing new capability home") - 8, 2.4, [1.0, 1.07]),
+  // 12 — real-time visibility, on site
+  single("tablet-dusk-plant", S("platform"), 2.2, [1.0, 1.08], 16),
+  // 13 — every employee
+  single("office-walk-laptop", S("connections"), 2.4, [1.0, 1.07]),
   // 14 — dawn over the site under the closing title (the drone shot, sun breaking)
   single("sunrise-drone", cue("future", 0, "The future"), (lineEnd("future", 0) + 10 - cue("future", 0, "The future")) / FPS, [1.0, 1.06], 20, 4.4),
 ];
