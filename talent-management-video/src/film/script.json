@@ -8,7 +8,10 @@
       "leadIn": 4.6,
       "tail": 4.4,
       "lines": [
-        { "text": "Every successful organisation shares one common strength… its people.", "gap": 0 },
+        {
+          "text": "Every successful organisation shares one common strength… its people.",
+          "gap": 0
+        },
         {
           "text": "At OQ RPI, behind every operation, every innovation, and every achievement, lies talent.",
           "gap": 1.0
@@ -54,10 +57,13 @@
       "tail": 1.6,
       "lines": [
         {
-          "text": "At OQ RPI Talent Management, Performance Management enables us to assess, measure, and recognise employee contribution while supporting strategic talent decisions.",
+          "text": "Performance Management enables us to assess, measure, and recognise employee contribution while supporting strategic talent decisions.",
           "gap": 0
         },
-        { "text": "It is the foundation for every talent decision we make.", "gap": 0.9 }
+        {
+          "text": "It is the foundation for every talent decision we make.",
+          "gap": 0.9
+        }
       ]
     },
     {
@@ -67,8 +73,8 @@
       "tail": 2.0,
       "lines": [
         {
-          "text": "Through our annual Talent Review, the OQ RPI 9-Box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
-          "say": "Through our annual Talent Review, the OQ RPI nine-box matrix combines performance and potential to identify our future leaders and accelerate their development.",
+          "text": "Through our annual Talent Review, the 9-Box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
+          "say": "Through our annual Talent Review, the nine-box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
           "gap": 0
         }
       ]
@@ -79,7 +85,10 @@
       "leadIn": 1.4,
       "tail": 1.6,
       "lines": [
-        { "text": "Not every position at OQ RPI carries the same level of risk.", "gap": 0 },
+        {
+          "text": "Not every position carries the same level of risk.",
+          "gap": 0
+        },
         {
           "text": "Our Critical Roles framework identifies the positions whose vacancy would impact safety, operations, leadership continuity, or business performance.",
           "gap": 0.9
@@ -93,7 +102,7 @@
       "tail": 2.2,
       "lines": [
         {
-          "text": "At OQ RPI Talent Management, Succession Planning ensures critical positions have identified and developed successors to support business continuity.",
+          "text": "Succession Planning ensures critical positions have identified and developed successors to support business continuity.",
           "gap": 0
         }
       ]
@@ -105,8 +114,8 @@
       "tail": 1.8,
       "lines": [
         {
-          "text": "At OQ RPI Talent Management, leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
-          "say": "At OQ RPI Talent Management, leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
+          "text": "Leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
+          "say": "Leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
           "gap": 0
         }
       ]
@@ -118,7 +127,7 @@
       "tail": 1.8,
       "lines": [
         {
-          "text": "At OQ RPI, Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize.",
+          "text": "Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize.",
           "gap": 0
         }
       ]
@@ -142,7 +151,7 @@
       "tail": 1.8,
       "lines": [
         {
-          "text": "OQ RPI Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible.",
+          "text": "Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible.",
           "gap": 0
         }
       ]
@@ -185,12 +194,18 @@
       "leadIn": 2.0,
       "tail": 10.5,
       "lines": [
-        { "text": "The future is not built by systems. It is built by people.", "gap": 0 },
+        {
+          "text": "The future is not built by systems. It is built by people.",
+          "gap": 0
+        },
         {
           "text": "By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow.",
           "gap": 1.3
         },
-        { "text": "OQ RPI Talent Management. Building tomorrow's talent, together.", "gap": 1.4 }
+        {
+          "text": "OQ RPI Talent Management. Building tomorrow's talent, together.",
+          "gap": 1.4
+        }
       ]
     }
   ]
