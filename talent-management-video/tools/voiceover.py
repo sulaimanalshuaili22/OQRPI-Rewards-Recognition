@@ -92,14 +92,17 @@ def trim(y, sr, thr=0.008):
     return y[max(0, nz[0] - int(0.03 * sr)): nz[-1] + int(0.12 * sr)]
 
 
-# House pronunciations, applied to every line. "OQ" is always two letters
-# (O-Q, never "ock"); RPI is spelled out; ROBBAN is "Roh-bahn".
+# House pronunciations, applied to every line. The company name is never
+# left to the voice model: Kokoro runs "O Q R P I" together and slurs the I
+# into the next word ("RP, ITalent"). Instead each letter is synthesised on its
+# own and spliced in with fixed gaps (see NAME below). ROBBAN is "Roh-bahn".
 LEXICON = [
-    (r"\bOQ\b", "O Q"),
-    (r"\bRPI\b", "R P I"),
+    (r"\bOQ RPI\b", " <OQRPI> "),
+    (r"\bOQ\b", " <OQ> "),
     (r"\bROBBAN\b|\bRobban\b", "Robahn"),
     (r"\bMASAR\b", "Masaar"),
 ]
+NAME_TOKEN = re.compile(r"\s*<(OQRPI|OQ)>\s*")
 
 
 def spoken(line):
@@ -107,6 +110,53 @@ def spoken(line):
     for pat, rep in LEXICON:
         text = re.sub(pat, rep, text)
     return text
+
+
+def letter(ch):
+    a, s = k.create(f"{ch},", voice=style, speed=args.speed * 1.2, lang="en-us")
+    a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
+    nz = np.where(np.abs(a) > 0.008)[0]
+    return a[max(0, nz[0] - int(0.02 * SR)): nz[-1] + int(0.05 * SR)]
+
+
+def spell(groups, letter_gap=0.1, group_gap=0.2):
+    """Letters spoken one by one: O · Q ·· R · P · I."""
+    out = []
+    for gi, group in enumerate(groups):
+        if gi:
+            out.append(np.zeros(int(group_gap * SR)))
+        for ci, ch in enumerate(group):
+            if ci:
+                out.append(np.zeros(int(letter_gap * SR)))
+            out.append(LETTERS[ch])
+    return np.concatenate(out)
+
+
+LETTERS = {ch: letter(ch) for ch in "OQRPI"}
+NAME = {"OQRPI": spell(["OQ", "RPI"]), "OQ": spell(["OQ"])}
+
+
+def say_sentence(sent, speed):
+    """Synthesise a sentence, splicing in the spelled-out company name."""
+    parts = NAME_TOKEN.split(sent)  # text, name, text, name, ...
+    out = []
+    for i, part in enumerate(parts):
+        if i % 2:  # the company name
+            prev = parts[i - 1].strip()
+            nxt = parts[i + 1].lstrip() if i + 1 < len(parts) else ""
+            if prev:
+                out.append(np.zeros(int((0.3 if prev.endswith(",") else 0.1) * SR)))
+            out.append(NAME[part])
+            if nxt.strip(" ,.;"):
+                out.append(np.zeros(int((0.4 if nxt.startswith(",") else 0.26) * SR)))
+            continue
+        text = part.strip().lstrip(",;").strip()
+        if not re.search(r"[A-Za-z]", text):
+            continue
+        a, s = k.create(text, voice=style, speed=speed, lang="en-us")
+        a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
+        out.append(stretch_pauses(trim(a, SR), SR))
+    return np.concatenate(out)
 
 
 # Slight, deterministic pace variation keeps the read from sounding mechanical.
@@ -119,11 +169,7 @@ for sc in script["scenes"]:
         chunks = []
         for si, (sent, after) in enumerate(sentences(spoken(line))):
             speed = args.speed + PACE[li % len(PACE)]
-            a, s = k.create(sent, voice=style, speed=speed, lang="en-us")
-            a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
-            a = trim(a, SR)
-            a = stretch_pauses(a, SR)
-            chunks.append(a)
+            chunks.append(say_sentence(sent, speed))
             chunks.append(np.zeros(int(after * SR)))
         y = np.concatenate(chunks[:-1])  # drop the trailing pause
         line_audio.append(y)
