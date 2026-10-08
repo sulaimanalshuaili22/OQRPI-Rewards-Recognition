@@ -154,7 +154,10 @@ const PlateShot: React.FC<{ readonly shot: Shot }> = ({ shot }) => {
   const dur = shot.to - shot.from;
   const len = (CLIP_SECONDS[shot.clip] ?? 1) * FPS;
   const rate = Math.max(0.4, Math.min(1, len / dur));
-  const o = interpolate(frame, [0, shot.fadeIn, dur - Math.max(1, shot.fadeOut), dur], [0, 1, 1, shot.fadeOut ? 0 : 1], {
+  // fades never overlap, however short the shot
+  const fadeIn = Math.min(shot.fadeIn, Math.floor(dur / 2) - 1);
+  const fadeOut = Math.min(Math.max(1, shot.fadeOut), dur - fadeIn - 1);
+  const o = interpolate(frame, [0, fadeIn, dur - fadeOut, dur], [0, 1, 1, shot.fadeOut ? 0 : 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
     easing: EASE.inOut,
