@@ -5,85 +5,85 @@
       "id": "opening",
       "name": "01 The future begins with people",
       "start": 0,
-      "duration": 739
+      "duration": 678
     },
     {
       "id": "why",
       "name": "02 Why Talent Management",
-      "start": 739,
-      "duration": 768
+      "start": 678,
+      "duration": 653
     },
     {
       "id": "ecosystem",
       "name": "03 The ecosystem",
-      "start": 1507,
-      "duration": 720
+      "start": 1331,
+      "duration": 642
     },
     {
       "id": "performance",
       "name": "04 Performance Management",
-      "start": 2227,
-      "duration": 676
+      "start": 1973,
+      "duration": 609
     },
     {
       "id": "ninebox",
       "name": "05 The 9-Box Matrix",
-      "start": 2903,
-      "duration": 506
+      "start": 2582,
+      "duration": 454
     },
     {
       "id": "critical",
       "name": "06 Critical Roles",
-      "start": 3409,
-      "duration": 620
+      "start": 3036,
+      "duration": 557
     },
     {
       "id": "succession",
       "name": "07 Succession Planning",
-      "start": 4029,
-      "duration": 503
+      "start": 3593,
+      "duration": 443
     },
     {
       "id": "leadership",
       "name": "08 Leadership Development",
-      "start": 4532,
-      "duration": 485
+      "start": 4036,
+      "duration": 422
     },
     {
       "id": "nationalization",
       "name": "09 Nationalization",
-      "start": 5017,
-      "duration": 536
+      "start": 4458,
+      "duration": 455
     },
     {
       "id": "secondment",
       "name": "10 Secondment Management",
-      "start": 5553,
-      "duration": 542
+      "start": 4913,
+      "duration": 452
     },
     {
       "id": "rewards",
       "name": "11 Rewards & Recognition",
-      "start": 6095,
-      "duration": 493
+      "start": 5365,
+      "duration": 439
     },
     {
       "id": "platform",
       "name": "12 The Talent Command Center",
-      "start": 6588,
-      "duration": 749
+      "start": 5804,
+      "duration": 705
     },
     {
       "id": "connections",
       "name": "13 How everything connects",
-      "start": 7337,
-      "duration": 913
+      "start": 6509,
+      "duration": 799
     },
     {
       "id": "future",
       "name": "14 The future of OQ RPI",
-      "start": 8250,
-      "duration": 1129
+      "start": 7308,
+      "duration": 1001
     }
   ],
   "lines": [
@@ -97,134 +97,134 @@
       "scene": "opening",
       "text": "At OQ RPI, behind every operation, every innovation, and every achievement, lies talent.",
       "start": 334,
-      "end": 615
+      "end": 554
     },
     {
       "scene": "why",
       "text": "In a fast-changing energy sector, OQ RPI must have the right talent, in the right roles, at the right time.",
-      "start": 787,
-      "end": 1076
+      "start": 726,
+      "end": 955
     },
     {
       "scene": "why",
       "text": "OQ RPI Talent Management exists to build sustainable workforce capability, strengthen our leadership pipeline, and secure the future of our business.",
-      "start": 1095,
-      "end": 1467
+      "start": 974,
+      "end": 1291
     },
     {
       "scene": "ecosystem",
       "text": "At OQ RPI, Talent Management is not a collection of separate programmes. It is one integrated ecosystem.",
-      "start": 1567,
-      "end": 1908
+      "start": 1391,
+      "end": 1654
     },
     {
       "scene": "ecosystem",
       "text": "Brought together in our Talent Command Center, each programme generates insights, actions and data that strengthen the next.",
-      "start": 1948,
-      "end": 2181
+      "start": 1694,
+      "end": 1927
     },
     {
       "scene": "performance",
       "text": "At OQ RPI Talent Management, Performance Management enables us to assess, measure, and recognise employee contribution while supporting strategic talent decisions.",
-      "start": 2281,
-      "end": 2720
+      "start": 2027,
+      "end": 2399
     },
     {
       "scene": "performance",
       "text": "It is the foundation for every talent decision we make.",
-      "start": 2739,
-      "end": 2863
+      "start": 2418,
+      "end": 2542
     },
     {
       "scene": "ninebox",
       "text": "Through our annual Talent Review, the OQ RPI 9-Box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
-      "start": 2945,
-      "end": 3357
+      "start": 2624,
+      "end": 2984
     },
     {
       "scene": "critical",
       "text": "Not every position at OQ RPI carries the same level of risk.",
-      "start": 3451,
-      "end": 3661
+      "start": 3078,
+      "end": 3224
     },
     {
       "scene": "critical",
       "text": "Our Critical Roles framework identifies the positions whose vacancy would impact safety, operations, leadership continuity, or business performance.",
-      "start": 3680,
-      "end": 3989
+      "start": 3243,
+      "end": 3553
     },
     {
       "scene": "succession",
       "text": "At OQ RPI Talent Management, Succession Planning ensures critical positions have identified and developed successors to support business continuity.",
-      "start": 4071,
-      "end": 4474
+      "start": 3635,
+      "end": 3978
     },
     {
       "scene": "leadership",
       "text": "At OQ RPI Talent Management, leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
-      "start": 4574,
-      "end": 4971
+      "start": 4078,
+      "end": 4412
     },
     {
       "scene": "nationalization",
       "text": "At OQ RPI, Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize.",
-      "start": 5059,
-      "end": 5507
+      "start": 4500,
+      "end": 4867
     },
     {
       "scene": "secondment",
       "text": "Through Secondment Management, OQ RPI employees gain broader exposure across OQ and national institutions, accelerating their learning and bringing new capability home.",
-      "start": 5595,
-      "end": 6055
+      "start": 4955,
+      "end": 5325
     },
     {
       "scene": "rewards",
       "text": "OQ RPI Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible.",
-      "start": 6137,
-      "end": 6542
+      "start": 5407,
+      "end": 5758
     },
     {
       "scene": "platform",
       "text": "The OQ RPI Talent Command Center brings our talent data together, giving leaders real-time visibility of critical roles, bench strength, succession readiness, and leadership pipelines.",
-      "start": 6642,
-      "end": 7092
+      "start": 5858,
+      "end": 6264
     },
     {
       "scene": "platform",
       "text": "And our Talent Assistant answers any question on talent data, in English or Arabic.",
-      "start": 7108,
-      "end": 7285
+      "start": 6280,
+      "end": 6457
     },
     {
       "scene": "connections",
       "text": "Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders.",
-      "start": 7445,
-      "end": 7894
+      "start": 6617,
+      "end": 7007
     },
     {
       "scene": "connections",
       "text": "For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI.",
-      "start": 7913,
-      "end": 8210
+      "start": 7026,
+      "end": 7268
     },
     {
       "scene": "future",
       "text": "The future is not built by systems. It is built by people.",
-      "start": 8310,
-      "end": 8452
+      "start": 7368,
+      "end": 7510
     },
     {
       "scene": "future",
       "text": "By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow.",
-      "start": 8483,
-      "end": 8808
+      "start": 7541,
+      "end": 7804
     },
     {
       "scene": "future",
       "text": "OQ RPI Talent Management. Building tomorrow's talent, together.",
-      "start": 8842,
-      "end": 9072
+      "start": 7838,
+      "end": 8002
     }
   ],
-  "durationInFrames": 9379
+  "durationInFrames": 8309
 }

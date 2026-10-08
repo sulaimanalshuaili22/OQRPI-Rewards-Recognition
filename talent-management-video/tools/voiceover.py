@@ -92,10 +92,11 @@ def trim(y, sr, thr=0.008):
     return y[max(0, nz[0] - int(0.03 * sr)): nz[-1] + int(0.12 * sr)]
 
 
-# House pronunciations, applied to every line. The company name is never
-# left to the voice model: Kokoro runs "O Q R P I" together and slurs the I
-# into the next word ("RP, ITalent"). Instead each letter is synthesised on its
-# own and spliced in with fixed gaps (see NAME below). ROBBAN is "Roh-bahn".
+# House pronunciations, applied to every line. The company name is given to
+# the voice as phonemes so it is always said the same way: one smooth name,
+# "Oh-Q R-P-I", with the stress on the final I (as in any initialism). Left to
+# the model, the I came out unstressed and ran into the next word
+# ("OQ, RP, ITalent"). ROBBAN is "Roh-bahn".
 LEXICON = [
     (r"\bOQ RPI\b", " <OQRPI> "),
     (r"\bOQ\b", " <OQ> "),
@@ -103,6 +104,7 @@ LEXICON = [
     (r"\bMASAR\b", "Masaar"),
 ]
 NAME_TOKEN = re.compile(r"\s*<(OQRPI|OQ)>\s*")
+NAME = {"OQRPI": "ˌoʊ kjˈuː ˌɑːɹ pˌiː ˈaɪ", "OQ": "ˌoʊ kjˈuː"}
 
 
 def spoken(line):
@@ -112,51 +114,25 @@ def spoken(line):
     return text
 
 
-def letter(ch):
-    a, s = k.create(f"{ch},", voice=style, speed=args.speed * 1.2, lang="en-us")
-    a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
-    nz = np.where(np.abs(a) > 0.008)[0]
-    return a[max(0, nz[0] - int(0.02 * SR)): nz[-1] + int(0.05 * SR)]
-
-
-def spell(groups, letter_gap=0.1, group_gap=0.2):
-    """Letters spoken one by one: O · Q ·· R · P · I."""
-    out = []
-    for gi, group in enumerate(groups):
-        if gi:
-            out.append(np.zeros(int(group_gap * SR)))
-        for ci, ch in enumerate(group):
-            if ci:
-                out.append(np.zeros(int(letter_gap * SR)))
-            out.append(LETTERS[ch])
-    return np.concatenate(out)
-
-
-LETTERS = {ch: letter(ch) for ch in "OQRPI"}
-NAME = {"OQRPI": spell(["OQ", "RPI"]), "OQ": spell(["OQ"])}
-
-
-def say_sentence(sent, speed):
-    """Synthesise a sentence, splicing in the spelled-out company name."""
+def phonemes(sent):
+    """The sentence as phonemes, with the company name in its house form."""
     parts = NAME_TOKEN.split(sent)  # text, name, text, name, ...
     out = []
     for i, part in enumerate(parts):
-        if i % 2:  # the company name
-            prev = parts[i - 1].strip()
-            nxt = parts[i + 1].lstrip() if i + 1 < len(parts) else ""
-            if prev:
-                out.append(np.zeros(int((0.3 if prev.endswith(",") else 0.1) * SR)))
+        if i % 2:
             out.append(NAME[part])
-            if nxt.strip(" ,.;"):
-                out.append(np.zeros(int((0.4 if nxt.startswith(",") else 0.26) * SR)))
-            continue
-        text = part.strip().lstrip(",;").strip()
-        if not re.search(r"[A-Za-z]", text):
-            continue
-        a, s = k.create(text, voice=style, speed=speed, lang="en-us")
-        a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
-        out.append(stretch_pauses(trim(a, SR), SR))
-    return np.concatenate(out)
+        elif part.strip():
+            lead = "," if part.lstrip().startswith(",") else ""
+            text = part.strip().lstrip(",").strip()
+            ph = k.tokenizer.phonemize(text, "en-us") if text else ""
+            out.append((lead + " " + ph).strip() if lead else ph)
+    return re.sub(r" ([,.;!?])", r"\1", " ".join(out))
+
+
+def say_sentence(sent, speed):
+    a, s = k.create(phonemes(sent), voice=style, speed=speed, lang="en-us", is_phonemes=True)
+    a = librosa.resample(np.asarray(a, dtype=np.float64), orig_sr=s, target_sr=SR)
+    return stretch_pauses(trim(a, SR), SR)
 
 
 # Slight, deterministic pace variation keeps the read from sounding mechanical.
