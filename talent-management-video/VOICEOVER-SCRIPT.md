@@ -31,10 +31,10 @@ Timecodes are where each line starts in the finished film (mm:ss.s). The picture
 | 09 Nationalization | 2:30.0 | At OQ RPI, Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize. |
 | 10 Secondment Management | 2:45.2 | Through Secondment Management, OQ RPI employees gain broader exposure across OQ and national institutions, accelerating their learning and bringing new capability home. |
 | 11 Rewards & Recognition | 3:00.2 | OQ RPI Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible. |
-| 12 The Talent Command Center | 3:15.3 | The OQ RPI Talent Command Center brings our talent data together, giving leaders real-time visibility of critical roles, bench strength, succession readiness, and leadership pipelines. |
-| 12 The Talent Command Center | 3:29.3 | And our Talent Assistant answers any question on talent data, in English or Arabic. |
-| 13 How everything connects | 3:40.6 | Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders. |
-| 13 How everything connects | 3:54.2 | For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI. |
-| 14 The future of OQ RPI | 4:05.6 | The future is not built by systems. It is built by people. |
-| 14 The future of OQ RPI | 4:11.4 | By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow. |
-| 14 The future of OQ RPI | 4:21.3 | OQ RPI Talent Management. Building tomorrow's talent, together. |
+| 12 The Talent Command Center | 3:15.3 | The OQ RPI Talent Command Center is the central platform that brings it all together: Performance Management, Succession Planning, Critical Roles, Leadership Development, Nationalization, Secondment, and Rewards and Recognition, giving every leader real-time visibility. |
+| 12 The Talent Command Center | 3:34.5 | And our Talent Assistant answers any question on talent data, in English or Arabic. |
+| 13 How everything connects | 3:45.7 | Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders. |
+| 13 How everything connects | 3:59.4 | For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI. |
+| 14 The future of OQ RPI | 4:10.8 | The future is not built by systems. It is built by people. |
+| 14 The future of OQ RPI | 4:16.5 | By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow. |
+| 14 The future of OQ RPI | 4:26.4 | OQ RPI Talent Management. Building tomorrow's talent, together. |

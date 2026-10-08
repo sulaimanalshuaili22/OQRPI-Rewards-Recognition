@@ -71,19 +71,19 @@
       "id": "platform",
       "name": "12 The Talent Command Center",
       "start": 5804,
-      "duration": 705
+      "duration": 859
     },
     {
       "id": "connections",
       "name": "13 How everything connects",
-      "start": 6509,
-      "duration": 799
+      "start": 6663,
+      "duration": 800
     },
     {
       "id": "future",
       "name": "14 The future of OQ RPI",
-      "start": 7308,
-      "duration": 1001
+      "start": 7463,
+      "duration": 1000
     }
   ],
   "lines": [
@@ -185,46 +185,46 @@
     },
     {
       "scene": "platform",
-      "text": "The OQ RPI Talent Command Center brings our talent data together, giving leaders real-time visibility of critical roles, bench strength, succession readiness, and leadership pipelines.",
+      "text": "The OQ RPI Talent Command Center is the central platform that brings it all together: Performance Management, Succession Planning, Critical Roles, Leadership Development, Nationalization, Secondment, and Rewards and Recognition, giving every leader real-time visibility.",
       "start": 5858,
-      "end": 6264
+      "end": 6418
     },
     {
       "scene": "platform",
       "text": "And our Talent Assistant answers any question on talent data, in English or Arabic.",
-      "start": 6280,
-      "end": 6457
+      "start": 6434,
+      "end": 6611
     },
     {
       "scene": "connections",
       "text": "Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders.",
-      "start": 6617,
-      "end": 7007
+      "start": 6771,
+      "end": 7162
     },
     {
       "scene": "connections",
       "text": "For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI.",
-      "start": 7026,
-      "end": 7268
+      "start": 7181,
+      "end": 7423
     },
     {
       "scene": "future",
       "text": "The future is not built by systems. It is built by people.",
-      "start": 7368,
-      "end": 7510
+      "start": 7523,
+      "end": 7665
     },
     {
       "scene": "future",
       "text": "By investing in our people today, OQ RPI is creating the leaders, capabilities, and opportunities that will shape tomorrow.",
-      "start": 7541,
-      "end": 7804
+      "start": 7696,
+      "end": 7959
     },
     {
       "scene": "future",
       "text": "OQ RPI Talent Management. Building tomorrow's talent, together.",
-      "start": 7838,
-      "end": 8002
+      "start": 7993,
+      "end": 8156
     }
   ],
-  "durationInFrames": 8309
+  "durationInFrames": 8463
 }

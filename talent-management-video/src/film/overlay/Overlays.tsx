@@ -15,7 +15,6 @@ import { add, EASE, ramp, type V3 } from "../math";
 import { SET } from "../layout";
 import { at, cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import {
-  AWARDS,
   BEACONS,
   CRITICAL,
   DNA_FLOW,
@@ -26,28 +25,22 @@ import {
   HOST,
   PROGRAMS,
   SEATS,
-  STAGES,
   SUCCESSION_FLOW,
 
   TILE,
-  awardPos,
   heroAscent,
   helixPoint,
   orgNode,
   programPos,
   seatPos,
-  stagePos,
-  terraceBase,
   tilePos,
 } from "../geometry";
 import { WHY_HIGHLIGHT, workerPos } from "../world/Sets";
 import { leadershipPath } from "../camera";
 import {
   LEADERSHIP,
-  NATIONALIZATION,
   NINE_BOX,
   PERFORMANCE,
-  REWARDS,
   SECONDMENT,
   SUCCESSION,
   WORKFORCE,
@@ -80,11 +73,12 @@ const Floating: React.FC<{
 };
 
 /** A Command Center card pinned to the right of the frame, sliding in on its cue. */
-const ScreenCard: React.FC<{ readonly top: number; readonly from: number; readonly to: number; readonly children: React.ReactNode }> = ({ top, from, to, children }) => {
+const ScreenCard: React.FC<{ readonly top: number; readonly from: number; readonly to: number; readonly side?: "left" | "right"; readonly children: React.ReactNode }> = ({ top, from, to, side = "right", children }) => {
   const frame = useCurrentFrame();
   const t = ramp(frame, from, from + 20, EASE.out) * (1 - ramp(frame, to - 14, to));
   if (t <= 0) return null;
-  return <div style={{ position: "absolute", right: 90, top, opacity: t, translate: `${(1 - t) * 60}px 0px` }}>{children}</div>;
+  const edge = side === "right" ? { right: 90 } : { left: 96 };
+  return <div style={{ position: "absolute", ...edge, top, opacity: t, translate: `${(1 - t) * (side === "right" ? 60 : -60)}px 0px` }}>{children}</div>;
 };
 
 /* 01 ---------------------------------------------------------------- */
@@ -154,7 +148,7 @@ const EcosystemOverlay: React.FC = () => (
       const pos = programPos(i);
       const left = pos[0] < (SET.ecosystem as V3)[0];
       return (
-        <Anchored key={p.label} at={add(pos, [0, 1.1, 0])} from={from} to={end("ecosystem", 30)}>
+        <Anchored key={p.label} at={add(pos, [0, 1.1, 0])} from={from} to={end("ecosystem", 30)} safeX={330}>
           <div
             style={{
               position: "absolute",
@@ -181,12 +175,6 @@ const EcosystemOverlay: React.FC = () => (
         </Anchored>
       );
     })}
-    <Title
-      at={add(SET.ecosystem as V3, [0, 8.2, 0])}
-      from={cue("ecosystem", 0, "It is one integrated")}
-      to={cue("ecosystem", 1, "each programme") + 40}
-      lines={[{ text: "One integrated ecosystem.", size: 58, weight: 300, tracking: 1 }]}
-    />
   </>
 );
 
@@ -282,7 +270,7 @@ const CriticalOverlay: React.FC = () => {
       {CRITICAL.filter((c) => c.label).map((c, i) => (
         <Tag key={c.label} at={add(orgNode(c.tier, c.k), [0, 0.4, 0])} from={cue("critical", 1, words[c.label!])} to={end("critical", 10)} label={c.label!} sub="Critical role" icon={icons[c.label!]} side={i % 2 ? "left" : "right"} />
       ))}
-      <Floating at={add(SET.critical as V3, [-13, 12, -2])} from={cue("critical", 0, "Not every")} to={end("critical", 10)} refDepth={26}>
+      <ScreenCard side="left" top={170} from={cue("critical", 0, "Not every")} to={end("critical", 10)}>
         <DashCard title="Succession & critical roles" sub="2026 cycle · SP_Nominations · CR_Positions" icon="succession" accent="teal" width={380}>
           <BigFigure label="Critical roles" value={SUCCESSION.criticalRoles} from={cue("critical", 0, "Not every") + 10} accent="teal" note="2026 cycle" />
           <StatRows
@@ -294,7 +282,7 @@ const CriticalOverlay: React.FC = () => {
             ]}
           />
         </DashCard>
-      </Floating>
+      </ScreenCard>
     </>
   );
 };
@@ -312,11 +300,11 @@ const SuccessionOverlay: React.FC = () => {
       {SUCCESSION_FLOW.map((label, i) => (
         <Tag key={label} at={add(anchors[i], [0, 0.5, 0])} from={times[i]} to={i === 0 ? climbEnd - 10 : i === 4 ? end("succession", 20) : times[i] + 80} label={label} sub={subs[i]} side={i % 2 ? "left" : "right"} accent={i === 0 || i === 4 ? "orange" : "turquoise"} />
       ))}
-      <Floating at={add(SET.succession as V3, [-5, 10, 4])} from={at("succession", 4.4)} to={end("succession", 10)} refDepth={13}>
+      <ScreenCard side="left" top={190} from={at("succession", 4.4)} to={end("succession", 10)}>
         <DashCard title="Bench strength" sub="Critical roles by named successors" icon="succession" accent="teal" width={360}>
           <VBars data={SUCCESSION.benchByNamed.map((b) => ({ label: b.label, n: b.n }))} from={at("succession", 4.8)} width={310} height={110} color={ACCENT.teal} />
         </DashCard>
-      </Floating>
+      </ScreenCard>
     </>
   );
 };
@@ -387,41 +375,6 @@ const LeadershipOverlay: React.FC = () => {
   );
 };
 
-/* 09 ---------------------------------------------------------------- */
-const NationalizationOverlay: React.FC = () => {
-  const Q = SET.nationalization as V3;
-  const c = cue("nationalization", 0, "Omani talent");
-  return (
-    <>
-      {STAGES.map((s, row) => (
-        <Anchored key={s} at={add(terraceBase(row, 0), [-1.4, 2.6 + row * 0.5, 0])} from={at("nationalization", 1) + row * 14} to={end("nationalization", 10)}>
-          <div style={{ position: "absolute", transform: "translate(-100%,-50%)", fontFamily: FONT, whiteSpace: "nowrap", textAlign: "right", textShadow: "0 1px 8px #000" }}>
-            <div style={{ fontSize: 24, fontWeight: 700, color: row === 2 ? COLORS.orange : COLORS.white }}>{s}</div>
-            <div style={{ fontSize: 14, color: COLORS.lightBlue }}>{NATIONALIZATION.plan[row].n} roles planned</div>
-          </div>
-        </Anchored>
-      ))}
-      <Floating at={add(Q, [7, 9, -10])} from={c} to={end("nationalization", 10)} refDepth={20}>
-        <DashCard title="Nationalization" sub="Expat replacement plan · Nationalization Tracker" icon="nationalization" accent="green" width={390}>
-          <BigFigure label="Expat roles on the plan" value={NATIONALIZATION.activeExpats} from={c + 8} accent="green" note={`of ${NATIONALIZATION.tracked} tracked`} />
-          <StatRows
-            from={c + 18}
-            rows={[
-              ["Planned for 2026–2027", fmt(NATIONALIZATION.planned2026to2027)],
-              ["Omani successors named", fmt(NATIONALIZATION.omaniSuccessorsNamed)],
-            ]}
-          />
-        </DashCard>
-      </Floating>
-      <Floating at={add(Q, [0, 15, -20])} from={cue("nationalization", 0, "a named successor") - 10} to={end("nationalization", 10)} refDepth={22}>
-        <DashCard title="Nationalization plan by year" sub="Active expat roles by planned nationalization year" accent="orange" width={420}>
-          <VBars data={NATIONALIZATION.plan.map((p) => ({ label: p.year, n: p.n }))} from={cue("nationalization", 0, "a named successor")} width={370} height={110} color={ACCENT.orange} />
-        </DashCard>
-      </Floating>
-    </>
-  );
-};
-
 /* 10 ---------------------------------------------------------------- */
 const SecondmentOverlay: React.FC = () => {
   const words: Array<[string, string, V3]> = [
@@ -449,50 +402,13 @@ const SecondmentOverlay: React.FC = () => {
   );
 };
 
-/* 11 ---------------------------------------------------------------- */
-const RewardsOverlay: React.FC = () => {
-  const frame = useCurrentFrame();
-  const spin = frame * 0.0035;
-  const honoured = [2, 6, 11];
-  const why = ["Testahal", "Above & Beyond", "HSSE Award"];
-  const spots = [at("rewards", 2.0), at("rewards", 4.6), at("rewards", 7.2)];
-  const c = cue("rewards", 0, "celebrates");
-  return (
-    <>
-      {honoured.map((h, k) => (
-        <Tag key={h} at={add(stagePos(h, 14), [0, 1.4, 0])} from={spots[k] + 8} to={end("rewards", 10)} label={why[k]} sub="Recognised · 2026" icon="rewards" side={k === 1 ? "left" : "right"} size={22} lift={50} />
-      ))}
-      {AWARDS.map((a, k) => (
-        <Anchored key={a.title} at={awardPos(k, spin)} from={at("rewards", 0.8) + k * 10} to={end("rewards", 10)} sizeWithDistance refDepth={12} maxBlur={1.4}>
-          <div style={{ position: "absolute", transform: "translate(-50%,-50%)" }}>
-            <DashCard title={a.title} sub={a.sub} icon="rewards" accent={REWARDS.programmes[k].accent as "green" | "orange" | "purple" | "teal"} width={260} source={false} />
-          </div>
-        </Anchored>
-      ))}
-      <Floating at={add(SET.rewards as V3, [-9, 9, -6])} from={c - 10} to={end("rewards", 10)} refDepth={16}>
-        <DashCard title="Rewards & recognition" sub={`Rewards granted per month · ${REWARDS.period}`} icon="rewards" accent="gold" width={420}>
-          <BigFigure label="Rewards granted" value={REWARDS.granted} from={c} accent="gold" note={`OMR ${fmt(REWARDS.usedOMR)} paid`} />
-          <div style={{ marginTop: 10 }}>
-            <VBars data={REWARDS.monthly.map((m) => ({ label: m.m, n: m.n }))} from={c + 10} width={370} height={80} color={ACCENT.orange} />
-          </div>
-        </DashCard>
-      </Floating>
-    </>
-  );
-};
-
 /* 12 ---------------------------------------------------------------- */
 const PlatformOverlay: React.FC = () => {
   const frame = useCurrentFrame();
-  const show = S("platform") + 2.0 * FPS;
+  // the Command Center hub (Showcase) carries line 0; the live screen follows for the Assistant
+  const show = lineEnd("platform", 0) - 4;
   const assistant = cue("platform", 1, "Talent Assistant");
-  const hl: Array<[number, number]> = [
-    [cue("platform", 0, "critical roles"), 2],
-    [cue("platform", 0, "bench strength"), 2],
-    [cue("platform", 0, "succession readiness"), 4],
-    [cue("platform", 0, "leadership pipelines"), 3],
-    [assistant - 10, 8],
-  ];
+  const hl: Array<[number, number]> = [[assistant - 10, 8]];
   const current = [...hl].reverse().find(([f]) => frame >= f);
   const screenOut = ramp(frame, assistant + 10, assistant + 40, EASE.inOut);
   const inT = ramp(frame, show, show + 45, EASE.out);
@@ -501,8 +417,8 @@ const PlatformOverlay: React.FC = () => {
   const z = interpolate(frame, [show, assistant + 40], [0.78, 0.9], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <>
-      {frame >= show && screenOut < 1 ? (
-        <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", perspective: 2200, opacity: inT * (1 - screenOut) }}>
+      {frame >= show ? (
+        <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", perspective: 2200, opacity: inT * (1 - 0.6 * screenOut) }}>
           <AbsoluteFill style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(3,13,20,0.55), rgba(3,13,20,0.85))" }} />
           <div style={{ transform: `rotateX(${rx}deg) rotateY(${ry}deg) scale(${z})`, transformStyle: "preserve-3d" }}>
             <CommandCenterHome from={show} highlight={current?.[1]} highlightFrom={current?.[0]} />
@@ -511,7 +427,7 @@ const PlatformOverlay: React.FC = () => {
       ) : null}
       {frame >= assistant + 20 ? (
         <div style={{ position: "absolute", right: 120, top: 230, opacity: ramp(frame, assistant + 20, assistant + 40) * (1 - ramp(frame, end("platform", -10), end("platform", 10))), translate: `${(1 - ramp(frame, assistant + 20, assistant + 44)) * 40}px 0px` }}>
-          <AssistantChat from={assistant + 30} width={560} />
+          <AssistantChat from={assistant + 30} width={640} />
         </div>
       ) : null}
     </>
@@ -523,16 +439,11 @@ const ConnectionsOverlay: React.FC = () => {
   const flowStart = at("connections", 3.2);
   const flowStep = 1.5 * FPS;
   const ids = Object.keys(BEACONS) as Array<keyof typeof BEACONS>;
-  const benefits: Array<[string, string]> = [
-    ["Clear expectations", "clear expectations"],
-    ["Real development", "real development"],
-    ["A visible path to grow", "a visible path"],
-  ];
   return (
     <>
       {ids.map((id) => (
         <Anchored key={id} at={add(BEACONS[id].pos, [0, 10, 0])} from={at("connections", 1.6)} to={end("connections", 30)}>
-          <div style={{ position: "absolute", transform: "translate(-50%,-100%)", fontFamily: FONT, fontSize: 19, fontWeight: 600, letterSpacing: 1, color: FLOWS.some((f) => f.from === id || f.to === id) ? COLORS.white : COLORS.lightBlue, whiteSpace: "nowrap", textShadow: "0 0 14px rgba(0,0,0,0.9)" }}>
+          <div style={{ position: "absolute", transform: "translate(-50%,-100%)", fontFamily: FONT, fontSize: 17, fontWeight: 600, letterSpacing: 1, color: FLOWS.some((f) => f.from === id || f.to === id) ? COLORS.white : COLORS.lightBlue, whiteSpace: "nowrap", textShadow: "0 0 14px rgba(0,0,0,0.9)" }}>
             {BEACONS[id].label}
           </div>
         </Anchored>
@@ -543,34 +454,13 @@ const ConnectionsOverlay: React.FC = () => {
         const mid: V3 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 6.2, (a[2] + b[2]) / 2];
         return (
           <Anchored key={i} at={mid} from={flowStart + i * flowStep + 24} to={end("connections", 20)}>
-            <div style={{ position: "absolute", transform: "translate(-50%,-50%)", padding: "6px 12px", borderRadius: 8, background: "rgba(255,130,0,0.9)", fontFamily: FONT, fontSize: 15, fontWeight: 700, letterSpacing: 2.5, color: COLORS.white, textTransform: "uppercase", whiteSpace: "nowrap", boxShadow: "0 0 24px rgba(255,130,0,0.6)" }}>
+            <div style={{ position: "absolute", transform: "translate(-50%,-50%)", padding: "4px 9px", borderRadius: 7, background: "rgba(255,130,0,0.9)", fontFamily: FONT, fontSize: 12, fontWeight: 700, letterSpacing: 2, color: COLORS.white, textTransform: "uppercase", whiteSpace: "nowrap", boxShadow: "0 0 24px rgba(255,130,0,0.6)" }}>
               {f.verb}
             </div>
           </Anchored>
         );
       })}
-      <TopBenefits benefits={benefits} />
     </>
-  );
-};
-
-const TopBenefits: React.FC<{ readonly benefits: Array<[string, string]> }> = ({ benefits }) => {
-  const frame = useCurrentFrame();
-  const first = cue("connections", 1, benefits[0][1]);
-  if (frame < first - 10 || frame > end("connections", 10)) return null;
-  return (
-    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
-      <div style={{ display: "flex", gap: 22, marginTop: -60 }}>
-        {benefits.map(([label, w], i) => {
-          const t = ramp(frame, cue("connections", 1, w), cue("connections", 1, w) + 20);
-          return (
-            <div key={label} style={{ padding: "18px 26px", borderRadius: 14, background: "linear-gradient(165deg, rgba(18,52,62,0.94), rgba(7,22,31,0.94))", borderTop: `3px solid ${i === 2 ? COLORS.orange : COLORS.turquoise}`, fontFamily: FONT, fontSize: 30, fontWeight: 600, color: COLORS.white, opacity: t, translate: `0px ${(1 - t) * 20}px`, boxShadow: "0 30px 70px rgba(0,0,0,0.5)" }}>
-              {label}
-            </div>
-          );
-        })}
-      </div>
-    </AbsoluteFill>
   );
 };
 
@@ -588,9 +478,7 @@ export const Overlays: React.FC = () => {
       {inScene("critical") ? <CriticalOverlay /> : null}
       {inScene("succession") ? <SuccessionOverlay /> : null}
       {inScene("leadership") ? <LeadershipOverlay /> : null}
-      {inScene("nationalization") ? <NationalizationOverlay /> : null}
       {inScene("secondment") ? <SecondmentOverlay /> : null}
-      {inScene("rewards") ? <RewardsOverlay /> : null}
       {inScene("platform") ? <PlatformOverlay /> : null}
       {inScene("connections") ? <ConnectionsOverlay /> : null}
     </AbsoluteFill>

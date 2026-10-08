@@ -21,7 +21,7 @@ export const PROGRAMS = [
   { label: "Learning & Development", icon: "learning" },
 ] as const;
 
-export const ECO_RADIUS = 11;
+export const ECO_RADIUS = 9.5;
 export const programPos = (i: number): V3 => {
   const a = (i / PROGRAMS.length) * Math.PI * 2 + 0.3;
   const x = Math.cos(a) * ECO_RADIUS;

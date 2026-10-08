@@ -59,12 +59,18 @@ export const Anchored: React.FC<{
   readonly inF?: number;
   readonly outF?: number;
   readonly maxBlur?: number;
-}> = ({ at, from, to, children, sizeWithDistance = false, refDepth = 14, inF = 14, outF = 14, maxBlur = 2.4 }) => {
+  /** horizontal safe margin; widen it for labels that extend sideways from their anchor */
+  readonly safeX?: number;
+}> = ({ at, from, to, children, sizeWithDistance = false, refDepth = 14, inF = 14, outF = 14, maxBlur = 2.4, safeX = 110 }) => {
   const frame = useCurrentFrame();
   if (frame < from || frame > to) return null;
   const pr = project(frame, at);
   if (!pr.visible) return null;
-  const o = window01(frame, from, to, inF, outF);
+  // broadcast safe area: anchored UI fades out before it can reach the frame edge
+  const safe =
+    clamp((pr.x - safeX) / 70, 0, 1) * clamp((1920 - safeX - pr.x) / 70, 0, 1) * clamp((pr.y - 150) / 60, 0, 1) * clamp((930 - pr.y) / 60, 0, 1);
+  if (safe <= 0) return null;
+  const o = window01(frame, from, to, inF, outF) * safe;
   const s = sizeWithDistance ? clamp(refDepth / pr.depth, 0.55, 1.35) : 1;
   return (
     <div
