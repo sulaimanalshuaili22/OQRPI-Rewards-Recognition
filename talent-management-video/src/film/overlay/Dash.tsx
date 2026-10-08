@@ -51,7 +51,9 @@ export const DashCard: React.FC<{
   readonly children?: React.ReactNode;
   readonly source?: boolean;
   readonly index?: string;
-}> = ({ title, sub, icon, accent, width, children, source = true, index }) => (
+  /** a brand mark in place of the icon tile */
+  readonly mark?: React.ReactNode;
+}> = ({ title, sub, icon, accent, width, children, source = true, index, mark }) => (
   <div
     style={{
       width,
@@ -68,7 +70,7 @@ export const DashCard: React.FC<{
   >
     <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
       {index ? <div style={{ fontSize: 18, fontWeight: 700, color: MUTED, width: 26 }}>{index}</div> : null}
-      {icon ? <IconTile icon={icon} accent={accent} size={44} /> : null}
+      {mark ? mark : icon ? <IconTile icon={icon} accent={accent} size={44} /> : null}
       <div>
         <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.15 }}>{title}</div>
         {sub ? <div style={{ fontSize: 13, color: MUTED, marginTop: 3 }}>{sub}</div> : null}
@@ -351,7 +353,13 @@ export const AssistantChat: React.FC<{ readonly from: number; readonly width?: n
     { who: "a", text: "تم منح 1,369 مكافأة من يناير إلى أغسطس 2026.", at: from + 150, ar: true },
   ];
   return (
-    <DashCard title="Talent Assistant" sub="Ask any question on the talent data, in English or Arabic." icon="ai" accent="teal" width={width}>
+    <DashCard
+      title="TM Assistant"
+      sub="Ask any question on the talent data, in English or Arabic."
+      accent="teal"
+      width={width}
+      mark={<Img src={staticFile("brand/tm-assistant.png")} style={{ width: 56, height: 56, borderRadius: 28, boxShadow: "0 6px 20px rgba(0,0,0,0.45)" }} />}
+    >
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {msgs.map((m, i) =>
           frame >= m.at ? (
@@ -360,6 +368,9 @@ export const AssistantChat: React.FC<{ readonly from: number; readonly width?: n
               dir={m.ar ? "rtl" : "ltr"}
               style={{
                 alignSelf: m.who === "q" ? "flex-end" : "flex-start",
+                display: "flex",
+                gap: 10,
+                alignItems: "flex-end",
                 maxWidth: width * 0.82,
                 padding: "10px 14px",
                 borderRadius: 12,
@@ -370,7 +381,8 @@ export const AssistantChat: React.FC<{ readonly from: number; readonly width?: n
                 opacity: interpolate(frame, [m.at, m.at + 6], [0, 1], { extrapolateRight: "clamp" }),
               }}
             >
-              {m.who === "a" && !m.ar ? typed(m.text, m.at + 4, 2.4) : m.ar && m.who === "a" ? typed(m.text, m.at + 4, 1.2) : m.text}
+              {m.who === "a" ? <Img src={staticFile("brand/tm-assistant.png")} style={{ width: 26, height: 26, borderRadius: 13, flexShrink: 0 }} /> : null}
+              <span>{m.who === "a" && !m.ar ? typed(m.text, m.at + 4, 2.4) : m.ar && m.who === "a" ? typed(m.text, m.at + 4, 1.2) : m.text}</span>
             </div>
           ) : null,
         )}

@@ -270,15 +270,27 @@ export const Chapter: React.FC<{ readonly id: SceneId; readonly index: string; r
   const a = SCENES[id].start + 20;
   const b = a + 160;
   if (frame < a || frame > b) return null;
-  const o = window01(frame, a, b, 18, 24);
+  const o = window01(frame, a, b, 10, 24);
   const line = ramp(frame, a, a + 30);
+  const words = label.split(" ");
   // top-right, clear of the OQ RPI watermark
   return (
     <div style={{ position: "absolute", right: 70, top: 46, textAlign: "right", fontFamily: FONT, opacity: o, textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.orange, letterSpacing: 3 }}>OQ RPI TALENT MANAGEMENT / {index}</div>
+      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.orange, letterSpacing: 3, overflow: "hidden" }}>
+        <div style={{ translate: `0px ${(1 - ramp(frame, a, a + 18, EASE.out)) * 18}px` }}>OQ RPI TALENT MANAGEMENT / {index}</div>
+      </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14, marginTop: 6 }}>
         <div style={{ width: 46 * line, height: 1.5, background: "rgba(255,255,255,0.6)" }} />
-        <div style={{ fontSize: 24, fontWeight: 600, color: COLORS.white, letterSpacing: 0.5 }}>{label}</div>
+        <div style={{ display: "flex", gap: 7, fontSize: 24, fontWeight: 600, color: COLORS.white, letterSpacing: 0.5 }}>
+          {words.map((w, i) => {
+            const k = ramp(frame, a + 4 + i * 3, a + 22 + i * 3, EASE.out);
+            return (
+              <span key={i} style={{ display: "inline-block", overflow: "hidden", paddingBottom: 2 }}>
+                <span style={{ display: "inline-block", translate: `0px ${(1 - k) * 110}%`, opacity: k }}>{w}</span>
+              </span>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -364,7 +376,7 @@ export const Grade: React.FC = () => {
   );
 };
 
-/** Exposure lift + anamorphic streak on every scene change (synced to the whoosh/boom). */
+/** Scene change: a diagonal brand light-sweep crosses the frame, with an exposure lift and anamorphic streak (synced to the whoosh/boom). */
 export const Transitions: React.FC = () => {
   const frame = useCurrentFrame();
   const s = SCENE_LIST.find((sc, i) => i > 0 && Math.abs(frame - sc.start) < 26);
@@ -372,10 +384,19 @@ export const Transitions: React.FC = () => {
   const d = frame - s.start;
   const flash = interpolate(d, [-14, 0, 14], [0, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   const streakX = interpolate(d, [-20, 20], [-0.3, 1.3], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  const sweep = interpolate(d, [-24, 22], [-0.6, 1.6], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE.inOut });
   const y = 380 + random(`streak-${s.id}`) * 320;
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <AbsoluteFill style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,190,120,0.9), rgba(255,130,0,0) 70%)", opacity: flash * 0.16, mixBlendMode: "screen" }} />
+      <AbsoluteFill style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,190,120,0.9), rgba(255,130,0,0) 70%)", opacity: flash * 0.14, mixBlendMode: "screen" }} />
+      {/* light sweep: a soft band at the OQ stripe angle */}
+      <AbsoluteFill
+        style={{
+          background: `linear-gradient(112deg, rgba(255,130,0,0) ${sweep * 100 - 22}%, rgba(255,160,60,0.55) ${sweep * 100 - 9}%, rgba(255,255,255,0.75) ${sweep * 100}%, rgba(0,176,185,0.5) ${sweep * 100 + 9}%, rgba(0,176,185,0) ${sweep * 100 + 22}%)`,
+          opacity: 0.42 * interpolate(d, [-24, -12, 12, 22], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }),
+          mixBlendMode: "screen",
+        }}
+      />
       <div
         style={{
           position: "absolute",

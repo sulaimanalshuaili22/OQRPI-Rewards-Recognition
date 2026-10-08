@@ -33,7 +33,24 @@ const Window: React.FC<{ readonly from: number; readonly to: number; readonly ch
   const frame = useCurrentFrame();
   if (frame < from || frame > to) return null;
   const o = ramp(frame, from, from + 16, EASE.inOut) * (1 - ramp(frame, to - 16, to, EASE.inOut));
-  return <AbsoluteFill style={{ opacity: o }}>{children}</AbsoluteFill>;
+  // the camera never sits still: a slow push-in with a few degrees of drift,
+  // and a perspective snap in and out so the scene arrives from depth
+  const t = (frame - from) / Math.max(1, to - from);
+  const inD = 1 - ramp(frame, from, from + 26, EASE.out);
+  const outD = ramp(frame, to - 22, to, EASE.inOut);
+  return (
+    <AbsoluteFill style={{ opacity: o, perspective: 2400, overflow: "hidden" }}>
+      <AbsoluteFill
+        style={{
+          transformStyle: "preserve-3d",
+          transform: `rotateX(${inD * 7 - outD * 5}deg) rotateY(${Math.sin(t * Math.PI) * 1.4 - 0.7}deg) scale(${1.02 + 0.045 * t + inD * 0.08 - outD * 0.06})`,
+          filter: inD > 0.05 || outD > 0.05 ? `blur(${(inD * 6 + outD * 5).toFixed(1)}px)` : undefined,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
 };
 
 /** Midnight-blue stage with a soft key light and a faint engineering grid. */

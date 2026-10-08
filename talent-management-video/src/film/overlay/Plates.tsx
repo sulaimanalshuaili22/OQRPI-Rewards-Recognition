@@ -20,6 +20,7 @@ const CLIP_SECONDS: Record<string, number> = {
   workshop: 0.82, "office-walk": 0.88, "oq-lobby": 1.66, "leadership-call": 2.16, "control-room": 2.6,
   "strategy-glass": 2.3, "talent-review": 2.18, "refinery-aerial": 0.94, "eyes-1": 2.74, "eyes-2": 0.54,
   "eyes-3": 0.86, "eyes-4": 0.86, "eyes-5": 1.58, "eyes-6": 1.06, "eyes-7": 0.94,
+  "sunrise-drone": 10.0,
 };
 
 /** High-resolution Corporate Communications stills that hold up full frame. */
@@ -29,6 +30,7 @@ const PHOTOS: Record<string, { readonly focus: string }> = {
   "team-meeting": { focus: "55% 50%" },
   "masar-cohort": { focus: "50% 45%" },
   "night-panorama": { focus: "50% 55%" },
+  "robban-cohort": { focus: "50% 45%" },
 };
 
 /** OQ RPI people, for the photo wall ("its people"). */
@@ -46,6 +48,10 @@ type Shot = {
   readonly fadeOut: number;
   readonly zoom: [number, number];
   readonly drift: [number, number];
+  /** seconds into the clip to start from */
+  readonly trim?: number;
+  /** zoom-through on the way in and out (singles); montage cuts stay plain dissolves */
+  readonly through?: boolean;
 };
 
 const XF = 12; // cross-dissolve length inside a montage
@@ -65,7 +71,7 @@ const montage = (cuts: number[], clips: string[], end: number, lastFade = 20): S
     };
   });
 
-const single = (clip: string, from: number, seconds: number, zoom: [number, number] = [1.02, 1.1], fadeOut = 20): Shot => ({
+const single = (clip: string, from: number, seconds: number, zoom: [number, number] = [1.02, 1.1], fadeOut = 20, trim?: number): Shot => ({
   clip,
   from: Math.round(from),
   to: Math.round(from + seconds * FPS),
@@ -73,6 +79,8 @@ const single = (clip: string, from: number, seconds: number, zoom: [number, numb
   fadeOut,
   zoom,
   drift: [10, -4],
+  trim,
+  through: true,
 });
 
 const lineEnd = (id: SceneId, n: number) => linesOf(id)[n].end;
@@ -91,7 +99,7 @@ export const SHOTS: Shot[] = [
       cue("opening", 1, "every achievement"),
       cue("opening", 1, "lies talent"),
     ],
-    ["eyes-1", "wall", "refinery-night", "control-room", "scientist", "field-engineers", "strategy-glass"],
+    ["eyes-1", "wall", "sunrise-drone", "control-room", "scientist", "field-engineers", "strategy-glass"],
     lineEnd("opening", 1) + 4,
     30,
   ),
@@ -108,12 +116,13 @@ export const SHOTS: Shot[] = [
   single("plant-equipment", S("critical"), 2.3),
   // 07 — leaders in discussion
   single("leadership-call", S("succession"), 2.4),
-  // 08 — the MASAR cohort at work
-  single("masar-cohort", S("leadership"), 3.0),
+  // 08 — the MASAR cohort at work; the ROBBAN cohort on its name
+  single("masar-cohort", S("leadership"), 2.6),
+  single("robban-cohort", cue("leadership", 0, "ROBBAN") - 6, 2.4, [1.0, 1.08], 16),
   // 10 — OQ's reach
   single("world-map", S("secondment"), 3.4, [1.0, 1.06]),
-  // 14 — the site at night under the closing title
-  single("night-panorama", cue("future", 0, "The future"), (lineEnd("future", 0) + 10 - cue("future", 0, "The future")) / FPS, [1.04, 1.12]),
+  // 14 — dawn over the site under the closing title (the drone shot, sun breaking)
+  single("sunrise-drone", cue("future", 0, "The future"), (lineEnd("future", 0) + 10 - cue("future", 0, "The future")) / FPS, [1.0, 1.06], 20, 4.4),
 ];
 
 const PhotoWall: React.FC<{ readonly t: number }> = ({ t }) => {
@@ -152,7 +161,7 @@ const PhotoWall: React.FC<{ readonly t: number }> = ({ t }) => {
 const PlateShot: React.FC<{ readonly shot: Shot }> = ({ shot }) => {
   const frame = useCurrentFrame(); // local to the Sequence
   const dur = shot.to - shot.from;
-  const len = (CLIP_SECONDS[shot.clip] ?? 1) * FPS;
+  const len = (CLIP_SECONDS[shot.clip] ?? 1) * FPS - (shot.trim ?? 0) * FPS;
   const rate = Math.max(0.4, Math.min(1, len / dur));
   // fades never overlap, however short the shot
   const fadeIn = Math.min(shot.fadeIn, Math.floor(dur / 2) - 1);
@@ -162,28 +171,37 @@ const PlateShot: React.FC<{ readonly shot: Shot }> = ({ shot }) => {
     extrapolateRight: "clamp",
     easing: EASE.inOut,
   });
-  const t = frame / dur;
+  // camera: eased push-in / drift rather than a linear slide
+  const t = EASE.inOut(frame / dur);
   const z = shot.zoom[0] + (shot.zoom[1] - shot.zoom[0]) * t;
   const dx = shot.drift[0] * t;
   const dy = shot.drift[1] * t;
+  // zoom-through: arrive from depth, leave into the next scene
+  const inT = shot.through ? 1 - interpolate(frame, [0, fadeIn + 6], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE.out }) : 0;
+  const outT = shot.through && shot.fadeOut ? interpolate(frame, [dur - fadeOut - 4, dur], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE.inOut }) : 0;
+  const through = 1 + inT * 0.12 + outT * 0.16;
+  const blur = inT * 5 + outT * 7;
   const photo = PHOTOS[shot.clip];
   return (
     <AbsoluteFill style={{ opacity: o, overflow: "hidden" }}>
-      {shot.clip === "wall" ? (
-        <PhotoWall t={t} />
-      ) : photo ? (
-        <Img
-          src={staticFile(`photos/${shot.clip}.jpg`)}
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: photo.focus, scale: String(z), translate: `${dx}px ${dy}px` }}
-        />
-      ) : (
-        <Video
-          src={staticFile(`footage/${shot.clip}.mp4`)}
-          muted
-          playbackRate={rate}
-          style={{ width: "100%", height: "100%", scale: String(z), translate: `${dx}px ${dy}px` }}
-        />
-      )}
+      <AbsoluteFill style={{ scale: String(through), filter: blur > 0.3 ? `blur(${blur.toFixed(1)}px)` : undefined }}>
+        {shot.clip === "wall" ? (
+          <PhotoWall t={t} />
+        ) : photo ? (
+          <Img
+            src={staticFile(`photos/${shot.clip}.jpg`)}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: photo.focus, scale: String(z), translate: `${dx}px ${dy}px` }}
+          />
+        ) : (
+          <Video
+            src={staticFile(`footage/${shot.clip}.mp4`)}
+            muted
+            playbackRate={rate}
+            trimBefore={shot.trim ? Math.round(shot.trim * FPS) : undefined}
+            style={{ width: "100%", height: "100%", scale: String(z), translate: `${dx}px ${dy}px` }}
+          />
+        )}
+      </AbsoluteFill>
       {/* OQ grade: deep-navy shadows, legible lower third */}
       <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,18,28,0.35) 0%, rgba(4,18,28,0) 28%, rgba(4,18,28,0) 55%, rgba(4,18,28,0.65) 100%)" }} />
       <AbsoluteFill style={{ background: "rgba(8,31,44,0.12)", mixBlendMode: "multiply" }} />

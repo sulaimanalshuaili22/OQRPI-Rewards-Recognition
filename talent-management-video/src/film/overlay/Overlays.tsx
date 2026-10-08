@@ -354,7 +354,7 @@ const LeadershipOverlay: React.FC = () => {
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>{LEADERSHIP.masar.themes.map(chip)}</div>
         </DashCard>
       </ScreenCard>
-      <ScreenCard top={470} from={robbanCue - 4} to={end("leadership", 10)}>
+      <ScreenCard top={470} from={robbanCue + 2.4 * FPS - 10} to={end("leadership", 10)}>
         <DashCard title="" accent="orange" width={430}>
           <RobbanMark />
           <div style={{ fontSize: 18, fontWeight: 700, marginTop: 12 }}>Robban Leadership Development Program 2026</div>
