@@ -73,16 +73,16 @@ export const DashCard: React.FC<{
       {mark ? mark : icon ? <IconTile icon={icon} accent={accent} size={44} /> : null}
       <div>
         <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.15 }}>{title}</div>
-        {sub ? <div style={{ fontSize: 13, color: MUTED, marginTop: 3 }}>{sub}</div> : null}
+        {sub ? <div style={{ fontSize: 14, color: MUTED, marginTop: 3 }}>{sub}</div> : null}
       </div>
     </div>
     {children ? <div style={{ marginTop: 16 }}>{children}</div> : null}
     {source ? (
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#0B1E27", background: "#9FB4BD", borderRadius: 4, padding: "2px 7px", letterSpacing: 0.4 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#0B1E27", background: "#9FB4BD", borderRadius: 4, padding: "2px 7px", letterSpacing: 0.4 }}>
           Real data
         </div>
-        <div style={{ fontSize: 12, color: MUTED }}>Data as of {AS_OF}</div>
+        <div style={{ fontSize: 14, color: MUTED }}>Data as of {AS_OF}</div>
       </div>
     ) : null}
   </div>
@@ -103,13 +103,13 @@ export const BigFigure: React.FC<{
   const n = Math.round(value * t);
   return (
     <div>
-      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1.6, color: "#C9D6DB", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.6, color: "#C9D6DB", textTransform: "uppercase" }}>{label}</div>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
         <div style={{ fontSize: 50, fontWeight: 800, letterSpacing: -1.5 }}>
           {fmt(n)}
           {suffix}
         </div>
-        {note ? <div style={{ fontSize: 12, color: MUTED }}>{note}</div> : null}
+        {note ? <div style={{ fontSize: 14, color: MUTED }}>{note}</div> : null}
       </div>
       {bar !== undefined ? (
         <div style={{ height: 8, background: "rgba(255,255,255,0.08)", borderRadius: 2, marginTop: 6 }}>
@@ -199,7 +199,7 @@ export const HBars: React.FC<{
         const t = ramp(frame, from + i * 5, from + i * 5 + 26);
         const w = ((width - labelWidth - 50) * d.n) / max;
         return (
-          <div key={d.label} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
+          <div key={d.label} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14 }}>
             <div style={{ width: labelWidth, textAlign: "right", color: "#C9D6DB", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{d.label}</div>
             <div style={{ width: w * t, height: 18, background: d.color ?? color, borderRadius: 2 }} />
             <div style={{ fontWeight: 700, opacity: t }}>{fmt(d.n)}</div>
@@ -237,9 +237,9 @@ export const KpiTile: React.FC<{
         boxSizing: "border-box",
       }}
     >
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, color: "#C9D6DB", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1.2, color: "#C9D6DB", textTransform: "uppercase" }}>{label}</div>
       <div style={{ fontSize: 40, fontWeight: 800, textAlign: "center", marginTop: 6, letterSpacing: -1 }}>{value}</div>
-      <div style={{ fontSize: 12, color: MUTED, textAlign: "center", marginTop: 2 }}>{note}</div>
+      <div style={{ fontSize: 14, color: MUTED, textAlign: "center", marginTop: 2 }}>{note}</div>
     </div>
   );
 };
@@ -335,7 +335,7 @@ export const CommandCenterHome: React.FC<{ readonly from: number; readonly highl
         <b>OQ RPI</b>
         <span style={{ color: MUTED }}>|  Talent Management Projects</span>
       </div>
-      <div style={{ position: "absolute", right: 60, bottom: 26, fontSize: 13, letterSpacing: 4, color: "#C9D6DB" }}>
+      <div style={{ position: "absolute", right: 60, bottom: 26, fontSize: 14, letterSpacing: 4, color: "#C9D6DB" }}>
         {COMMAND_CENTER.footer} ——
       </div>
     </div>
@@ -390,3 +390,18 @@ export const AssistantChat: React.FC<{ readonly from: number; readonly width?: n
     </DashCard>
   );
 };
+
+/** Evidence status, so results, work in progress and plans are never confused. */
+export type StatusKind = "delivered" | "inplace" | "progress" | "plan";
+const STATUS: Record<StatusKind, { label: string; color: string }> = {
+  delivered: { label: "DELIVERED", color: "#12B07A" },
+  inplace: { label: "IN PLACE", color: "#16B6C2" },
+  progress: { label: "IN PROGRESS", color: "#FF8200" },
+  plan: { label: "PLAN", color: "#9CDBD9" },
+};
+export const Status: React.FC<{ readonly kind: StatusKind; readonly note?: string; readonly opacity?: number; readonly size?: number }> = ({ kind, note, opacity = 1, size = 14 }) => (
+  <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: FONT, opacity, whiteSpace: "nowrap" }}>
+    <span style={{ fontSize: size, fontWeight: 800, letterSpacing: 1.6, color: "#071a23", background: STATUS[kind].color, borderRadius: 4, padding: "3px 8px" }}>{STATUS[kind].label}</span>
+    {note ? <span style={{ fontSize: size + 1, color: "#C9D6DB" }}>{note}</span> : null}
+  </span>
+);

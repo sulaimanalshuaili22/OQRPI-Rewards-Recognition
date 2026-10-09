@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { AbsoluteFill, interpolate, random, useCurrentFrame } from "remotion";
 import { cameraAt } from "../camera";
 import { clamp, EASE, ramp, window01, type V3 } from "../math";
+import { CYCLE, SCENE_STAGE } from "../ecosystem";
 import { LINES, SCENE_LIST, SCENES, type SceneId } from "../timeline";
 import { COLORS, FONT } from "../../theme";
 import { Icon, type IconName } from "../../components/Icons";
@@ -273,10 +274,12 @@ export const Chapter: React.FC<{ readonly id: SceneId; readonly index: string; r
   const o = window01(frame, a, b, 10, 24);
   const line = ramp(frame, a, a + 30);
   const words = label.split(" ");
+  const stage = SCENE_STAGE[id];
+  const tracker = ramp(frame, a + 16, a + 40);
   // top-right, clear of the OQ RPI watermark
   return (
     <div style={{ position: "absolute", right: 70, top: 46, textAlign: "right", fontFamily: FONT, opacity: o, textShadow: "0 1px 8px rgba(0,0,0,0.6)" }}>
-      <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.orange, letterSpacing: 3, overflow: "hidden" }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.orange, letterSpacing: 3, overflow: "hidden" }}>
         <div style={{ translate: `0px ${(1 - ramp(frame, a, a + 18, EASE.out)) * 18}px` }}>OQ RPI TALENT MANAGEMENT / {index}</div>
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14, marginTop: 6 }}>
@@ -292,6 +295,32 @@ export const Chapter: React.FC<{ readonly id: SceneId; readonly index: string; r
           })}
         </div>
       </div>
+      {stage !== undefined ? (
+        // where this programme sits in the one ecosystem cycle
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 10, marginTop: 9, opacity: tracker }}>
+          <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 2, color: COLORS.lightBlue }}>
+            {stage === "R" ? "ACROSS EVERY STAGE" : `STAGE ${stage} · ${CYCLE[stage - 1].short.toUpperCase()}`}
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            {CYCLE.map((c, i) => {
+              const on = stage === "R" || stage === i + 1;
+              return (
+                <div
+                  key={c.id}
+                  style={{
+                    width: on ? 12 : 8,
+                    height: on ? 12 : 8,
+                    borderRadius: 6,
+                    background: stage === "R" ? "transparent" : on ? COLORS.orange : "rgba(156,219,217,0.35)",
+                    border: stage === "R" ? "2px solid #F7C548" : undefined,
+                    boxShadow: on && stage !== "R" ? `0 0 10px ${COLORS.orange}` : undefined,
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };

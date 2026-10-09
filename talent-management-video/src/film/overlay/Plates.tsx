@@ -41,6 +41,7 @@ const PHOTOS: Record<string, { readonly focus: string }> = {
   "engineers-walking": { focus: "50% 40%" },
   "tablet-sunset": { focus: "50% 45%" },
   "walk-glass": { focus: "40% 45%" },
+  "site-dusk-aerial": { focus: "50% 55%" },
 };
 
 /** OQ RPI people, for the photo wall ("its people"). */
@@ -109,13 +110,13 @@ export const SHOTS: Shot[] = [
       cue("opening", 1, "every achievement"),
       cue("opening", 1, "lies talent"),
     ],
-    ["eyes-1", "wall", "sunrise-drone", "control-room", "tablet-sunset", "field-engineers", "boardroom-live"],
+    ["site-dusk-aerial", "wall", "sunrise-drone", "control-room", "tablet-sunset", "field-engineers", "boardroom-live"],
     lineEnd("opening", 1) + 4,
     30,
   ),
   // 02 — the real site, then the teams who run it
   single("refinery-aerial", S("why"), 2.6, [1.0, 1.12]),
-  single("team-meeting-live", cue("why", 1, "OQ RPI Talent Management exists"), 3.4, [1.0, 1.04]),
+  single("team-meeting-live", cue("why", 2, "OQ RPI Talent Management exists"), 3.4, [1.0, 1.04]),
   // 03 — OQ
   single("oq-lobby", S("ecosystem"), 2.6),
   // 04 — contribution, recognised: an engineer on site with the work in hand
@@ -131,8 +132,7 @@ export const SHOTS: Shot[] = [
   single("robban-cohort-live", cue("leadership", 0, "ROBBAN") - 6, 2.4, [1.0, 1.03], 16),
   // 09 — Omani talent on site, before the nationalization sequence
   single("engineers-walking", S("nationalization"), 2.4, [1.0, 1.07], 16),
-  // 10 — OQ's reach; capability coming home
-  single("world-map", S("secondment"), 3.4, [1.0, 1.06]),
+  // 10 — capability coming home (the secondments are national, so no world map)
   single("walk-glass", cue("secondment", 0, "bringing new capability home") - 8, 2.4, [1.0, 1.07]),
   // 12 — real-time visibility, on site
   single("tablet-dusk-plant", S("platform"), 2.2, [1.0, 1.08], 16),

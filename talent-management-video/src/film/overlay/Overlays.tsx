@@ -9,21 +9,19 @@ import {
   DashCard,
   HBars,
   StatRows,
+  Status,
   VBars,
 } from "./Dash";
 import { add, EASE, ramp, type V3 } from "../math";
 import { SET } from "../layout";
 import { at, cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import {
-  BEACONS,
   CRITICAL,
   DNA_FLOW,
   DNA_INDICATORS,
-  FLOWS,
   GATES,
   HOME,
   HOST,
-  PROGRAMS,
   SEATS,
   SUCCESSION_FLOW,
 
@@ -31,7 +29,6 @@ import {
   heroAscent,
   helixPoint,
   orgNode,
-  programPos,
   seatPos,
   tilePos,
 } from "../geometry";
@@ -46,7 +43,7 @@ import {
   WORKFORCE,
   fmt,
 } from "../data";
-import { Icon, type IconName } from "../../components/Icons";
+import type { IconName } from "../../components/Icons";
 import { COLORS, FONT } from "../../theme";
 
 const end = (id: SceneId, pad = 0) => SCENES[id].end + pad;
@@ -88,10 +85,48 @@ const OpeningOverlay: React.FC = () => (
     to={end("opening", 12)}
     lines={[
       { text: "OQ RPI TALENT MANAGEMENT", size: 74, weight: 300, tracking: 16 },
-      { text: "Building Tomorrow's Talent, Together", size: 34, weight: 500, color: COLORS.orange, tracking: 1.5, delay: 26 },
+      { text: "Protecting critical capability · Building future leaders · Advancing Omani talent", size: 30, weight: 500, color: COLORS.orange, tracking: 1, delay: 26 },
     ]}
   />
 );
+
+/** The business challenge, as the three questions Talent Management answers. */
+const ChallengeQuestions: React.FC = () => {
+  const frame = useCurrentFrame();
+  const line = linesOf("why")[1];
+  const qs: Array<[string, string]> = [
+    ["which roles are critical", "Which roles are critical to the business?"],
+    ["who is ready", "Who is ready to step into them?"],
+    ["where capability must be built", "Where must capability be built?"],
+  ];
+  const from = line.start - 10;
+  const to = line.end + 24;
+  if (frame < from || frame > to) return null;
+  const o = ramp(frame, from, from + 14) * (1 - ramp(frame, to - 14, to));
+  return (
+    <AbsoluteFill style={{ opacity: o }}>
+      <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(3,13,20,0.88) 0%, rgba(3,13,20,0.6) 45%, rgba(3,13,20,0) 75%)" }} />
+      <div style={{ position: "absolute", left: 110, top: 220, fontFamily: FONT }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 3, background: COLORS.orange }} />
+          <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: 5, color: COLORS.orange }}>THE BUSINESS CHALLENGE</div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 30, marginTop: 34 }}>
+          {qs.map(([say, q], i) => {
+            const c = cue("why", 1, say);
+            const k = ramp(frame, c - 6, c + 16, EASE.out);
+            return (
+              <div key={q} style={{ display: "flex", alignItems: "baseline", gap: 20, opacity: k, translate: `${(1 - k) * -26}px 0px` }}>
+                <span style={{ fontSize: 26, fontWeight: 700, color: COLORS.orange }}>0{i + 1}</span>
+                <span style={{ fontSize: 52, fontWeight: 300, color: COLORS.white, letterSpacing: -0.5 }}>{q}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
 
 /* 02 ---------------------------------------------------------------- */
 const WhyOverlay: React.FC = () => {
@@ -104,18 +139,18 @@ const WhyOverlay: React.FC = () => {
   ];
   const W = SET.why as V3;
   const pillars: Array<{ word: string; c: number; p: V3 }> = [
-    { word: "Capability", c: cue("why", 1, "workforce capability"), p: add(W, [-7, 9, 3]) },
-    { word: "Leadership", c: cue("why", 1, "leadership pipeline"), p: add(W, [-1, 10.5, -1]) },
-    { word: "Performance", c: cue("why", 1, "leadership pipeline") + 20, p: add(W, [5, 9.5, -4]) },
-    { word: "Succession", c: cue("why", 1, "secure the future") - 8, p: add(W, [10, 11, -7]) },
-    { word: "Future Readiness", c: cue("why", 1, "secure the future") + 14, p: add(W, [14, 9, -10]) },
+    { word: "Capability", c: cue("why", 2, "workforce capability"), p: add(W, [-7, 9, 3]) },
+    { word: "Leadership", c: cue("why", 2, "leadership pipeline"), p: add(W, [-1, 10.5, -1]) },
+    { word: "Performance", c: cue("why", 2, "leadership pipeline") + 20, p: add(W, [5, 9.5, -4]) },
+    { word: "Succession", c: cue("why", 2, "secure the future") - 8, p: add(W, [10, 11, -7]) },
+    { word: "Future Readiness", c: cue("why", 2, "secure the future") + 14, p: add(W, [14, 9, -10]) },
   ];
   return (
     <>
       {WHY_HIGHLIGHT.map((wi, k) => (
-        <Tag key={wi} at={add(workerPos(wi), [0, 1.3, 0])} from={cues[k]} to={cue("why", 1, "OQ RPI Talent Management exists") - 4} label={tags[k][0]} sub={tags[k][1]} side={k === 2 ? "left" : "right"} />
+        <Tag key={wi} at={add(workerPos(wi), [0, 1.3, 0])} from={cues[k]} to={linesOf("why")[1].start - 4} label={tags[k][0]} sub={tags[k][1]} side={k === 2 ? "left" : "right"} />
       ))}
-      <Floating at={add(W, [-1, 7.5, 10])} from={S("why") + 190} to={cue("why", 1, "OQ RPI Talent Management exists")}>
+      <Floating at={add(W, [-1, 7.5, 10])} from={S("why") + 190} to={linesOf("why")[1].start}>
         <DashCard title="Executive talent overview" sub="Every talent programme at a glance" icon="people" accent="orange" width={400}>
           <StatRows
             from={S("why") + 95}
@@ -128,6 +163,7 @@ const WhyOverlay: React.FC = () => {
           />
         </DashCard>
       </Floating>
+      <ChallengeQuestions />
       {pillars.map((p, i) => (
         <Anchored key={p.word} at={p.p} from={p.c} to={end("why", -20)} inF={18} outF={18}>
           <div style={{ position: "absolute", transform: "translate(-50%,-50%)", display: "flex", alignItems: "baseline", gap: 14, fontFamily: FONT, whiteSpace: "nowrap" }}>
@@ -139,44 +175,6 @@ const WhyOverlay: React.FC = () => {
     </>
   );
 };
-
-/* 03 ---------------------------------------------------------------- */
-const EcosystemOverlay: React.FC = () => (
-  <>
-    {PROGRAMS.map((p, i) => {
-      const from = at("ecosystem", 2.4) + i * 7;
-      const pos = programPos(i);
-      const left = pos[0] < (SET.ecosystem as V3)[0];
-      return (
-        <Anchored key={p.label} at={add(pos, [0, 1.1, 0])} from={from} to={end("ecosystem", 30)} safeX={330}>
-          <div
-            style={{
-              position: "absolute",
-              transform: `translate(${left ? "-100%" : "0"}, -100%) translate(${left ? -10 : 10}px, -6px)`,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "8px 14px 8px 8px",
-              borderRadius: 10,
-              background: "linear-gradient(165deg, rgba(18,52,62,0.9), rgba(7,22,31,0.9))",
-              borderTop: `2px solid ${i % 3 === 0 ? COLORS.orange : COLORS.turquoise}`,
-              fontFamily: FONT,
-              fontSize: 19,
-              fontWeight: 600,
-              color: COLORS.white,
-              whiteSpace: "nowrap",
-            }}
-          >
-            <div style={{ width: 30, height: 30, borderRadius: 7, background: i % 3 === 0 ? COLORS.orange : COLORS.turquoise, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Icon name={p.icon as IconName} size={18} color="#fff" strokeWidth={2} />
-            </div>
-            {p.label}
-          </div>
-        </Anchored>
-      );
-    })}
-  </>
-);
 
 /* 04 ---------------------------------------------------------------- */
 const PerformanceOverlay: React.FC = () => {
@@ -212,6 +210,23 @@ const PerformanceOverlay: React.FC = () => {
   );
 };
 
+/** What the matrix is for: a decision input, not a verdict. */
+const NineBoxNote: React.FC = () => {
+  const frame = useCurrentFrame();
+  const from = cue("ninebox", 0, "accelerate their development") - 10;
+  const to = end("ninebox", 8);
+  if (frame < from || frame > to) return null;
+  const o = ramp(frame, from, from + 16) * (1 - ramp(frame, to - 12, to));
+  return (
+    <div style={{ position: "absolute", left: 80, bottom: 190, width: 470, opacity: o, translate: `${(1 - ramp(frame, from, from + 20, EASE.out)) * -18}px 0px` }}>
+      <div style={{ padding: "18px 24px", borderRadius: 12, background: "rgba(8,31,44,0.94)", border: "1px solid rgba(156,219,217,0.25)", borderLeft: `4px solid ${COLORS.orange}`, fontFamily: FONT }}>
+        <div style={{ fontSize: 26, fontWeight: 600, color: COLORS.white }}>A decision tool, not a label</div>
+        <div style={{ fontSize: 19, lineHeight: 1.4, color: "#C9D6DB", marginTop: 6 }}>Placement informs development decisions. It does not decide promotion or succession on its own.</div>
+      </div>
+    </div>
+  );
+};
+
 /* 05 ---------------------------------------------------------------- */
 const NineBoxOverlay: React.FC = () => {
   const N = SET.ninebox as V3;
@@ -240,6 +255,7 @@ const NineBoxOverlay: React.FC = () => {
         )),
       )}
       <Tag at={add(tilePos(2, 2), [0, 1.4, 0])} from={cue("ninebox", 0, "identify our future leaders")} to={end("ninebox")} label="Hi-Lead · ready today" sub={`${PERFORMANCE.hiLeadReadyToday} leaders · 2026 ranking`} icon="leadership" />
+      <NineBoxNote />
       <Floating at={add(N, [10.5, 6, -6])} from={cue("ninebox", 0, "performance and potential")} to={end("ninebox", 10)} refDepth={18} anchor="left">
         <DashCard title="9-box talent matrix" sub="2026 ranking · rated employees" icon="ninebox" accent="teal" width={330}>
           <StatRows
@@ -300,9 +316,27 @@ const SuccessionOverlay: React.FC = () => {
       {SUCCESSION_FLOW.map((label, i) => (
         <Tag key={label} at={add(anchors[i], [0, 0.5, 0])} from={times[i]} to={i === 0 ? climbEnd - 10 : i === 4 ? end("succession", 20) : times[i] + 80} label={label} sub={subs[i]} side={i % 2 ? "left" : "right"} accent={i === 0 || i === 4 ? "orange" : "turquoise"} />
       ))}
-      <ScreenCard side="left" top={190} from={at("succession", 4.4)} to={end("succession", 10)}>
-        <DashCard title="Bench strength" sub="Critical roles by named successors" icon="succession" accent="teal" width={360}>
-          <VBars data={SUCCESSION.benchByNamed.map((b) => ({ label: b.label, n: b.n }))} from={at("succession", 4.8)} width={310} height={110} color={ACCENT.teal} />
+      <ScreenCard side="left" top={170} from={at("succession", 4.4)} to={end("succession", 10)}>
+        <DashCard title="Succession coverage" sub="Critical roles · 2026 cycle" icon="succession" accent="teal" width={420}>
+          <StatRows
+            from={at("succession", 4.8)}
+            rows={[
+              ["Critical roles mapped", fmt(SUCCESSION.criticalRoles)],
+              ["With at least one named successor", fmt(SUCCESSION.rolesWithSuccessor)],
+              ["Successor slots named", fmt(SUCCESSION.successorSlots)],
+            ]}
+          />
+          <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 2, color: "#8FA6B0", marginTop: 14 }}>DEPTH OF BENCH · ROLES BY NAMED SUCCESSORS</div>
+          <VBars data={SUCCESSION.benchByNamed.map((b) => ({ label: b.label, n: b.n }))} from={at("succession", 5.4)} width={370} height={84} color={ACCENT.teal} />
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, fontSize: 15, fontWeight: 700 }}>
+            {["Named", "Developing", "Ready now"].map((st, i) => (
+              <div key={st} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {i ? <div style={{ width: 18, height: 2, background: "rgba(255,255,255,0.35)" }} /> : null}
+                <span style={{ padding: "4px 10px", borderRadius: 999, border: `1px solid ${i === 2 ? COLORS.orange : "rgba(156,219,217,0.5)"}`, color: i === 2 ? COLORS.orange : COLORS.lightBlue }}>{st}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 15, color: "#C9D6DB", marginTop: 8 }}>Named is not ready: readiness is confirmed in Talent Review.</div>
         </DashCard>
       </ScreenCard>
     </>
@@ -320,7 +354,7 @@ const LeadershipOverlay: React.FC = () => {
   const masarCue = cue("leadership", 0, "MASAR");
   const robbanCue = cue("leadership", 0, "ROBBAN");
   const chip = (t: string) => (
-    <span key={t} style={{ fontSize: 12, padding: "4px 9px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.25)", color: "#E3ECEF" }}>{t}</span>
+    <span key={t} style={{ fontSize: 14, padding: "4px 9px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.25)", color: "#E3ECEF" }}>{t}</span>
   );
   return (
     <>
@@ -347,26 +381,29 @@ const LeadershipOverlay: React.FC = () => {
             ].map(([v, l]) => (
               <div key={l as string}>
                 <div style={{ fontSize: 40, fontWeight: 800 }}>{v}</div>
-                <div style={{ fontSize: 13, color: "#C9D6DB" }}>{l}</div>
+                <div style={{ fontSize: 14, color: "#C9D6DB" }}>{l}</div>
               </div>
             ))}
           </div>
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>{LEADERSHIP.masar.themes.map(chip)}</div>
+          <div style={{ marginTop: 12 }}>
+            <Status kind="delivered" note="2023–2025" />
+          </div>
         </DashCard>
       </ScreenCard>
       <ScreenCard top={470} from={robbanCue + 2.4 * FPS - 10} to={end("leadership", 10)}>
         <DashCard title="" accent="orange" width={430}>
           <RobbanMark />
           <div style={{ fontSize: 18, fontWeight: 700, marginTop: 12 }}>Robban Leadership Development Program 2026</div>
-          <div style={{ fontSize: 13, color: "#C9D6DB", marginTop: 4 }}>Delivered with the {LEADERSHIP.robban.partner}</div>
+          <div style={{ fontSize: 14, color: "#C9D6DB", marginTop: 4 }}>Delivered with the {LEADERSHIP.robban.partner}</div>
           <div style={{ display: "flex", gap: 28, marginTop: 12 }}>
             <div>
               <div style={{ fontSize: 36, fontWeight: 800 }}>{LEADERSHIP.robban.cohort}</div>
-              <div style={{ fontSize: 13, color: "#C9D6DB" }}>leaders in cohort</div>
+              <div style={{ fontSize: 14, color: "#C9D6DB" }}>leaders in cohort</div>
             </div>
             <div>
               <div style={{ fontSize: 26, fontWeight: 800, marginTop: 6 }}>{LEADERSHIP.robban.dates}</div>
-              <div style={{ fontSize: 13, color: "#C9D6DB" }}>five-day residential journey</div>
+              <div style={{ fontSize: 14, color: "#C9D6DB" }}>five-day residential journey</div>
             </div>
           </div>
         </DashCard>
@@ -434,36 +471,6 @@ const PlatformOverlay: React.FC = () => {
   );
 };
 
-/* 13 ---------------------------------------------------------------- */
-const ConnectionsOverlay: React.FC = () => {
-  const flowStart = at("connections", 3.2);
-  const flowStep = 1.5 * FPS;
-  const ids = Object.keys(BEACONS) as Array<keyof typeof BEACONS>;
-  return (
-    <>
-      {ids.map((id) => (
-        <Anchored key={id} at={add(BEACONS[id].pos, [0, 10, 0])} from={at("connections", 1.6)} to={end("connections", 30)}>
-          <div style={{ position: "absolute", transform: "translate(-50%,-100%)", fontFamily: FONT, fontSize: 17, fontWeight: 600, letterSpacing: 1, color: FLOWS.some((f) => f.from === id || f.to === id) ? COLORS.white : COLORS.lightBlue, whiteSpace: "nowrap", textShadow: "0 0 14px rgba(0,0,0,0.9)" }}>
-            {BEACONS[id].label}
-          </div>
-        </Anchored>
-      ))}
-      {FLOWS.map((f, i) => {
-        const a = BEACONS[f.from].pos;
-        const b = BEACONS[f.to].pos;
-        const mid: V3 = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 6.2, (a[2] + b[2]) / 2];
-        return (
-          <Anchored key={i} at={mid} from={flowStart + i * flowStep + 24} to={end("connections", 20)}>
-            <div style={{ position: "absolute", transform: "translate(-50%,-50%)", padding: "4px 9px", borderRadius: 7, background: "rgba(255,130,0,0.9)", fontFamily: FONT, fontSize: 12, fontWeight: 700, letterSpacing: 2, color: COLORS.white, textTransform: "uppercase", whiteSpace: "nowrap", boxShadow: "0 0 24px rgba(255,130,0,0.6)" }}>
-              {f.verb}
-            </div>
-          </Anchored>
-        );
-      })}
-    </>
-  );
-};
-
 /* ---------------------------------------------------------------- */
 export const Overlays: React.FC = () => {
   const frame = useCurrentFrame();
@@ -472,7 +479,6 @@ export const Overlays: React.FC = () => {
     <AbsoluteFill>
       {inScene("opening") ? <OpeningOverlay /> : null}
       {inScene("why") ? <WhyOverlay /> : null}
-      {inScene("ecosystem") ? <EcosystemOverlay /> : null}
       {inScene("performance") ? <PerformanceOverlay /> : null}
       {inScene("ninebox") ? <NineBoxOverlay /> : null}
       {inScene("critical") ? <CriticalOverlay /> : null}
@@ -480,7 +486,6 @@ export const Overlays: React.FC = () => {
       {inScene("leadership") ? <LeadershipOverlay /> : null}
       {inScene("secondment") ? <SecondmentOverlay /> : null}
       {inScene("platform") ? <PlatformOverlay /> : null}
-      {inScene("connections") ? <ConnectionsOverlay /> : null}
     </AbsoluteFill>
   );
 };

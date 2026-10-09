@@ -13,24 +13,24 @@
 import type React from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { Video } from "@remotion/media";
-import { ACCENT, IconTile, type Accent } from "./Dash";
+import { ACCENT, IconTile, Status, type Accent, type StatusKind } from "./Dash";
 import type { IconName } from "../../components/Icons";
 import { cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import { EASE, ramp } from "../math";
 import { COLORS, FONT } from "../../theme";
-import { LEADERSHIP, NATIONALIZATION, PERFORMANCE, REWARDS, SECONDMENT, SUCCESSION, fmt } from "../data";
+import { AS_OF, LEADERSHIP, NATIONALIZATION, PERFORMANCE, REWARDS, SECONDMENT, SUCCESSION, fmt } from "../data";
 
 const S = (id: SceneId) => SCENES[id].start;
 const end = (id: SceneId, pad = 0) => SCENES[id].end + pad;
 const lineEnd = (id: SceneId, n: number) => linesOf(id)[n].end;
-const MUTED = "#8FA6B0";
-const CARD_BG = "linear-gradient(165deg, rgba(18,52,62,0.96) 0%, rgba(9,30,40,0.96) 55%, rgba(7,22,31,0.97) 100%)";
+export const MUTED = "#8FA6B0";
+export const CARD_BG = "linear-gradient(165deg, rgba(18,52,62,0.96) 0%, rgba(9,30,40,0.96) 55%, rgba(7,22,31,0.97) 100%)";
 const NATIONALIZATION_PLANNED = NATIONALIZATION.plan.reduce((a, p) => a + p.n, 0);
 
 /* ---------------------------------------------------------------- shared */
 
 /** Fades a full-screen scene in and out over the frame window. */
-const Window: React.FC<{ readonly from: number; readonly to: number; readonly children: React.ReactNode }> = ({ from, to, children }) => {
+export const Window: React.FC<{ readonly from: number; readonly to: number; readonly children: React.ReactNode }> = ({ from, to, children }) => {
   const frame = useCurrentFrame();
   if (frame < from || frame > to) return null;
   const o = ramp(frame, from, from + 16, EASE.inOut) * (1 - ramp(frame, to - 16, to, EASE.inOut));
@@ -55,7 +55,7 @@ const Window: React.FC<{ readonly from: number; readonly to: number; readonly ch
 };
 
 /** Midnight-blue stage with a soft key light and a faint engineering grid. */
-const Stage: React.FC<{ readonly light?: string; readonly children?: React.ReactNode }> = ({ light = "50% 38%", children }) => (
+export const Stage: React.FC<{ readonly light?: string; readonly children?: React.ReactNode }> = ({ light = "50% 38%", children }) => (
   <AbsoluteFill style={{ background: `radial-gradient(ellipse 75% 70% at ${light}, #12384a 0%, #0a2433 40%, #061722 75%, #030d14 100%)` }}>
     <AbsoluteFill
       style={{
@@ -86,7 +86,7 @@ const Headline: React.FC<{ readonly kicker: string; readonly title: string; read
 };
 
 /** Neutral professional figure (head and shoulders). */
-const Person: React.FC<{ readonly color: string; readonly size?: number; readonly glow?: number }> = ({ color, size = 64, glow = 0 }) => (
+export const Person: React.FC<{ readonly color: string; readonly size?: number; readonly glow?: number }> = ({ color, size = 64, glow = 0 }) => (
   <svg width={size} height={size * 1.1} viewBox="0 0 64 70" style={{ overflow: "visible", filter: glow ? `drop-shadow(0 0 ${12 * glow}px ${color})` : undefined }}>
     <circle cx="32" cy="18" r="13" fill={color} />
     <path d="M6 70 C6 46 18 36 32 36 C46 36 58 46 58 70 Z" fill={color} />
@@ -130,6 +130,9 @@ const Nationalization: React.FC = () => {
         <Headline kicker="NATIONALIZATION" title="Omani talent, stepping into critical roles" from={from + 6} />
         {/* planned nationalizations, counting with the timeline */}
         <div style={{ position: "absolute", right: 96, top: 150, textAlign: "right", fontFamily: FONT, opacity: ramp(frame, develops - 10, develops + 14) }}>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 6 }}>
+            <Status kind="plan" note="2026–2030" />
+          </div>
           <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: 3, color: MUTED }}>ROLES PLANNED FOR OMANI TALENT</div>
           <div style={{ fontSize: 76, fontWeight: 800, color: COLORS.white, lineHeight: 1.05 }}>
             {Math.round(cumulative)}
@@ -196,7 +199,7 @@ const Nationalization: React.FC = () => {
               }}
             >
               <div style={{ padding: "18px 20px 0" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 3, color: MUTED }}>{r.tier.toUpperCase()}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 3, color: MUTED }}>{r.tier.toUpperCase()}</div>
                 <div style={{ fontSize: 24, fontWeight: 700, marginTop: 4, lineHeight: 1.15 }}>{r.role}</div>
               </div>
               {/* the seat */}
@@ -225,7 +228,7 @@ const Nationalization: React.FC = () => {
               </div>
               <div style={{ position: "absolute", left: 14, right: 14, top: 244, textAlign: "center", fontSize: 16, opacity: k }}>
                 <div style={{ color: COLORS.orange, fontWeight: 700 }}>Nationalized · {r.year}</div>
-                <div style={{ color: MUTED, fontSize: 13, marginTop: 2 }}>Expert stays on as mentor</div>
+                <div style={{ color: MUTED, fontSize: 14, marginTop: 2 }}>Expert stays on as mentor</div>
               </div>
               <div style={{ position: "absolute", left: 20, bottom: 16, display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 600, color: COLORS.white, opacity: chip, translate: `0px ${(1 - chip) * 8}px` }}>
                 <div style={{ width: 22, height: 22, borderRadius: 11, background: "#12B07A", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>✓</div>
@@ -239,7 +242,15 @@ const Nationalization: React.FC = () => {
           KNOWLEDGE TRANSFER · CAPABILITY BUILDING · WORKFORCE LOCALIZATION
         </div>
         <div style={{ position: "absolute", left: 0, right: 0, top: 856, textAlign: "center", fontFamily: FONT, fontSize: 22, color: COLORS.white, opacity: ramp(frame, named, named + 20) }}>
-          <b>{NATIONALIZATION.omaniSuccessorsNamed}</b> Omani successors already named · <b>{NATIONALIZATION.planned2026to2027}</b> roles planned for 2026–27
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 26 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+              <Status kind="inplace" /> <b>{NATIONALIZATION.omaniSuccessorsNamed}</b> Omani successors named
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+              <Status kind="plan" /> <b>{NATIONALIZATION.planned2026to2027}</b> roles planned for 2026–27
+            </span>
+          </span>
+          <div style={{ fontSize: 14, color: MUTED, marginTop: 6 }}>Source: OQ RPI Nationalization Tracker · as of {AS_OF}</div>
         </div>
       </Stage>
     </Window>
@@ -380,7 +391,7 @@ const Rewards: React.FC = () => {
             <div key={t.tier} style={{ textAlign: "center", opacity: ramp(frame, hero + 16 + i * 5, hero + 30 + i * 5), translate: `0px ${(1 - ramp(frame, hero + 16 + i * 5, hero + 30 + i * 5)) * 10}px` }}>
               <div style={{ width: 14, height: 14, margin: "0 auto 6px", rotate: "45deg", background: t.color, boxShadow: `0 0 12px ${t.color}` }} />
               <div style={{ fontSize: 24, fontWeight: 800, color: COLORS.white, lineHeight: 1 }}>{t.n}</div>
-              <div style={{ fontSize: 12, letterSpacing: 2, color: MUTED, marginTop: 3 }}>{t.tier.toUpperCase()}</div>
+              <div style={{ fontSize: 14, letterSpacing: 2, color: MUTED, marginTop: 3 }}>{t.tier.toUpperCase()}</div>
             </div>
           ))}
         </div>
@@ -390,7 +401,7 @@ const Rewards: React.FC = () => {
             <b style={{ fontSize: 30 }}>
               <Count value={REWARDS.granted} from={hero + 20} />
             </b>{" "}
-            recognitions · {REWARDS.period}
+            recognitions · {REWARDS.period} <Status kind="delivered" />
           </div>
           <div style={{ fontSize: 22 }}>
             <b style={{ fontSize: 30 }}>OMR {fmt(REWARDS.usedOMR)}</b> awarded
@@ -496,6 +507,7 @@ const CommandHub: React.FC = () => {
         })}
         <div style={{ position: "absolute", left: 0, right: 0, top: 864, textAlign: "center", fontFamily: FONT, fontSize: 22, letterSpacing: 6, color: COLORS.orange, fontWeight: 700, opacity: all }}>
           REAL-TIME VISIBILITY FOR EVERY LEADER
+          <div style={{ fontSize: 15, letterSpacing: 1, fontWeight: 500, color: MUTED, marginTop: 6 }}>Figures from the Talent Command Center · as of {AS_OF}</div>
         </div>
       </Stage>
     </Window>
@@ -578,7 +590,7 @@ const Journey: React.FC = () => {
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                   <IconTile icon={s.icon} accent={s.accent} size={46} />
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 3, color: MUTED }}>0{i + 1}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 3, color: MUTED }}>0{i + 1}</div>
                     <div style={{ fontSize: 26, fontWeight: 700 }}>{s.title}</div>
                   </div>
                 </div>
@@ -601,9 +613,27 @@ const Investing: React.FC = () => {
   const to = lineEnd("future", 1) + 16;
   const t = ramp(frame, from, to, (x) => x);
   const rows = [
-    { say: "the leaders", word: "Leaders", proof: `${LEADERSHIP.masar.alumni} MASAR alumni · ${LEADERSHIP.robban.cohort} ROBBAN leaders in 2026`, color: COLORS.orange },
-    { say: "capabilities", word: "Capabilities", proof: `${PERFORMANCE.highPotential} high-potential talents · ${PERFORMANCE.technicalTrack} on the technical track`, color: COLORS.turquoise },
-    { say: "opportunities", word: "Opportunities", proof: `${SUCCESSION.peopleInPipeline} successors in the pipeline · ${NATIONALIZATION_PLANNED} roles for Omani talent`, color: COLORS.lightBlue },
+    {
+      say: "protecting critical capability",
+      word: "Continuity",
+      proof: "Critical roles mapped, with successors named against them",
+      status: [["inplace", `${fmt(SUCCESSION.criticalRoles)} critical roles · ${fmt(SUCCESSION.rolesWithSuccessor)} with a named successor`]] as Array<[StatusKind, string]>,
+      color: COLORS.turquoise,
+    },
+    {
+      say: "next generation of leaders",
+      word: "Leadership",
+      proof: "Leadership journeys for current and future leaders",
+      status: [["delivered", `${LEADERSHIP.masar.alumni} MASAR alumni, 2023–2025`], ["inplace", `${LEADERSHIP.robban.cohort} leaders, 2026 ROBBAN cohort`]] as Array<[StatusKind, string]>,
+      color: COLORS.orange,
+    },
+    {
+      say: "advancing Omani talent",
+      word: "National talent",
+      proof: "Omani talent progressing into critical and leadership roles",
+      status: [["inplace", `${NATIONALIZATION.omaniSuccessorsNamed} Omani successors named`], ["plan", `${NATIONALIZATION_PLANNED} roles to 2030`]] as Array<[StatusKind, string]>,
+      color: COLORS.lightBlue,
+    },
   ];
   return (
     <Window from={from} to={to}>
@@ -618,7 +648,7 @@ const Investing: React.FC = () => {
         />
         <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(4,15,23,0.94) 0%, rgba(4,15,23,0.86) 38%, rgba(4,15,23,0.35) 70%, rgba(4,15,23,0.25) 100%)" }} />
         <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,15,23,0.5) 0%, rgba(4,15,23,0) 30%, rgba(4,15,23,0) 70%, rgba(4,15,23,0.7) 100%)" }} />
-        <Headline kicker="INVESTING IN OUR PEOPLE TODAY" title="Shaping tomorrow's OQ RPI" from={from + 4} />
+        <Headline kicker="INVESTING IN OUR PEOPLE TODAY" title="The capability OQ RPI is building" from={from + 4} />
         <div style={{ position: "absolute", left: 96, top: 330, display: "flex", flexDirection: "column", gap: 34, fontFamily: FONT }}>
           {rows.map((r) => {
             const c = cue("future", 1, r.say);
@@ -629,10 +659,18 @@ const Investing: React.FC = () => {
                 <div>
                   <div style={{ fontSize: 58, fontWeight: 700, color: COLORS.white, letterSpacing: -1, lineHeight: 1.05 }}>{r.word}</div>
                   <div style={{ fontSize: 23, color: "#C9D6DB", marginTop: 6 }}>{r.proof}</div>
+                  <div style={{ display: "flex", gap: 22, marginTop: 10 }}>
+                    {r.status.map(([kind, note]) => (
+                      <Status key={note} kind={kind} note={note} size={19} />
+                    ))}
+                  </div>
                 </div>
               </div>
             );
           })}
+        </div>
+        <div style={{ position: "absolute", left: 96, top: 870, fontFamily: FONT, fontSize: 15, color: MUTED, opacity: ramp(frame, from + 30, from + 50) }}>
+          Source: OQ RPI Talent Command Center · as of {AS_OF}
         </div>
       </AbsoluteFill>
     </Window>

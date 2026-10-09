@@ -65,9 +65,9 @@ const KEYS: Key[] = [
   k("opening", 19.0, O, [-5, 9, 40], [0, -3, 0], 40, { bokeh: 2.5 }),
   // 02 — dive down into the refinery digital twin
   k("why", 1.4, W, [-20, 6, 24], [0, 3, 0], 40, { bokeh: 3, fog: 0.013 }),
-  k("why", 8.5, W, [-10, 8.5, 21], [3, 3.5, -3], 38, { bokeh: 3 }),
-  k("why", 15, W, [12, 5.5, 11], [0, 4, -4], 38, { bokeh: 3 }),
-  k("why", 22.4, W, [5, 14, 21], [0, 6, -10], 40, { bokeh: 2 }),
+  k("why", 10, W, [-10, 8.5, 21], [3, 3.5, -3], 38, { bokeh: 3 }),
+  k("why", 21, W, [12, 5.5, 11], [0, 4, -4], 38, { bokeh: 3 }),
+  k("why", 28.4, W, [5, 14, 21], [0, 6, -10], 40, { bokeh: 2 }),
   // 03 — rise to the living ecosystem
   k("ecosystem", 1.8, E, [0, 7, 32], [0, 0, 0], 40, { bokeh: 2, fog: 0.011 }),
   k("ecosystem", 8, E, [15, 8, 23], [0, 0, 0], 40, { bokeh: 2.5 }),

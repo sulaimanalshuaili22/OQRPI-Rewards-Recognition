@@ -4,6 +4,7 @@ import { World } from "./world/World";
 import { Overlays, TopLayer } from "./overlay/Overlays";
 import { Plates } from "./overlay/Plates";
 import { Showcase } from "./overlay/Showcase";
+import { EcosystemScenes } from "./overlay/Ecosystem";
 import { EndCard, LogoIntro, Watermark } from "./overlay/Brand";
 import { Captions, Grade, H, Transitions, W, whipBlur } from "./overlay/ui";
 import "../theme";
@@ -41,6 +42,7 @@ export const Film: React.FC<FilmProps> = ({ captions, soundtrack }) => {
         <Overlays />
         <Plates />
         <Showcase />
+        <EcosystemScenes />
         <TopLayer />
         <Transitions />
         <Grade />
