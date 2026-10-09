@@ -1,0 +1,209 @@
+{
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "coldopen",
+      "name": "I \u00b7 The stakes",
+      "start": 0,
+      "duration": 452
+    },
+    {
+      "id": "lights",
+      "name": "I \u00b7 309 lights",
+      "start": 452,
+      "duration": 667
+    },
+    {
+      "id": "know",
+      "name": "II \u00b7 Know",
+      "start": 1119,
+      "duration": 569
+    },
+    {
+      "id": "grow",
+      "name": "II \u00b7 Grow",
+      "start": 1688,
+      "duration": 642
+    },
+    {
+      "id": "secure",
+      "name": "II \u00b7 Secure",
+      "start": 2330,
+      "duration": 1023
+    },
+    {
+      "id": "sustain",
+      "name": "II \u00b7 Sustain",
+      "start": 3353,
+      "duration": 673
+    },
+    {
+      "id": "proof",
+      "name": "III \u00b7 The proof",
+      "start": 4026,
+      "duration": 671
+    },
+    {
+      "id": "handover",
+      "name": "IV \u00b7 The handover",
+      "start": 4697,
+      "duration": 763
+    }
+  ],
+  "lines": [
+    {
+      "scene": "coldopen",
+      "text": "There are 309 roles in this company that can never be empty.",
+      "say": "There are three hundred and nine roles in this company that can never be empty.",
+      "start": 96,
+      "end": 243
+    },
+    {
+      "scene": "coldopen",
+      "text": "Not for a week. Not for a night.",
+      "start": 256,
+      "end": 352
+    },
+    {
+      "scene": "lights",
+      "text": "Each one keeps this plant safe, running and performing.",
+      "start": 488,
+      "end": 597
+    },
+    {
+      "scene": "lights",
+      "text": "Talent Management at OQ RPI exists to answer three questions the business cannot afford to get wrong.",
+      "start": 616,
+      "end": 850
+    },
+    {
+      "scene": "lights",
+      "text": "Which roles matter most? Who is ready to take them? And what must we build before we need it?",
+      "start": 860,
+      "end": 1061
+    },
+    {
+      "scene": "know",
+      "text": "It starts with an honest conversation: 680 performance reviews this year.",
+      "say": "It starts with an honest conversation: six hundred and eighty performance reviews this year.",
+      "start": 1185,
+      "end": 1366
+    },
+    {
+      "scene": "know",
+      "text": "Then, once a year, our leaders sit in one room and decide who will lead us next.",
+      "start": 1376,
+      "end": 1530
+    },
+    {
+      "scene": "know",
+      "text": "Today, 43 are ready to step up.",
+      "say": "Today, forty-three are ready to step up.",
+      "start": 1540,
+      "end": 1618
+    },
+    {
+      "scene": "grow",
+      "text": "Then we build them.",
+      "start": 1748,
+      "end": 1794
+    },
+    {
+      "scene": "grow",
+      "text": "237 leaders through MASAR since 2023. 24 more in ROBBAN this October, with the Center for Creative Leadership.",
+      "say": "Two hundred and thirty-seven leaders through MASAR since twenty twenty-three. Twenty-four more in ROBBAN this October, with the Center for Creative Leadership.",
+      "start": 1801,
+      "end": 2123
+    },
+    {
+      "scene": "grow",
+      "text": "And secondments across OQ and national institutions bring new capability home.",
+      "start": 2133,
+      "end": 2302
+    },
+    {
+      "scene": "secure",
+      "text": "And we plan every handover.",
+      "start": 2390,
+      "end": 2461
+    },
+    {
+      "scene": "secure",
+      "text": "132 of our 309 critical roles already have a named successor. Named is not the same as ready: readiness is confirmed in the Talent Review.",
+      "say": "One hundred and thirty-two of our three hundred and nine critical roles already have a named successor. Named is not the same as ready: readiness is confirmed in the Talent Review.",
+      "start": 2471,
+      "end": 2842
+    },
+    {
+      "scene": "secure",
+      "text": "By 2030, 242 roles held today by international experts are planned to be led by Omanis, with each expert staying on as a mentor.",
+      "say": "By twenty thirty, two hundred and forty-two roles held today by international experts are planned to be led by Omanis, with each expert staying on as a mentor.",
+      "start": 2858,
+      "end": 3189
+    },
+    {
+      "scene": "secure",
+      "text": "99 Omani successors are already named.",
+      "say": "Ninety-nine Omani successors are already named.",
+      "start": 3196,
+      "end": 3313
+    },
+    {
+      "scene": "sustain",
+      "text": "When people go above and beyond, we notice: 1,369 recognitions in eight months.",
+      "say": "When people go above and beyond, we notice. One thousand, three hundred and sixty-nine recognitions in eight months.",
+      "start": 3407,
+      "end": 3660
+    },
+    {
+      "scene": "sustain",
+      "text": "All of it lives in one place, the Talent Command Center, live for every leader.",
+      "start": 3676,
+      "end": 3832
+    },
+    {
+      "scene": "sustain",
+      "text": "Ask it a question, in English or in Arabic, and it answers.",
+      "start": 3842,
+      "end": 3962
+    },
+    {
+      "scene": "proof",
+      "text": "This is the capability OQ RPI is building.",
+      "start": 4074,
+      "end": 4183
+    },
+    {
+      "scene": "proof",
+      "text": "Continuity for the roles that matter most. Leaders ready before they are needed. And Omani talent at the heart of the business.",
+      "start": 4193,
+      "end": 4469
+    },
+    {
+      "scene": "proof",
+      "text": "The remaining 177 critical roles are the work ahead.",
+      "say": "The remaining one hundred and seventy-seven critical roles are the work ahead.",
+      "start": 4488,
+      "end": 4645
+    },
+    {
+      "scene": "handover",
+      "text": "The future is not built by systems.",
+      "start": 4823,
+      "end": 4903
+    },
+    {
+      "scene": "handover",
+      "text": "It is built by people.",
+      "start": 4928,
+      "end": 4982
+    },
+    {
+      "scene": "handover",
+      "text": "OQ RPI Talent Management. Building tomorrow's talent, together.",
+      "start": 5034,
+      "end": 5198
+    }
+  ],
+  "durationInFrames": 5460
+}

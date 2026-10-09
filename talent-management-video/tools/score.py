@@ -24,7 +24,9 @@ Outputs
   src/film/music.json            musical landmarks (bar grid, logo hit frame)
 
 Usage:  python tools/score.py
+        python tools/score.py --film src/v5 --work audio-src/v5 --out public/audio/soundtrack-v5.mp3
 """
+import argparse
 import json
 import os
 import subprocess
@@ -36,6 +38,13 @@ import soundfile as sf
 from scipy.signal import butter, sosfilt, sosfiltfilt, fftconvolve
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ap = argparse.ArgumentParser()
+ap.add_argument("--film", default="src/film", help="folder with script.json + timeline.json; music.json is written there")
+ap.add_argument("--work", default="audio-src", help="folder with voice_raw.wav; stems are written here")
+ap.add_argument("--out", default="public/audio/soundtrack.mp3")
+args = ap.parse_args()
+FILM = os.path.join(ROOT, args.film)
+WORK = os.path.join(ROOT, args.work)
 SF = "/usr/share/sounds/sf3/MuseScore_General_Full.sf3"
 SR = 48000
 BPM = 76.0
@@ -43,7 +52,9 @@ BEAT = 60.0 / BPM
 BAR = BEAT * 4
 TPB = 480  # MIDI ticks per beat
 
-tl = json.load(open(os.path.join(ROOT, "src/film/timeline.json")))
+tl = json.load(open(os.path.join(FILM, "timeline.json")))
+# Optional per-film music map (v5); without it the v4 scene names are used.
+MUSIC = json.load(open(os.path.join(FILM, "script.json"), encoding="utf-8")).get("music")
 FPS = tl["fps"]
 TOTAL = tl["durationInFrames"] / FPS
 SCENES = [(s["id"], s["start"] / FPS, (s["start"] + s["duration"]) / FPS) for s in tl["scenes"]]
@@ -68,8 +79,13 @@ def bar_of(t):
 last_line_end = LINES[-1][2]
 LOGO_BAR = int(np.ceil((last_line_end + 0.9) / BAR))
 LOGO_T = LOGO_BAR * BAR
-CLIMAX_BAR = bar_of(scene_start["connections"])
-QUIET_BAR = bar_of(scene_start["future"])          # "built by people": pull back
+CLIMAX_BAR = bar_of(scene_start[MUSIC["climax"] if MUSIC else "connections"])
+QUIET_BAR = bar_of(scene_start[MUSIC["reflect"] if MUSIC else "future"])          # "built by people": pull back
+OPEN_ID = SCENES[0][0]
+RISE_ID = SCENES[1][0] if MUSIC else "ecosystem"     # second scene: first rise accent
+DATA_IDS = ("know", "sustain") if MUSIC else ("performance", "platform")
+DARK_KEYS = (SCENES[1][1], SCENES[2][1]) if MUSIC else None
+HUSH_ID = MUSIC.get("hush") if MUSIC else None
 PRIDE_BAR = bar_of(LINES[-2][1]) - 1                 # rebuild into the final lines
 END_BAR = int(np.ceil(TOTAL / BAR)) + 1
 
@@ -85,6 +101,11 @@ def section(bar):
     if bar >= CLIMAX_BAR:
         return "climax"
     sid = scene_at(t + 0.01)
+    if MUSIC:
+        for sec in ("intro", "rise", "momentum"):
+            if sid in MUSIC[sec]:
+                return sec
+        return "innovation"
     if sid == "opening":
         return "intro"
     if sid in ("why", "ecosystem"):
@@ -295,7 +316,7 @@ for bar in range(END_BAR):
         for i in range(16 if sec in ("innovation", "climax", "pride") else 8):
             step = BEAT / 4 if sec in ("innovation", "climax", "pride") else BEAT / 2
             drums.note(swing(t0 + i * step, 0.004), 0.1, 70, hum(30 + 30 * e + (10 if i % 2 == 0 else 0)))  # maracas
-    if sec == "rise" and scene_at(t0) == "ecosystem":
+    if sec == "rise" and scene_at(t0) == RISE_ID:
         drums.note(t0, 0.3, 36, 70)
         drums.note(t0 + 2 * BEAT, 0.3, 36, 62)
     # Timpani: climax downbeats and pride rolls.
@@ -320,7 +341,7 @@ parts = {
 }
 
 N = int((TOTAL + 1) * SR)
-stem_dir = os.path.join(ROOT, "audio-src", "stems")
+stem_dir = os.path.join(WORK, "stems")
 os.makedirs(stem_dir, exist_ok=True)
 
 
@@ -450,22 +471,26 @@ fx = np.zeros((N, 2))
 for i, (sid, a, b) in enumerate(SCENES):
     if i == 0:
         continue
+    if sid == HUSH_ID:
+        # the handover: no impact, the room goes quiet
+        place(fx, a + 0.4, shimmer(4.0, 86), 0.45)
+        continue
     place(fx, a - 0.95, whoosh(1.7), 0.32)
     place(fx, a, boom(2.5)[:, None] * np.array([[1, 1]]), 0.16)
 # Opening: particle birth + network burst
 place(fx, 0.6, shimmer(5.0, 86), 0.9)
-place(fx, scene_start["opening"] + 2.6, riser(1.6), 0.35)
-place(fx, scene_start["opening"] + 4.2, boom(4.0)[:, None] * np.array([[1, 1]]), 0.38)
-place(fx, scene_start["opening"] + 4.2, shimmer(4.0, 79), 0.8)
+place(fx, scene_start[OPEN_ID] + 2.6, riser(1.6), 0.35)
+place(fx, scene_start[OPEN_ID] + 4.2, boom(4.0)[:, None] * np.array([[1, 1]]), 0.38)
+place(fx, scene_start[OPEN_ID] + 4.2, shimmer(4.0, 79), 0.8)
 # Ecosystem reveal, climax, logo
-for t, g in ((scene_start["ecosystem"], 0.32), (CLIMAX_BAR * BAR, 0.45)):
+for t, g in ((scene_start[RISE_ID], 0.32), (CLIMAX_BAR * BAR, 0.45)):
     place(fx, t - 4.0, riser(4.0), g)
     place(fx, t, boom(4.0)[:, None] * np.array([[1, 1]]), g + 0.08)
 place(fx, LOGO_T - 5.0, riser(5.0), 0.5)
 place(fx, LOGO_T, boom(5.0)[:, None] * np.array([[1, 1]]), 0.7)
 place(fx, LOGO_T, shimmer(6.0, 79), 1.3)
 # Data blips in the analytics-heavy scenes (very low level)
-for sid in ("performance", "platform"):
+for sid in DATA_IDS:
     a = scene_start[sid]
     for k in range(10):
         place(fx, a + 2.0 + k * 0.9 + rng.random() * 0.3, blip(1400 + 300 * (k % 4)), 0.25)
@@ -525,7 +550,8 @@ music += reverb(fx, hall, 0.25) * db(-3)
 t = t_axis(N)
 dark = lp(music, 2200, order=2)
 climax_t = CLIMAX_BAR * BAR
-w_dark = np.interp(t, [0, scene_start["why"], scene_start["performance"], climax_t, LOGO_T, LOGO_T + 4, TOTAL],
+dk = DARK_KEYS or (scene_start["why"], scene_start["performance"])
+w_dark = np.interp(t, [0, dk[0], dk[1], climax_t, LOGO_T, LOGO_T + 4, TOTAL],
                    [0.75, 0.6, 0.35, 0.0, 0.0, 0.35, 0.65])
 music = music * (1 - w_dark)[:, None] + dark * w_dark[:, None]
 
@@ -533,10 +559,18 @@ music = music * (1 - w_dark)[:, None] + dark * w_dark[:, None]
 music *= np.clip(t / 1.2, 0, 1)[:, None]
 music *= np.clip((TOTAL + 0.5 - t) / 4.0, 0, 1)[:, None]
 
+# Hush: the music drops almost to silence through the handover picture and
+# comes back, soft, under the first line of that scene.
+if HUSH_ID:
+    h0 = scene_start[HUSH_ID] + 0.3
+    h1 = next(a for sid, a, b in LINES if sid == HUSH_ID) - 0.15
+    hush = np.interp(t, [h0 - 0.8, h0 + 0.6, h1 - 0.5, h1 + 1.2], [1.0, 0.06, 0.06, 1.0])
+    music *= hush[:, None]
+
 # ---------------------------------------------------------------- narrator
 print("processing narrator…")
-vpath = os.path.join(ROOT, "audio-src", "voice_raw.wav")
-vproc = os.path.join(ROOT, "audio-src", "voice_processed.wav")
+vpath = os.path.join(WORK, "voice_raw.wav")
+vproc = os.path.join(WORK, "voice_processed.wav")
 subprocess.run([
     "ffmpeg", "-y", "-v", "error", "-i", vpath, "-af",
     "highpass=f=70,"
@@ -580,10 +614,10 @@ print(f"voice over music during speech: {20 * np.log10(v_rms / m_rms):.1f} dB")
 # gentle glue: soft-knee saturation then normalise
 peak = np.abs(mix).max()
 mix = np.tanh(mix / peak * 1.4) / np.tanh(1.4)
-mix_path = os.path.join(ROOT, "audio-src", "mix_pre.wav")
+mix_path = os.path.join(WORK, "mix_pre.wav")
 sf.write(mix_path, mix.astype(np.float32), SR)
 
-out_mp3 = os.path.join(ROOT, "public", "audio", "soundtrack.mp3")
+out_mp3 = os.path.join(ROOT, args.out)
 subprocess.run([
     "ffmpeg", "-y", "-v", "error", "-i", mix_path, "-af",
     "loudnorm=I=-16:TP=-1.2:LRA=7", "-ar", str(SR), "-b:a", "256k", out_mp3,
@@ -594,5 +628,5 @@ music_json = {
     "logoHitFrame": round(LOGO_T * FPS),
     "climaxFrame": round(CLIMAX_BAR * BAR * FPS),
 }
-json.dump(music_json, open(os.path.join(ROOT, "src/film/music.json"), "w"), indent=2)
+json.dump(music_json, open(os.path.join(FILM, "music.json"), "w"), indent=2)
 print("wrote", out_mp3, music_json)

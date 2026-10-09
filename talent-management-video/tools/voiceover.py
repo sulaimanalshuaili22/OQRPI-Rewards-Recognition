@@ -14,6 +14,7 @@ reference narrator (60% am_michael, 20% bm_daniel, 20% bm_lewis).
 
 Usage:
   python tools/voiceover.py --model kokoro-v1.0.onnx --voices voices-v1.0.bin
+  python tools/voiceover.py ... --film src/v5 --voice-out audio-src/v5/voice_raw.wav
 """
 import argparse
 import json
@@ -29,13 +30,15 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--model", required=True)
 ap.add_argument("--voices", required=True)
 ap.add_argument("--speed", type=float, default=0.97)
+ap.add_argument("--film", default="src/film", help="folder holding script.json; timeline.json is written there")
+ap.add_argument("--voice-out", default="audio-src/voice_raw.wav")
 ap.add_argument("--espeak-lib", default="/usr/lib/x86_64-linux-gnu/libespeak-ng.so.1")
 ap.add_argument("--espeak-data", default="/usr/lib/x86_64-linux-gnu/espeak-ng-data")
 args = ap.parse_args()
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SR = 48000
-script = json.load(open(os.path.join(ROOT, "src/film/script.json"), encoding="utf-8"))
+script = json.load(open(os.path.join(ROOT, args.film, "script.json"), encoding="utf-8"))
 FPS = script["fps"]
 
 k = Kokoro(args.model, args.voices,
@@ -168,6 +171,7 @@ for sc in script["scenes"]:
         timeline["lines"].append({
             "scene": sc["id"],
             "text": line["text"],
+            **({"say": line["say"]} if "say" in line else {}),
             "start": round(start * FPS),
             "end": round(end * FPS) + 8,
         })
@@ -189,9 +193,9 @@ for start, y in voice:
     out[i0:i0 + len(y)] += y
 out /= max(1e-9, np.abs(out).max()) / 0.9
 
-os.makedirs(os.path.join(ROOT, "audio-src"), exist_ok=True)
-sf.write(os.path.join(ROOT, "audio-src/voice_raw.wav"), out, SR, subtype="PCM_24")
-json.dump(timeline, open(os.path.join(ROOT, "src/film/timeline.json"), "w"), indent=2)
+os.makedirs(os.path.dirname(os.path.join(ROOT, args.voice_out)), exist_ok=True)
+sf.write(os.path.join(ROOT, args.voice_out), out, SR, subtype="PCM_24")
+json.dump(timeline, open(os.path.join(ROOT, args.film, "timeline.json"), "w"), indent=2)
 
 speech = sum(len(y) for _, y in voice) / SR
 print(f"film {total / FPS:.1f}s, speech {speech:.1f}s ({100 * speech / (total / FPS):.0f}%)")
