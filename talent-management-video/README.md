@@ -30,25 +30,6 @@ The **workforce journey** runs through scenes 4–8: the same employee
 (Talent ID 0147) becomes data, lands in Future Leaders, is identified as a
 successor and passes through the leadership gates.
 
-## v5 "The Handover" (three-minute hero cut)
-
-`src/v5/` is a separate film built on the panel review in
-`deliverables/V4-EXPERT-PANEL-REVIEW.md`. It is one story in four acts (the
-stakes, the system, the proof, the handover). It uses real OQ RPI photography
-and footage with 2D overlays, and has no 3D world, so it renders on a CPU
-without WebGL. See `deliverables/V5-CHANGES.md`.
-
-```bash
-# narrator + timeline, then score + mix (same tools as v4, pointed at src/v5)
-.venv/bin/python tools/voiceover.py --model kokoro-v1.0.onnx --voices voices-v1.0.bin --film src/v5 --voice-out audio-src/v5/voice_raw.wav
-.venv/bin/python tools/score.py --film src/v5 --work audio-src/v5 --out public/audio/soundtrack-v5.mp3
-.venv/bin/python tools/srt.py src/v5/timeline.json deliverables/OQRPI-Talent-Management-v5.en.srt
-
-npx remotion render TalentManagement-v5 out/v5-1080p.mp4
-# stills for review, bundling once (BROWSER=<local chrome> if the download is blocked)
-node tools/stills.mjs TalentManagement-v5 out 200 1600 5300
-```
-
 ## Quick start
 
 ```bash
