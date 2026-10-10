@@ -104,6 +104,122 @@ const Count: React.FC<{ readonly value: number; readonly from: number; readonly 
   return <>{fmt(Math.round(value * ramp(frame, from, from + dur)))}</>;
 };
 
+/* ------------------------------------------ 02 RPI 2030 Transformation */
+
+/** The RPI 2030 Transformation house, as published (levels 1–4). */
+const HOUSE = {
+  aspiration: "PROFITABLE AND SUSTAINABLE BUSINESS CAPITALIZING ON NATIONAL RESOURCES",
+  objectives: ["Profitable business resilient to market environment", "Competitive and sustainable operation", "Customer's preferred choice"],
+  priorities: [
+    { title: "Business Excellence", items: ["Safety and Operational Excellence focus", "Maximized margin capture and commercial excellence", "Financial discipline", "Digitalization driving productivity"] },
+    { title: "Flexibility & Profitability", items: ["Feed and yield flexibility, close to the market", "Broadened, differentiated value-add grades", "Strategic partnerships and innovation"] },
+    { title: "Sustainability & Compliance", items: ["Compliance with regulations", "Decarbonization and energy efficiency", "Sustainable business model aligned with the market"] },
+    { title: "People & Culture", items: ["Performance driven, customer centric culture", "Future-ready organization", "Strong collaboration and organizational agility"] },
+  ],
+  execution: "Transformation Plan 2.0 (2025–2027) · Transformation Plan 3.0 (2028–2030)",
+} as const;
+
+const Transformation: React.FC = () => {
+  const frame = useCurrentFrame();
+  const from = S("transformation") + 4;
+  const to = end("transformation", 12);
+  const direction = cue("transformation", 0, "clear direction");
+  const core = cue("transformation", 0, "strengthening the core");
+  const pillar = cue("transformation", 1, "People and Culture");
+  const outcome = cue("transformation", 1, "a future-ready organization");
+  const t = ramp(frame, from, to, (x) => x);
+  const house = ramp(frame, from + 20, from + 50, EASE.out);
+  const focus = ramp(frame, pillar - 6, pillar + 22, EASE.inOut);
+  const lit = ramp(frame, outcome - 4, outcome + 16, EASE.out);
+  const tag = ramp(frame, outcome + 14, outcome + 34, EASE.out);
+  // the house: right of the headline, levels stacked
+  const X = 600;
+  const W = 1230;
+  const level = (i: number) => ramp(frame, from + 24 + i * 8, from + 48 + i * 8, EASE.out);
+  const cardW = (W - 24) / 2;
+  const cardH = 196;
+  return (
+    <Window from={from} to={to}>
+      <AbsoluteFill style={{ background: COLORS.midnightDeep, overflow: "hidden" }}>
+        <Img src={staticFile("photos/plant-sunset-skyline.jpg")} style={{ position: "absolute", left: 0, top: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 60%", scale: String(1.04 + 0.05 * t), translate: `${-16 * t}px 0px` }} />
+        <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,15,23,0.86) 0%, rgba(4,15,23,0.74) 55%, rgba(4,15,23,0.42) 100%)" }} />
+        <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(4,15,23,0.55) 0%, rgba(4,15,23,0) 40%)" }} />
+        <Headline kicker="RPI 2030 TRANSFORMATION" title="Strengthening the core, while embracing the future" from={direction - 10} />
+        {/* level 1: aspiration */}
+        <div style={{ position: "absolute", left: X, top: 240, width: W, opacity: house * level(0), translate: `0px ${(1 - level(0)) * 14}px`, fontFamily: FONT }}>
+          <svg width={W} height={26} style={{ display: "block" }}>
+            <polyline points={`${W * 0.08},26 ${W / 2},2 ${W * 0.92},26`} fill="none" stroke="rgba(156,219,217,0.55)" strokeWidth={2} />
+          </svg>
+          <div style={{ padding: "11px 20px", background: "linear-gradient(180deg, #13324A, #0B2231)", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 6, textAlign: "center", fontSize: 15, fontWeight: 800, letterSpacing: 1.5, color: COLORS.white }}>{HOUSE.aspiration}</div>
+        </div>
+        {/* level 2: objectives */}
+        <div style={{ position: "absolute", left: X, top: 336, width: W, display: "flex", gap: 12, opacity: level(1), translate: `0px ${(1 - level(1)) * 14}px` }}>
+          {HOUSE.objectives.map((o) => (
+            <div key={o} style={{ flex: 1, padding: "12px 14px", background: "linear-gradient(180deg, #13324A, #0B2231)", border: "1px solid rgba(255,255,255,0.14)", borderRadius: 6, fontFamily: FONT, fontSize: 15, fontWeight: 700, color: COLORS.white, textAlign: "center", textTransform: "uppercase", letterSpacing: 0.6 }}>{o}</div>
+          ))}
+        </div>
+        {/* level 3: strategic priorities */}
+        {HOUSE.priorities.map((p, i) => {
+          const pc = p.title === "People & Culture";
+          const col = i % 2;
+          const row = Math.floor(i / 2);
+          const k = level(2 + i * 0.5);
+          const dim = pc ? 0 : focus * 0.72;
+          return (
+            <div
+              key={p.title}
+              style={{
+                position: "absolute",
+                left: X + col * (cardW + 24),
+                top: 406 + row * (cardH + 16),
+                width: cardW,
+                height: cardH,
+                boxSizing: "border-box",
+                padding: "16px 20px",
+                borderRadius: 10,
+                background: pc ? `linear-gradient(165deg, rgba(20,58,72,${0.96}) 0%, rgba(9,30,40,0.97) 100%)` : "rgba(236,239,241,0.94)",
+                border: pc ? `1px solid rgba(255,130,0,${0.35 + 0.55 * focus})` : "1px solid rgba(255,255,255,0.3)",
+                borderTop: pc ? `3px solid ${COLORS.orange}` : "3px solid rgba(8,31,44,0.4)",
+                boxShadow: pc ? `0 -8px 40px -10px rgba(255,130,0,${0.6 * focus}), 0 30px 70px rgba(0,0,0,${0.3 + 0.3 * focus})` : "0 20px 50px rgba(0,0,0,0.3)",
+                fontFamily: FONT,
+                color: pc ? COLORS.white : "#13324A",
+                opacity: k * (1 - dim),
+                scale: String(0.96 + 0.04 * k + (pc ? 0.05 * focus : 0)),
+                translate: `0px ${(1 - k) * 14 - (pc ? 8 * focus : 0)}px`,
+                zIndex: pc ? 2 : 1,
+              }}
+            >
+              <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: 0.4, textTransform: "uppercase", color: pc ? COLORS.white : "#081F2C" }}>{p.title}</div>
+              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                {p.items.map((it) => {
+                  const hot = pc && it === "Future-ready organization";
+                  return (
+                    <div key={it} style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, fontSize: hot ? 19 + 3 * lit : 16, fontWeight: hot ? 800 : 500, color: hot ? (lit > 0.5 ? COLORS.orange : COLORS.white) : pc ? "#DCE6EA" : "#2B4656", lineHeight: 1.35, textShadow: hot ? `0 0 ${18 * lit}px rgba(255,130,0,0.8)` : undefined }}>
+                      <span style={{ width: hot ? 10 : 6, height: hot ? 10 : 6, borderRadius: 5, background: hot ? COLORS.orange : pc ? COLORS.lightBlue : "#52626B", flexShrink: 0, boxShadow: hot ? `0 0 ${12 * lit}px ${COLORS.orange}` : undefined }} />
+                      {it}
+                    </div>
+                  );
+                })}
+              </div>
+              {pc ? (
+                <div style={{ position: "absolute", right: 18, bottom: 14, display: "flex", alignItems: "center", gap: 10, padding: "7px 14px", borderRadius: 999, background: "rgba(255,130,0,0.14)", border: `1px solid ${COLORS.orange}`, fontSize: 14, fontWeight: 700, letterSpacing: 1.2, color: "#FFD9B0", opacity: tag, translate: `0px ${(1 - tag) * 8}px` }}>
+                  <IconTile icon="people" accent="orange" size={24} />
+                  DELIVERED BY TALENT MANAGEMENT
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+        {/* level 4: execution */}
+        <div style={{ position: "absolute", left: X, top: 406 + 2 * (cardH + 16) + 2, width: W, padding: "12px 0", textAlign: "center", border: "1px solid rgba(156,219,217,0.35)", borderRadius: 6, fontFamily: FONT, fontSize: 17, fontWeight: 700, color: COLORS.white, background: "rgba(8,31,44,0.6)", opacity: level(4) * (1 - 0.5 * focus) }}>
+          {HOUSE.execution}
+        </div>
+        <div style={{ position: "absolute", left: 96, top: 870, fontFamily: FONT, fontSize: 15, color: MUTED, opacity: ramp(frame, core, core + 20) }}>Source: RPI 2030 Transformation · Strategic priorities, level 3</div>
+      </AbsoluteFill>
+    </Window>
+  );
+};
+
 /* ---------------------------------------------------- 09 Nationalization */
 
 // Roles in the order OQ RPI specified (Oct 2026 revision). The years run with
@@ -666,6 +782,8 @@ const THEMES_CLOSE: ReadonlyArray<{ readonly say: string; readonly word: string;
   { say: "next generation of leaders", word: "Leadership", color: COLORS.orange, slot: 172 },
   { say: "advancing Omani talent", word: "National Talent", color: COLORS.lightBlue, slot: 248 },
 ];
+/** The 2030 goal the three themes serve: a second column in the clear sky right of them. */
+const GOAL = { say: "the future-ready organization", x: 640, slot: 146 };
 /** below the skyline: the titles start hidden behind the plant */
 const BEHIND = 560;
 
@@ -693,6 +811,30 @@ const Investing: React.FC = () => {
               </div>
             );
           })}
+          {/* the goal: rises through the engineer into the clear sky right of the themes */}
+          {(() => {
+            const c = cue("future", 1, GOAL.say);
+            const k = interpolate(frame, [c - 8, c + 40], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.2, 0.7, 0.2, 1) });
+            if (k <= 0) return null;
+            const y = interpolate(k, [0, 1], [BEHIND + 40, GOAL.slot]);
+            const arrow = ramp(k, 0.8, 1);
+            return (
+              <>
+                <svg width={120} height={40} style={{ position: "absolute", left: GOAL.x - 120, top: 183, overflow: "visible", opacity: arrow }}>
+                  <path d={`M ${8} 20 L ${8 + 92 * arrow} 20`} stroke={COLORS.orange} strokeWidth={3} strokeLinecap="round" />
+                  <path d="M 100 12 L 110 20 L 100 28" fill="none" stroke={COLORS.orange} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" opacity={arrow} />
+                </svg>
+                <div style={{ position: "absolute", left: GOAL.x, top: y, display: "flex", alignItems: "center", gap: 18, fontFamily: FONT, whiteSpace: "nowrap", opacity: ramp(k, 0, 0.25) }}>
+                  <div style={{ width: 6, height: 116, borderRadius: 3, background: COLORS.orange, boxShadow: `0 0 16px ${COLORS.orange}` }} />
+                  <div>
+                    <div style={{ fontSize: 42, fontWeight: 700, letterSpacing: -0.5, color: COLORS.orange, lineHeight: 1.05, textShadow: "0 2px 22px rgba(4,20,34,0.7), 0 1px 3px rgba(4,20,34,0.6)" }}>Future-ready</div>
+                    <div style={{ fontSize: 42, fontWeight: 700, letterSpacing: -0.5, color: COLORS.orange, lineHeight: 1.05, textShadow: "0 2px 22px rgba(4,20,34,0.7), 0 1px 3px rgba(4,20,34,0.6)" }}>organization</div>
+                    <div style={{ marginTop: 8, fontSize: 14, fontWeight: 800, letterSpacing: 2.5, color: "#FFD9B0", textShadow: "0 1px 6px rgba(4,20,34,0.8)" }}>RPI 2030 TRANSFORMATION</div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
           {/* the plant and the engineer, in front of the titles */}
           <Img src={staticFile("photos/IMG_2798-3-foreground.png")} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
         </div>
@@ -705,6 +847,7 @@ const Investing: React.FC = () => {
 
 export const Showcase: React.FC = () => (
   <>
+    <Transformation />
     <Nationalization />
     <Rewards />
     <CommandHub />

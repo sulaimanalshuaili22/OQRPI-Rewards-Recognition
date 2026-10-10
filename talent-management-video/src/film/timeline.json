@@ -8,82 +8,88 @@
       "duration": 678
     },
     {
-      "id": "why",
-      "name": "02 Why Talent Management",
+      "id": "transformation",
+      "name": "02 RPI 2030 Transformation",
       "start": 678,
-      "duration": 875
+      "duration": 659
+    },
+    {
+      "id": "why",
+      "name": "03 Why Talent Management",
+      "start": 1337,
+      "duration": 878
     },
     {
       "id": "ecosystem",
-      "name": "03 The ecosystem",
-      "start": 1553,
-      "duration": 650
+      "name": "04 The ecosystem",
+      "start": 2215,
+      "duration": 767
     },
     {
       "id": "performance",
-      "name": "04 Performance Management",
-      "start": 2203,
-      "duration": 532
+      "name": "05 Performance Management",
+      "start": 2982,
+      "duration": 677
     },
     {
       "id": "ninebox",
-      "name": "05 The 9-Box Matrix",
-      "start": 2735,
-      "duration": 397
+      "name": "06 The 9-Box Matrix",
+      "start": 3659,
+      "duration": 402
     },
     {
       "id": "critical",
-      "name": "06 Critical Roles",
-      "start": 3132,
-      "duration": 512
+      "name": "07 Critical Roles",
+      "start": 4061,
+      "duration": 509
     },
     {
       "id": "succession",
-      "name": "07 Succession Planning",
-      "start": 3644,
-      "duration": 378
+      "name": "08 Succession Planning",
+      "start": 4570,
+      "duration": 370
     },
     {
       "id": "leadership",
-      "name": "08 Leadership Development",
-      "start": 4022,
-      "duration": 346
+      "name": "09 Leadership Development",
+      "start": 4940,
+      "duration": 347
     },
     {
       "id": "nationalization",
-      "name": "09 Nationalization",
-      "start": 4368,
-      "duration": 416
+      "name": "10 Nationalization",
+      "start": 5287,
+      "duration": 419
     },
     {
       "id": "secondment",
-      "name": "10 Secondment Management",
-      "start": 4784,
-      "duration": 463
+      "name": "11 Secondment Management",
+      "start": 5706,
+      "duration": 452
     },
     {
       "id": "rewards",
-      "name": "11 Rewards & Recognition",
-      "start": 5247,
-      "duration": 396
+      "name": "12 Rewards & Recognition",
+      "start": 6158,
+      "duration": 399
     },
     {
       "id": "platform",
-      "name": "12 The Talent Command Center",
-      "start": 5643,
-      "duration": 857
+      "name": "13 The Talent Command Center",
+      "start": 6557,
+      "duration": 859
     },
     {
       "id": "connections",
-      "name": "13 How everything connects",
-      "start": 6500,
-      "duration": 790
+      "name": "14 How everything connects",
+      "start": 7416,
+      "duration": 799
     },
     {
       "id": "future",
-      "name": "14 The future of OQ RPI",
-      "start": 7290,
-      "duration": 1078
+      "name": "15 The future of OQ RPI",
+      "start": 8215,
+      "duration": 1199
     }
   ],
   "lines": [
@@ -100,137 +106,149 @@
       "end": 554
     },
     {
+      "scene": "transformation",
+      "text": "OQ RPI's 2030 Transformation has a clear direction: strengthening the core, while embracing the future.",
+      "start": 750,
+      "end": 998
+    },
+    {
+      "scene": "transformation",
+      "text": "At its heart, the People and Culture pillar commits us to one outcome Talent Management exists to deliver: a future-ready organization.",
+      "start": 1017,
+      "end": 1297
+    },
+    {
       "scene": "why",
       "text": "In a fast-changing energy sector, OQ RPI must have the right talent, in the right roles, at the right time.",
-      "start": 726,
-      "end": 955
+      "start": 1385,
+      "end": 1611
     },
     {
       "scene": "why",
       "text": "That means knowing which roles are critical, who is ready to step into them, and where capability must be built.",
-      "start": 971,
-      "end": 1184
+      "start": 1627,
+      "end": 1841
     },
     {
       "scene": "why",
       "text": "OQ RPI Talent Management exists to build sustainable workforce capability, strengthen our leadership pipeline, and secure the future of our business.",
-      "start": 1203,
-      "end": 1513
+      "start": 1860,
+      "end": 2175
     },
     {
       "scene": "ecosystem",
       "text": "At OQ RPI, Talent Management is not a collection of separate programmes. It is one integrated ecosystem.",
-      "start": 1613,
-      "end": 1888
+      "start": 2275,
+      "end": 2538
     },
     {
       "scene": "ecosystem",
-      "text": "Brought together in our Talent Command Center, each programme generates insights, actions and data that strengthen the next.",
-      "start": 1928,
-      "end": 2157
+      "text": "Brought together in our Talent Command Center, each programme generates insights, actions and data that strengthen the next, all aimed at one goal: a future-ready organization.",
+      "start": 2578,
+      "end": 2936
     },
     {
       "scene": "performance",
       "text": "Performance Management enables us to assess, measure, and recognise employee contribution while supporting strategic talent decisions.",
-      "start": 2257,
-      "end": 2551
+      "start": 3036,
+      "end": 3332
     },
     {
       "scene": "performance",
-      "text": "It is the foundation for every talent decision we make.",
-      "start": 2570,
-      "end": 2695
+      "text": "It is the foundation for every talent decision we make, and for the performance-driven culture our 2030 Transformation calls for.",
+      "start": 3351,
+      "end": 3619
     },
     {
       "scene": "ninebox",
       "text": "Through our annual Talent Review, the 9-Box Matrix combines performance and potential to identify our future leaders and accelerate their development.",
-      "start": 2777,
-      "end": 3080
+      "start": 3701,
+      "end": 4009
     },
     {
       "scene": "critical",
       "text": "Not every position carries the same level of risk.",
-      "start": 3174,
-      "end": 3274
+      "start": 4103,
+      "end": 4202
     },
     {
       "scene": "critical",
       "text": "Our Critical Roles framework identifies the positions whose vacancy would impact safety, operations, leadership continuity, or business performance.",
-      "start": 3293,
-      "end": 3604
+      "start": 4221,
+      "end": 4530
     },
     {
       "scene": "succession",
       "text": "Succession Planning identifies successors for critical positions, then develops them until they are ready, to support business continuity.",
-      "start": 3686,
-      "end": 3964
+      "start": 4612,
+      "end": 4882
     },
     {
       "scene": "leadership",
       "text": "Leadership development programmes such as MASAR and ROBBAN build future leaders and strengthen organisational capability.",
-      "start": 4064,
-      "end": 4322
+      "start": 4982,
+      "end": 5241
     },
     {
       "scene": "nationalization",
       "text": "Nationalization develops and advances Omani talent into critical roles and leadership positions, with a named successor for every role we nationalize.",
-      "start": 4410,
-      "end": 4738
+      "start": 5329,
+      "end": 5660
     },
     {
       "scene": "secondment",
       "text": "Through Secondment Management, OQ RPI employees gain broader exposure across OQ and national institutions, accelerating their learning and bringing new capability home.",
-      "start": 4826,
-      "end": 5207
+      "start": 5748,
+      "end": 6118
     },
     {
       "scene": "rewards",
       "text": "Rewards and Recognition, from Testahal to Above and Beyond, reinforces the behaviours we value and celebrates the people who make our success possible.",
-      "start": 5289,
-      "end": 5597
+      "start": 6200,
+      "end": 6511
     },
     {
       "scene": "platform",
       "text": "The OQ RPI Talent Command Center is the central platform that brings it all together: Performance Management, Succession Planning, Critical Roles, Leadership Development, Nationalization, Secondment, and Rewards and Recognition, giving every leader real-time visibility.",
-      "start": 5697,
-      "end": 6253
+      "start": 6611,
+      "end": 7170
     },
     {
       "scene": "platform",
       "text": "And our Talent Assistant answers any question on talent data, in English or Arabic.",
-      "start": 6269,
-      "end": 6448
+      "start": 7186,
+      "end": 7364
     },
     {
       "scene": "connections",
       "text": "Together, these initiatives form the OQ RPI Talent Management ecosystem, transforming data into decisions, potential into capability, and employees into future leaders.",
-      "start": 6608,
-      "end": 6987
+      "start": 7524,
+      "end": 7914
     },
     {
       "scene": "connections",
       "text": "For every employee, it means clear expectations, real development, and a visible path to grow with OQ RPI.",
-      "start": 7006,
-      "end": 7250
+      "start": 7933,
+      "end": 8175
     },
     {
       "scene": "future",
       "text": "The future is not built by systems. It is built by people.",
-      "start": 7350,
-      "end": 7494
+      "start": 8275,
+      "end": 8418
     },
     {
       "scene": "future",
-      "text": "By investing in our people today, OQ RPI is protecting critical capability, building its next generation of leaders, and advancing Omani talent for the future.",
-      "start": 7525,
-      "end": 7863
+      "text": "By investing in our people today, OQ RPI is protecting critical capability, building its next generation of leaders, and advancing Omani talent, the future-ready organization our 2030 Transformation calls for.",
+      "start": 8449,
+      "end": 8909
     },
     {
       "scene": "future",
       "text": "OQ RPI Talent Management. Building tomorrow's talent, together.",
-      "start": 7897,
-      "end": 8061
+      "start": 8943,
+      "end": 9107
     }
   ],
-  "durationInFrames": 8368
+  "durationInFrames": 9414
 }

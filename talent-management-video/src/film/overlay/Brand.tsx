@@ -128,6 +128,7 @@ export const EndCard: React.FC = () => {
             <span style={{ color: COLORS.orange, fontStyle: "italic", opacity: tag(1) }}>{COMMAND_CENTER.tagline[1]}</span>
           </div>
           <div style={{ fontFamily: FONT, fontSize: 18, letterSpacing: 8, marginRight: -8, color: COLORS.lightBlue, opacity: tag(2), marginTop: 22 }}>{COMMAND_CENTER.footer}</div>
+          <div style={{ fontFamily: FONT, fontSize: 17, fontWeight: 500, color: "rgba(255,255,255,0.7)", opacity: tag(3), marginTop: 30 }}>Serving the RPI 2030 Transformation</div>
         </Lockup>
       </div>
       <div style={{ position: "absolute", right: 80, top: 60 }}>

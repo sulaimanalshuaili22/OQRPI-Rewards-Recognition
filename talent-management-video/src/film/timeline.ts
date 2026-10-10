@@ -8,6 +8,7 @@ export const CLIMAX = music.climaxFrame;
 
 export type SceneId =
   | "opening"
+  | "transformation"
   | "why"
   | "ecosystem"
   | "performance"

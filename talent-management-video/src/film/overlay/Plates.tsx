@@ -42,6 +42,9 @@ const PHOTOS: Record<string, { readonly focus: string }> = {
   "tablet-sunset": { focus: "50% 45%" },
   "walk-glass": { focus: "40% 45%" },
   "site-dusk-aerial": { focus: "50% 55%" },
+  // Oct 2026: the polymer plant at blue hour (Polymers Operations) and the plant skyline at sunset
+  "polymer-operation": { focus: "40% 55%" },
+  "plant-sunset-skyline": { focus: "50% 55%" },
 };
 
 /** OQ RPI people, for the photo wall ("its people"). */
@@ -119,8 +122,8 @@ export const SHOTS: Shot[] = [
   single("team-meeting-live", cue("why", 2, "OQ RPI Talent Management exists"), 3.4, [1.0, 1.04]),
   // 03 — OQ
   single("oq-lobby", S("ecosystem"), 2.6),
-  // 04 — contribution, recognised: an engineer on site with the work in hand
-  single("site-engineer-drawings", S("performance"), 2.6, [1.0, 1.08]),
+  // 05 — Polymers Operations at blue hour: the plant the Sr Panel Operator runs
+  single("polymer-operation", S("performance"), 3.0, [1.0, 1.1]),
   // 05 — a talent review in session
   single("talent-review", S("ninebox"), 2.5),
   // 06 — the control room: the roles whose vacancy would impact safety and operations

@@ -94,7 +94,7 @@ const OpeningOverlay: React.FC = () => {
       <AbsoluteFill style={{ background: "radial-gradient(ellipse 42% 30% at 50% 50%, rgba(3,13,20,0.82) 0%, rgba(3,13,20,0.55) 55%, rgba(3,13,20,0) 100%)", opacity: inT }} />
       <Lockup width={LOCKUP_W} sub={sub} logoStyle={{ opacity: inT, filter: `blur(${(1 - inT) * 12}px)`, scale: String(0.94 + 0.06 * inT) }}>
         <div style={{ marginTop: 34, fontFamily: FONT, fontSize: 28, fontWeight: 500, color: COLORS.orange, letterSpacing: 1, whiteSpace: "nowrap", opacity: prop, translate: `0px ${(1 - prop) * 12}px`, textShadow: "0 2px 14px rgba(0,0,0,0.8)" }}>
-          Protecting critical capability · Building future leaders · Advancing Omani talent
+          RPI 2030 Transformation · People & Culture · Future-ready organization
         </div>
       </Lockup>
     </AbsoluteFill>
@@ -150,7 +150,7 @@ const THEMES: ReadonlyArray<{ readonly word: string; readonly at: () => number }
   { word: "Leadership", at: () => cue("why", 2, "leadership pipeline") },
   { word: "Performance", at: () => cue("why", 2, "leadership pipeline") + 22 },
   { word: "Succession", at: () => cue("why", 2, "secure the future") - 10 },
-  { word: "Future Readiness", at: () => cue("why", 2, "secure the future") + 14 },
+  { word: "Future-ready organization", at: () => cue("why", 2, "secure the future") + 14 },
 ];
 const ROW = 102;
 
@@ -755,18 +755,19 @@ export const Overlays: React.FC = () => {
 export const TopLayer: React.FC = () => {
   const frame = useCurrentFrame();
   const chapters: Array<[SceneId, string, string]> = [
-    ["why", "02", "Why Talent Management"],
-    ["ecosystem", "03", "The Talent Management ecosystem"],
-    ["performance", "04", "Performance Management"],
-    ["ninebox", "05", "9-Box Talent Matrix"],
-    ["critical", "06", "Critical Roles"],
-    ["succession", "07", "Succession Planning"],
-    ["leadership", "08", "Leadership Development · MASAR · ROBBAN"],
-    ["nationalization", "09", "Nationalization"],
-    ["secondment", "10", "Secondment Management"],
-    ["rewards", "11", "Rewards & Recognition"],
-    ["platform", "12", "Talent Command Center"],
-    ["connections", "13", "How everything connects"],
+    ["transformation", "02", "RPI 2030 Transformation"],
+    ["why", "03", "Why Talent Management"],
+    ["ecosystem", "04", "The Talent Management ecosystem"],
+    ["performance", "05", "Performance Management"],
+    ["ninebox", "06", "9-Box Talent Matrix"],
+    ["critical", "07", "Critical Roles"],
+    ["succession", "08", "Succession Planning"],
+    ["leadership", "09", "Leadership Development · MASAR · ROBBAN"],
+    ["nationalization", "10", "Nationalization"],
+    ["secondment", "11", "Secondment Management"],
+    ["rewards", "12", "Rewards & Recognition"],
+    ["platform", "13", "Talent Command Center"],
+    ["connections", "14", "How everything connects"],
   ];
   return (
     <AbsoluteFill>

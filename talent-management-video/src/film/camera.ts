@@ -63,7 +63,9 @@ const KEYS: Key[] = [
   k("opening", 8.5, O, [4, 3, 21], [0, 0, 0], 36, { bokeh: 3 }),
   k("opening", 14, O, [-9, 6, 33], [0, 0, 0], 40, { bokeh: 2.5 }),
   k("opening", 19.0, O, [-5, 9, 40], [0, -3, 0], 40, { bokeh: 2.5 }),
-  // 02 — dive down into the refinery digital twin
+  // 02 — RPI 2030 Transformation (a full-frame 2D scene): the camera parks at the top of the dive
+  k("transformation", 0.6, W, [-20, 6, 24], [0, 3, 0], 40, { bokeh: 3, fog: 0.013 }),
+  // 03 — dive down into the refinery digital twin
   k("why", 1.4, W, [-20, 6, 24], [0, 3, 0], 40, { bokeh: 3, fog: 0.013 }),
   k("why", 10, W, [-10, 8.5, 21], [3, 3.5, -3], 38, { bokeh: 3 }),
   k("why", 21, W, [12, 5.5, 11], [0, 4, -4], 38, { bokeh: 3 }),

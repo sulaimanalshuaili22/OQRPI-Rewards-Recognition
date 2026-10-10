@@ -87,7 +87,7 @@ def section(bar):
     sid = scene_at(t + 0.01)
     if sid == "opening":
         return "intro"
-    if sid in ("why", "ecosystem"):
+    if sid in ("transformation", "why", "ecosystem"):
         return "rise"
     if sid in ("performance", "ninebox", "critical", "succession", "leadership"):
         return "momentum"

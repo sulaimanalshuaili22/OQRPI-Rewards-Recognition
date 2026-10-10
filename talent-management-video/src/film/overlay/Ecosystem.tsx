@@ -304,6 +304,7 @@ export const EcosystemScene: React.FC = () => {
   const one = cue("ecosystem", 0, "It is one integrated");
   const command = cue("ecosystem", 1, "Talent Command Center");
   const each = cue("ecosystem", 1, "each programme");
+  const goal = cue("ecosystem", 1, "a future-ready organization");
   const lineEnd1 = linesOf("ecosystem")[1].end;
   const assembled = ramp(frame, one - 6, one + 40, EASE.inOut);
   // convergence: on "It is one integrated ecosystem" the programmes fly into
@@ -353,7 +354,8 @@ export const EcosystemScene: React.FC = () => {
               <Img src={staticFile("brand/oq-rpi-logo-white.png")} style={{ height: 46 }} />
               <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: 4, color: COLORS.lightBlue, marginTop: 14 }}>TALENT MANAGEMENT</div>
               <div style={{ fontSize: 30, fontWeight: 300, color: COLORS.white, marginTop: 4, lineHeight: 1.15 }}>One integrated ecosystem</div>
-              <div style={{ fontSize: 16, color: COLORS.orange, marginTop: 10, opacity: ramp(frame, command, command + 16) }}>Brought together in the Talent Command Center</div>
+              <div style={{ fontSize: 16, color: COLORS.orange, marginTop: 10, opacity: ramp(frame, command, command + 16) * (1 - ramp(frame, goal - 8, goal + 4)) }}>Brought together in the Talent Command Center</div>
+              <div style={{ position: "absolute", bottom: 26, fontSize: 17, fontWeight: 700, color: COLORS.orange, letterSpacing: 0.3, opacity: ramp(frame, goal - 4, goal + 16), translate: `0px ${(1 - ramp(frame, goal - 4, goal + 16)) * 8}px` }}>One goal: a future-ready organization</div>
             </>
           }
         />
