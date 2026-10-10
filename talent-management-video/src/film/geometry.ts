@@ -41,9 +41,8 @@ export const DNA_INDICATORS = [
   { label: "Skills", s: 0.12 },
   { label: "Performance", s: 0.28 },
   { label: "Potential", s: 0.44 },
-  { label: "Certifications", s: 0.6 },
-  { label: "Readiness", s: 0.76 },
-  { label: "Leadership", s: 0.92 },
+  { label: "Readiness", s: 0.7 },
+  { label: "Leadership", s: 0.9 },
 ];
 export const DNA_FLOW: V3[] = [
   add(SET.performance as V3, [1.5, 13.5, 0]),

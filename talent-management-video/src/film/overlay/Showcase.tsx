@@ -11,13 +11,13 @@
  *  14 Investing in people   — what the investment is creating
  */
 import type React from "react";
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
-import { Video } from "@remotion/media";
-import { ACCENT, IconTile, Status, type Accent, type StatusKind } from "./Dash";
+import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import { ACCENT, IconTile, Status, type Accent } from "./Dash";
 import type { IconName } from "../../components/Icons";
 import { cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import { EASE, ramp } from "../math";
 import { COLORS, FONT } from "../../theme";
+import { CYCLE, RING, stageAngle } from "../ecosystem";
 import { AS_OF, LEADERSHIP, NATIONALIZATION, PERFORMANCE, REWARDS, SECONDMENT, SUCCESSION, fmt } from "../data";
 
 const S = (id: SceneId) => SCENES[id].start;
@@ -30,7 +30,13 @@ const NATIONALIZATION_PLANNED = NATIONALIZATION.plan.reduce((a, p) => a + p.n, 0
 /* ---------------------------------------------------------------- shared */
 
 /** Fades a full-screen scene in and out over the frame window. */
-export const Window: React.FC<{ readonly from: number; readonly to: number; readonly children: React.ReactNode }> = ({ from, to, children }) => {
+export const Window: React.FC<{
+  readonly from: number;
+  readonly to: number;
+  readonly children: React.ReactNode;
+  /** "full": fade and depth move out; "fade": a plain fade, so the frame holds its geometry for a match cut */
+  readonly exit?: "full" | "fade";
+}> = ({ from, to, children, exit = "full" }) => {
   const frame = useCurrentFrame();
   if (frame < from || frame > to) return null;
   const o = ramp(frame, from, from + 16, EASE.inOut) * (1 - ramp(frame, to - 16, to, EASE.inOut));
@@ -38,7 +44,7 @@ export const Window: React.FC<{ readonly from: number; readonly to: number; read
   // and a perspective snap in and out so the scene arrives from depth
   const t = (frame - from) / Math.max(1, to - from);
   const inD = 1 - ramp(frame, from, from + 26, EASE.out);
-  const outD = ramp(frame, to - 22, to, EASE.inOut);
+  const outD = exit === "full" ? ramp(frame, to - 22, to, EASE.inOut) : 0;
   return (
     <AbsoluteFill style={{ opacity: o, perspective: 2400, overflow: "hidden" }}>
       <AbsoluteFill
@@ -100,12 +106,14 @@ const Count: React.FC<{ readonly value: number; readonly from: number; readonly 
 
 /* ---------------------------------------------------- 09 Nationalization */
 
+// Roles in the order OQ RPI specified (Oct 2026 revision). The years run with
+// the position on the timeline rail, as before; they are illustrative.
 const ROLES: Array<{ readonly role: string; readonly tier: "Technical" | "Leadership"; readonly year: string }> = [
   { role: "Process Engineer", tier: "Technical", year: "2026" },
-  { role: "Control Room Supervisor", tier: "Technical", year: "2027" },
+  { role: "Area Engineer", tier: "Technical", year: "2027" },
   { role: "Reliability Engineer", tier: "Technical", year: "2027" },
-  { role: "Section Head", tier: "Leadership", year: "2028" },
-  { role: "Department Manager", tier: "Leadership", year: "2029" },
+  { role: "Sr Panel Operator", tier: "Technical", year: "2028" },
+  { role: "Department Head", tier: "Leadership", year: "2029" },
 ];
 
 const Nationalization: React.FC = () => {
@@ -117,7 +125,7 @@ const Nationalization: React.FC = () => {
   const leadership = cue("nationalization", 0, "leadership positions");
   const named = cue("nationalization", 0, "a named successor");
   // handover moments: technical roles on "critical roles", leadership roles on "leadership positions"
-  const handover = [critical - 6, critical + 16, critical + 38, leadership, leadership + 24];
+  const handover = [critical - 6, critical + 12, critical + 30, critical + 48, leadership + 30];
   const progress = interpolate(frame, [develops, named + 30], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE.inOut });
   const yearIdx = progress * (NATIONALIZATION.plan.length - 1);
   const cumulative = NATIONALIZATION.plan.reduce((acc, p, i) => acc + p.n * Math.max(0, Math.min(1, yearIdx - i + 1)), 0);
@@ -259,7 +267,10 @@ const Nationalization: React.FC = () => {
 
 /* ---------------------------------------------- 11 Rewards & Recognition */
 
-type Award = { readonly title: string; readonly line: string; readonly accent: Accent; readonly kind: "medal" | "shield" | "star" | "photo" };
+type Award = { readonly title: string; readonly line: string; readonly accent: Accent; readonly kind: "medal" | "shield" | "star" | "cup" };
+
+/** The OQ Excellence Award cup, cut out from its photograph (true alpha, natural edges). */
+const CUP_RATIO = 408 / 295;
 
 /** The OQ RPI presentation plaque, redrawn as a shield: navy velvet, cream panel, gold plate. */
 const Shield: React.FC<{ readonly size: number }> = ({ size }) => (
@@ -288,12 +299,8 @@ const Shield: React.FC<{ readonly size: number }> = ({ size }) => (
 
 const Emblem: React.FC<{ readonly kind: Award["kind"]; readonly color: string; readonly size: number }> = ({ kind, color, size }) => {
   if (kind === "shield") return <Shield size={size} />;
-  if (kind === "photo") {
-    return (
-      <div style={{ width: size, height: size * 1.25, overflow: "hidden", borderRadius: 10, filter: "drop-shadow(0 0 22px rgba(247,197,72,0.5))", maskImage: "radial-gradient(ellipse 60% 70% at 50% 50%, black 55%, transparent 100%)" }}>
-        <Img src={staticFile("photos/excellence-award.png")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-      </div>
-    );
+  if (kind === "cup") {
+    return <Img src={staticFile("photos/excellence-award-cup.png")} style={{ width: size, height: size * CUP_RATIO, filter: "drop-shadow(0 0 26px rgba(247,197,72,0.45)) drop-shadow(0 18px 24px rgba(0,0,0,0.45))" }} />;
   }
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" style={{ overflow: "visible", filter: `drop-shadow(0 0 18px ${color}88)` }}>
@@ -331,10 +338,15 @@ const Rewards: React.FC = () => {
     { title: "Above & Beyond", line: `${aab.rewarded} recognised in 2026`, accent: "orange", kind: "medal", at: cue("rewards", 0, "Above and Beyond"), x: 610, y: 500 },
     { title: "Grand Winner Award", line: `${REWARDS.grandWinner.total} certificates · OQ RPI's highest honour`, accent: "gold", kind: "shield", at: cue("rewards", 0, "celebrates the people"), x: 960, y: 420, hero: true },
     { title: "Testahal", line: `${fmt(testahal.rewarded)} employees recognised`, accent: "green", kind: "medal", at: cue("rewards", 0, "Testahal"), x: 1310, y: 500 },
-    { title: "OQ Excellence Award", line: "Outstanding contributions across OQ", accent: "gold", kind: "photo", at: cue("rewards", 0, "we value") + 6, x: 1670, y: 540 },
+    { title: "OQ Excellence Award", line: "Recognises projects across all OQ assets", accent: "gold", kind: "cup", at: cue("rewards", 0, "we value") - 4, x: 1612, y: 540 },
   ];
   const hero = awards[2].at;
   const burst = ramp(frame, hero, hero + 30, EASE.out);
+  // OQ Excellence: from its entrance (about 3:02) the cup rises slowly onto a
+  // tier of its own above the OQ RPI awards: the OQ-wide, project award
+  const exAt = awards[4].at;
+  const rise = interpolate(frame, [exAt + 4, exAt + 120], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.45, 0, 0.15, 1) });
+  const RISE = 300;
   return (
     <Window from={from} to={to}>
       <Stage light="50% 30%">
@@ -355,15 +367,16 @@ const Rewards: React.FC = () => {
           const t = ramp(frame, a.at - 4, a.at + 18, EASE.out);
           const set = ramp(frame, from + 10, from + 34, EASE.out);
           const color = ACCENT[a.accent];
-          const size = a.hero ? 210 : 150;
-          const w = a.hero ? 400 : 320;
+          const cup = a.kind === "cup";
+          const size = a.hero ? 210 : cup ? 120 + 46 * rise : 150;
+          const w = a.hero ? 400 : cup ? 420 : 320;
           return (
             <div
               key={a.title}
               style={{
                 position: "absolute",
                 left: a.x - w / 2,
-                top: a.y - (a.hero ? 60 : 30),
+                top: a.y - (a.hero ? 60 : 30) - (cup ? RISE * rise + (CUP_RATIO * size - 150) : 0),
                 width: w,
                 textAlign: "center",
                 fontFamily: FONT,
@@ -373,15 +386,22 @@ const Rewards: React.FC = () => {
                 scale: String(0.94 + 0.06 * t + (a.hero ? 0.04 * burst : 0)),
               }}
             >
+              {cup ? (
+                // a shaft of light from above that the cup rises into
+                <div style={{ position: "absolute", left: w / 2 - 90, top: -260, width: 180, height: 260 + CUP_RATIO * size, background: "linear-gradient(180deg, rgba(255,226,160,0) 0%, rgba(255,214,140,0.16) 55%, rgba(255,214,140,0.05) 100%)", filter: "blur(10px)", opacity: rise }} />
+              ) : null}
               {a.hero ? (
                 <div style={{ position: "absolute", left: w / 2 - 170, top: -60, width: 340, height: 340, borderRadius: 170, background: `repeating-conic-gradient(from ${frame * 0.3}deg, rgba(247,197,72,0.16) 0deg 6deg, transparent 6deg 18deg)`, maskImage: "radial-gradient(circle, black 30%, transparent 70%)", opacity: burst }} />
               ) : null}
               <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
                 <Emblem kind={a.kind} color={color} size={size} />
               </div>
-              <div style={{ position: "relative", fontSize: a.hero ? 38 : 28, fontWeight: 800, color: COLORS.white, marginTop: 16 }}>{a.title}</div>
-              <div style={{ position: "relative", fontSize: a.hero ? 21 : 18, color: a.hero ? "#F7C548" : COLORS.lightBlue, marginTop: 6, opacity: t }}>{a.line}</div>
+              <div style={{ position: "relative", fontSize: a.hero ? 38 : cup ? 28 + 4 * rise : 28, fontWeight: 800, color: COLORS.white, marginTop: 16, whiteSpace: "nowrap" }}>{a.title}</div>
+              <div style={{ position: "relative", fontSize: a.hero ? 21 : 18, color: a.hero || cup ? "#F7C548" : COLORS.lightBlue, marginTop: 6, opacity: t, whiteSpace: cup ? "nowrap" : undefined }}>{a.line}</div>
               <div style={{ position: "relative", width: 60, height: 3, margin: "12px auto 0", background: color, borderRadius: 2 }} />
+              {cup ? (
+                <div style={{ position: "relative", marginTop: 14, fontSize: 15, fontWeight: 700, letterSpacing: 4, color: "#F7C548", opacity: ramp(rise, 0.6, 1) }}>OQ-WIDE AWARD</div>
+              ) : null}
             </div>
           );
         })}
@@ -516,13 +536,34 @@ const CommandHub: React.FC = () => {
 
 /* ------------------------------------------------ 13 For every employee */
 
-const P0: [number, number] = [150, 900];
-const P1: [number, number] = [760, 900];
+/** Where the ecosystem cycle lands when it shrinks into the employee scene. */
+export const MINI = { x: 252, y: 846, s: 0.22 };
+const P0: [number, number] = [MINI.x + RING.rx * MINI.s + 12, MINI.y];
+const P1: [number, number] = [880, 880];
 const P2: [number, number] = [1120, 330];
 const P3: [number, number] = [1780, 300];
 const bez = (t: number): [number, number] => {
   const u = 1 - t;
   return [0, 1].map((k) => u * u * u * P0[k] + 3 * u * u * t * P1[k] + 3 * u * t * t * P2[k] + t * t * t * P3[k]) as [number, number];
+};
+
+/** The ecosystem ring in miniature, its stages lighting as the path reaches them. */
+const MiniRing: React.FC<{ readonly lit: (i: number) => number; readonly o: number }> = ({ lit, o }) => {
+  const rx = RING.rx * MINI.s;
+  const ry = RING.ry * MINI.s;
+  return (
+    <div style={{ position: "absolute", left: 0, top: 0, width: 1920, height: 1080, opacity: o }}>
+      <svg width={1920} height={1080} style={{ position: "absolute", inset: 0, overflow: "visible" }}>
+        <ellipse cx={MINI.x} cy={MINI.y} rx={rx} ry={ry} fill="none" stroke="rgba(156,219,217,0.45)" strokeWidth={2} />
+        {CYCLE.map((c, i) => {
+          const a = stageAngle(i);
+          const L = lit(i);
+          return <circle key={c.id} cx={MINI.x + Math.cos(a) * rx} cy={MINI.y + Math.sin(a) * ry} r={7 + 3 * L} fill={L > 0.5 ? COLORS.orange : "#2E5566"} stroke="#061722" strokeWidth={2} style={{ filter: L > 0.5 ? "drop-shadow(0 0 8px rgba(255,130,0,0.9))" : undefined }} />;
+        })}
+      </svg>
+      <div style={{ position: "absolute", left: MINI.x - 120, width: 240, top: MINI.y + ry + 14, textAlign: "center", fontFamily: FONT, fontSize: 15, fontWeight: 700, letterSpacing: 3, color: COLORS.lightBlue }}>THE ECOSYSTEM</div>
+    </div>
+  );
 };
 
 const Journey: React.FC = () => {
@@ -531,9 +572,9 @@ const Journey: React.FC = () => {
   const from = start - 8;
   const to = end("connections", 12);
   const steps = [
-    { t: 0.2, say: "clear expectations", title: "Clear expectations", line: "Goals and an annual performance conversation", metric: `${fmt(PERFORMANCE.rated2026)} employees rated in 2026`, icon: "performance" as IconName, accent: "teal" as Accent },
-    { t: 0.52, say: "real development", title: "Real development", line: "IDPs, MASAR, ROBBAN and secondments", metric: `${LEADERSHIP.places2023to2026} leadership places since 2023`, icon: "learning" as IconName, accent: "purple" as Accent },
-    { t: 0.84, say: "a visible path", title: "A visible path to grow", line: "Succession and career pathways", metric: `${SUCCESSION.peopleInPipeline} people in the succession pipeline`, icon: "succession" as IconName, accent: "orange" as Accent },
+    { t: 0.2, stage: 1, say: "clear expectations", title: "Clear expectations", line: "Goals and an annual performance conversation", metric: `${fmt(PERFORMANCE.rated2026)} employees rated in 2026`, icon: "performance" as IconName, accent: "teal" as Accent },
+    { t: 0.52, stage: 2, say: "real development", title: "Real development", line: "IDPs, MASAR, ROBBAN and secondments", metric: `${LEADERSHIP.places2023to2026} leadership places since 2023`, icon: "learning" as IconName, accent: "purple" as Accent },
+    { t: 0.84, stage: 3, say: "a visible path", title: "A visible path to grow", line: "Succession and career pathways", metric: `${SUCCESSION.peopleInPipeline} people in the succession pipeline`, icon: "succession" as IconName, accent: "orange" as Accent },
   ];
   const head = interpolate(frame, [start, cue("connections", 1, "a visible path") + 40], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE.inOut });
   const N = 80;
@@ -544,7 +585,8 @@ const Journey: React.FC = () => {
   return (
     <Window from={from} to={to}>
       <Stage light="60% 45%">
-        <Headline kicker="FOR EVERY EMPLOYEE" title="A clear path to grow with OQ RPI" from={from + 6} />
+        <Headline kicker="THE SAME ECOSYSTEM, FOR EVERY EMPLOYEE" title="A clear path to grow with OQ RPI" from={from + 6} />
+        <MiniRing o={1} lit={(i) => Math.max(...steps.map((s) => (s.stage === i ? ramp(frame, cue("connections", 1, s.say) - 4, cue("connections", 1, s.say) + 10) : 0)))} />
         <svg width={1920} height={1080} style={{ position: "absolute", inset: 0 }}>
           <defs>
             <linearGradient id="journey" x1="0" y1="1" x2="1" y2="0">
@@ -594,6 +636,9 @@ const Journey: React.FC = () => {
                     <div style={{ fontSize: 26, fontWeight: 700 }}>{s.title}</div>
                   </div>
                 </div>
+                <div style={{ display: "inline-block", marginTop: 10, padding: "3px 10px", borderRadius: 999, border: `1px solid ${COLORS.orange}88`, fontSize: 14, fontWeight: 700, letterSpacing: 1.5, color: "#FFD9B0" }}>
+                  FROM STAGE {CYCLE[s.stage].n} · {CYCLE[s.stage].short.toUpperCase()}
+                </div>
                 <div style={{ fontSize: 17, color: "#C9D6DB", marginTop: 10 }}>{s.line}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, color, marginTop: 6 }}>{s.metric}</div>
               </div>
@@ -607,71 +652,52 @@ const Journey: React.FC = () => {
 
 /* ------------------------------------------- 14 Investing in our people */
 
+/**
+ * The closing plate (IMG_2798-3: an OQ RPI engineer in front of the plant) with
+ * only the three themes. The photograph is layered twice: the full frame
+ * behind the titles and a copy with its sky cut away in front of them, so each
+ * title rises from behind the refinery's skyline into the sky and is hidden by
+ * the real structures until it clears them. Plate, titles and foreground share
+ * one container, so they move as one.
+ */
+const PLATE = { w: 1920, h: Math.round((1920 * 1334) / 2000), top: 0 };
+const THEMES_CLOSE: ReadonlyArray<{ readonly say: string; readonly word: string; readonly color: string; readonly slot: number }> = [
+  { say: "protecting critical capability", word: "Continuity", color: COLORS.turquoise, slot: 96 },
+  { say: "next generation of leaders", word: "Leadership", color: COLORS.orange, slot: 172 },
+  { say: "advancing Omani talent", word: "National Talent", color: COLORS.lightBlue, slot: 248 },
+];
+/** below the skyline: the titles start hidden behind the plant */
+const BEHIND = 560;
+
 const Investing: React.FC = () => {
   const frame = useCurrentFrame();
   const from = cue("future", 1, "By investing") - 6;
   const to = lineEnd("future", 1) + 16;
   const t = ramp(frame, from, to, (x) => x);
-  const rows = [
-    {
-      say: "protecting critical capability",
-      word: "Continuity",
-      proof: "Critical roles mapped, with successors named against them",
-      status: [["inplace", `${fmt(SUCCESSION.criticalRoles)} critical roles · ${fmt(SUCCESSION.rolesWithSuccessor)} with a named successor`]] as Array<[StatusKind, string]>,
-      color: COLORS.turquoise,
-    },
-    {
-      say: "next generation of leaders",
-      word: "Leadership",
-      proof: "Leadership journeys for current and future leaders",
-      status: [["delivered", `${LEADERSHIP.masar.alumni} MASAR alumni, 2023–2025`], ["inplace", `${LEADERSHIP.robban.cohort} leaders, 2026 ROBBAN cohort`]] as Array<[StatusKind, string]>,
-      color: COLORS.orange,
-    },
-    {
-      say: "advancing Omani talent",
-      word: "National talent",
-      proof: "Omani talent progressing into critical and leadership roles",
-      status: [["inplace", `${NATIONALIZATION.omaniSuccessorsNamed} Omani successors named`], ["plan", `${NATIONALIZATION_PLANNED} roles to 2030`]] as Array<[StatusKind, string]>,
-      color: COLORS.lightBlue,
-    },
-  ];
   return (
     <Window from={from} to={to}>
-      <AbsoluteFill style={{ background: COLORS.midnightDeep }}>
-        {/* our people, full frame */}
-        <Video
-          src={staticFile("footage/employees-live.mp4")}
-          muted
-          playbackRate={0.4}
-          objectFit="cover"
-          style={{ position: "absolute", width: "100%", height: "100%", objectPosition: "60% 30%", filter: "blur(1.2px) saturate(1.05)", scale: String(1.06 + 0.06 * t), translate: `${-20 * t}px 0px` }}
-        />
-        <AbsoluteFill style={{ background: "linear-gradient(90deg, rgba(4,15,23,0.94) 0%, rgba(4,15,23,0.86) 38%, rgba(4,15,23,0.35) 70%, rgba(4,15,23,0.25) 100%)" }} />
-        <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,15,23,0.5) 0%, rgba(4,15,23,0) 30%, rgba(4,15,23,0) 70%, rgba(4,15,23,0.7) 100%)" }} />
-        <Headline kicker="INVESTING IN OUR PEOPLE TODAY" title="The capability OQ RPI is building" from={from + 4} />
-        <div style={{ position: "absolute", left: 96, top: 330, display: "flex", flexDirection: "column", gap: 34, fontFamily: FONT }}>
-          {rows.map((r) => {
-            const c = cue("future", 1, r.say);
-            const k = ramp(frame, c - 4, c + 18, EASE.out);
+      <AbsoluteFill style={{ background: COLORS.midnightDeep, overflow: "hidden" }}>
+        <div style={{ position: "absolute", left: 0, top: PLATE.top, width: PLATE.w, height: PLATE.h, transformOrigin: "30% 20%", scale: String(1 + 0.035 * t) }}>
+          <Img src={staticFile("photos/IMG_2798-3.jpg")} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+          {/* deepen the sky behind the titles; the plant and the engineer sit above this */}
+          <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 48% 42% at 18% 12%, rgba(8,31,44,0.62) 0%, rgba(8,31,44,0.3) 55%, rgba(8,31,44,0) 100%)", opacity: ramp(frame, from, from + 40) }} />
+          {THEMES_CLOSE.map((th) => {
+            const c = cue("future", 1, th.say);
+            const k = interpolate(frame, [c - 8, c + 34], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: Easing.bezier(0.2, 0.7, 0.2, 1) });
+            const y = interpolate(k, [0, 1], [BEHIND, th.slot]);
+            if (k <= 0) return null;
             return (
-              <div key={r.word} style={{ display: "flex", gap: 22, alignItems: "stretch", opacity: k, translate: `${(1 - k) * -30}px 0px` }}>
-                <div style={{ width: 5, borderRadius: 3, background: r.color, boxShadow: `0 0 18px ${r.color}` }} />
-                <div>
-                  <div style={{ fontSize: 58, fontWeight: 700, color: COLORS.white, letterSpacing: -1, lineHeight: 1.05 }}>{r.word}</div>
-                  <div style={{ fontSize: 23, color: "#C9D6DB", marginTop: 6 }}>{r.proof}</div>
-                  <div style={{ display: "flex", gap: 22, marginTop: 10 }}>
-                    {r.status.map(([kind, note]) => (
-                      <Status key={note} kind={kind} note={note} size={19} />
-                    ))}
-                  </div>
-                </div>
+              <div key={th.word} style={{ position: "absolute", left: 140, top: y, display: "flex", alignItems: "center", gap: 18, fontFamily: FONT, whiteSpace: "nowrap", opacity: ramp(k, 0, 0.25) }}>
+                <div style={{ width: 6, height: 50, borderRadius: 3, background: th.color, boxShadow: `0 0 16px ${th.color}` }} />
+                <div style={{ fontSize: 56, fontWeight: 700, letterSpacing: -0.5, color: COLORS.white, lineHeight: 1.1, textShadow: "0 2px 22px rgba(4,20,34,0.7), 0 1px 3px rgba(4,20,34,0.6)" }}>{th.word}</div>
               </div>
             );
           })}
+          {/* the plant and the engineer, in front of the titles */}
+          <Img src={staticFile("photos/IMG_2798-3-foreground.png")} style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
         </div>
-        <div style={{ position: "absolute", left: 96, top: 870, fontFamily: FONT, fontSize: 15, color: MUTED, opacity: ramp(frame, from + 30, from + 50) }}>
-          Source: OQ RPI Talent Command Center · as of {AS_OF}
-        </div>
+        {/* a quiet lower edge for the subtitles */}
+        <AbsoluteFill style={{ background: "linear-gradient(180deg, rgba(4,15,23,0) 70%, rgba(4,15,23,0.55) 100%)" }} />
       </AbsoluteFill>
     </Window>
   );
