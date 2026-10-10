@@ -591,7 +591,10 @@ const SuccessionOverlay: React.FC = () => {
         <Tag key={label} at={add(anchors[i], [0, 0.5, 0])} from={times[i]} to={i === 0 ? climbEnd - 10 : i === 4 ? end("succession", 20) : times[i] + 80} label={label} sub={subs[i]} side={i % 2 ? "left" : "right"} accent={i === 0 || i === 4 ? "orange" : "turquoise"} />
       ))}
       <ScreenCard side="left" top={170} from={at("succession", 4.4)} to={end("succession", 10)}>
-        <SuccessionPlanningCard from={at("succession", 4.4)} />
+        {/* 86% (≈480 px): clear of the 3D role tags that pass right of the card */}
+        <div style={{ scale: "0.86", transformOrigin: "0 0" }}>
+          <SuccessionPlanningCard from={at("succession", 4.4)} />
+        </div>
       </ScreenCard>
     </>
   );
