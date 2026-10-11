@@ -70,8 +70,8 @@ const KEYS: Key[] = [
   k("transformation", 6.0, T, [-5, 7.5, 37], [0, 7.5, 0], 38, { bokeh: 2 }),
   k("transformation", 11.0, T, [6, 9.5, 35], [0, 8, 0], 38, { bokeh: 2 }),
   k("transformation", 15.5, T, [10, 7.5, 31], [2.5, 5.5, 0], 38, { bokeh: 2.5 }),
-  k("transformation", 20.0, T, [10, 6, 26.5], [4.5, 3.8, 0.5], 37, { bokeh: 3 }),
-  k("transformation", 25.5, T, [9, 5.5, 24.5], [5, 3.2, 0.8], 36, { bokeh: 3 }),
+  k("transformation", 20.0, T, [12, 6, 27.5], [7, 3.6, 0.5], 37, { bokeh: 3 }),
+  k("transformation", 25.5, T, [12.5, 5.4, 26], [8.5, 3.0, 0.8], 36, { bokeh: 3 }),
   // 03 — dive down into the refinery digital twin
   k("why", 1.4, W, [-20, 6, 24], [0, 3, 0], 40, { bokeh: 3, fog: 0.013 }),
   k("why", 10, W, [-10, 8.5, 21], [3, 3.5, -3], 38, { bokeh: 3 }),

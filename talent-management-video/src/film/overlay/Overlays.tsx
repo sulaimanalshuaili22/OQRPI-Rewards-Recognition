@@ -327,7 +327,7 @@ const TransformationOverlay: React.FC = () => {
       ) : null}
       <Tag at={add(priorityPos(3), [HOUSE_BAR[0] / 2 - 0.3, -HOUSE_BAR[1] / 2 + 0.2, 0.4])} from={pillar + 4} to={outcome + 10} label="People & Culture" sub="The people pillar of the strategy" icon="people" accent="orange" side="right" lift={-46} />
       {/* the tie: Talent Management programmes are part of the strategy */}
-      <Tag at={add(GOAL_POS, [HOUSE_GOAL[0] / 2 - 0.3, 0.1, 0.5])} from={tm + 26} to={endT} label="Talent Management programmes" sub="Part of the RPI 2030 Transformation strategy" icon="leadership" accent="orange" side="right" lift={44} size={26} />
+      <Tag at={add(GOAL_POS, [-HOUSE_GOAL[0] / 2 + 0.3, 0.1, 0.5])} from={tm + 26} to={end("transformation", -30)} label="Talent Management programmes" sub="Part of the RPI 2030 Transformation strategy" icon="leadership" accent="orange" side="left" lift={40} size={26} />
     </>
   );
 };
