@@ -290,15 +290,7 @@ const TransformationOverlay: React.FC = () => {
         return (
           <Anchored key={p.title} at={add(priorityPos(i), [0, 0.3 + lift(i), 0])} from={S0 + 50 + i * 7} to={endT}>
             <div style={{ position: "absolute", transform: "translate(-50%,-50%)", textAlign: "center", fontFamily: FONT, whiteSpace: "nowrap", opacity: dim, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
-              <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: 0.5, textTransform: "uppercase", color: pc && hot > 0.5 ? "#FFD9B0" : COLORS.white }}>{p.title}</div>
-              {p.items.map((it) => {
-                const hotItem = pc && it === "Future-ready organization";
-                return (
-                  <div key={it} style={{ fontSize: hotItem ? 14 + 3 * rise : 13, fontWeight: hotItem ? 800 : 500, color: hotItem && rise > 0 ? COLORS.orange : hotItem && hot > 0.5 ? "#FFE2C2" : COLORS.lightBlue, marginTop: 2 }}>
-                    {it}
-                  </div>
-                );
-              })}
+              <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 0.6, textTransform: "uppercase", color: pc && hot > 0.5 ? "#FFD9B0" : COLORS.white }}>{p.title}</div>
             </div>
           </Anchored>
         );
