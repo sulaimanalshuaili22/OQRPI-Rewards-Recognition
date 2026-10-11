@@ -49,11 +49,14 @@ import {
   stagePos,
   terraceBase,
   tilePos,
-  HOUSE_APEX,
-  HOUSE_APEX_TOP,
+  GOAL_POS,
+  HOUSE_BAR,
   HOUSE_BASE,
+  HOUSE_GOAL,
+  HOUSE_ROOF,
   HOUSE_SLAB,
-  HOUSE_TILE,
+  ROOF_APEX,
+  ROOF_BASE,
   objectivePos,
   priorityPos,
 } from "../geometry";
@@ -383,12 +386,41 @@ export const NineBoxSet: React.FC = () => {
 
 /* =================================================================== 02 */
 /**
- * The RPI 2030 Transformation as a structure: a plinth (execution), four
- * priority tiles (level 3), three objective slabs (level 2) and the
- * aspiration at the apex (level 1), built level by level with the narration.
- * On "People and Culture" that tile lifts and lights; on "a future-ready
- * organization" an orb rises from it, the outcome the structure exists for.
+ * The RPI 2030 Transformation house as glass architecture, frontal: a plinth
+ * (execution), four priority bars, three objective slabs and the roof
+ * (aspiration), rising level by level with the narration. On "People and
+ * Culture" that bar turns orange; on "a future-ready organization" the orange
+ * block slides out of it onto the plinth edge; on the Talent Management line
+ * the block is tied to the programmes of this film.
  */
+const roofShape = (() => {
+  const sh = new THREE.Shape();
+  sh.moveTo(-HOUSE_ROOF.w / 2, 0);
+  sh.lineTo(HOUSE_ROOF.w / 2, 0);
+  sh.lineTo(0, HOUSE_ROOF.h);
+  sh.closePath();
+  return sh;
+})();
+
+const Glass: React.FC<{ readonly size: V3; readonly edge: V3; readonly tint?: string; readonly opacity?: number; readonly fill?: V3; readonly fillOpacity?: number }> = ({ size, edge, tint = "#0f2f42", opacity = 0.62, fill, fillOpacity = 0 }) => (
+  <group>
+    <mesh>
+      <boxGeometry args={v(size)} />
+      <meshStandardMaterial color={tint} metalness={0.45} roughness={0.18} transparent opacity={opacity} />
+    </mesh>
+    {fill && fillOpacity > 0 ? (
+      <mesh>
+        <boxGeometry args={[size[0] + 0.02, size[1] + 0.02, size[2] + 0.02]} />
+        <meshBasicMaterial color={new THREE.Color(...fill)} transparent opacity={fillOpacity} toneMapped={false} />
+      </mesh>
+    ) : null}
+    <lineSegments>
+      <edgesGeometry args={[new THREE.BoxGeometry(...size)]} />
+      <lineBasicMaterial color={new THREE.Color(...edge)} toneMapped={false} />
+    </lineSegments>
+  </group>
+);
+
 export const TransformationSet: React.FC = () => {
   const frame = useCurrentFrame();
   const T = SET.transformation as V3;
@@ -397,59 +429,34 @@ export const TransformationSet: React.FC = () => {
   const future = cue("transformation", 0, "embracing the future");
   const pillar = cue("transformation", 1, "People and Culture");
   const outcome = cue("transformation", 1, "a future-ready organization");
-  const base = ramp(frame, S0 + 10, S0 + 40, EASE.out);
-  const tileIn = (i: number) => ramp(frame, S0 + 26 + i * 7, S0 + 56 + i * 7, EASE.out);
+  const tm = cue("transformation", 2, "Talent Management");
+  const base = ramp(frame, S0 + 10, S0 + 42, EASE.out);
+  const barIn = (i: number) => ramp(frame, S0 + 28 + i * 7, S0 + 58 + i * 7, EASE.out);
   const slabIn = (i: number) => ramp(frame, core + i * 8, core + 30 + i * 8, EASE.out);
-  const apex = ramp(frame, future, future + 36, EASE.out);
+  const roof = ramp(frame, future, future + 40, EASE.out);
   const hot = ramp(frame, pillar, pillar + 24, EASE.out);
-  const rise = ramp(frame, outcome, outcome + 36, EASE.out);
-  const pulse = ((frame - outcome) / 50) % 1;
-  const tileMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#0f2a38", metalness: 0.4, roughness: 0.15, transparent: true, opacity: 0.6 }),
-    [],
-  );
-  const slabMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#123546", metalness: 0.5, roughness: 0.2, transparent: true, opacity: 0.7 }),
-    [],
-  );
-  const lift = (i: number) => (i === 3 ? hot * 1.1 : 0);
-  const orbY = 1.1 + rise * 2.8;
-  const orbPos = add(priorityPos(3), [0, orbY, 0]);
+  const slide = ramp(frame, outcome, outcome + 34, EASE.out);
+  const tie = ramp(frame, tm, tm + 24, EASE.out);
+  const pulse = ((frame - outcome) / 60) % 1;
+  const ice: V3 = [0.05, 0.95, 1.05];
+  const goalPos = lerp3(priorityPos(3), GOAL_POS, slide);
   return (
     <group>
-      <Floor center={add(T, [0, -0.3, 0])} radius={30} cell={1} reveal={base} />
+      <Floor center={add(T, [0, -0.3, 0])} radius={34} cell={1} reveal={base} />
       {/* level 4: the plinth */}
-      <group position={v(add(T, [0, 0.25 - (1 - base) * 2, 0]))} scale={[base, 1, base]}>
-        <mesh material={slabMat}>
-          <boxGeometry args={v(HOUSE_BASE)} />
-        </mesh>
-        <lineSegments>
-          <edgesGeometry args={[new THREE.BoxGeometry(...HOUSE_BASE)]} />
-          <lineBasicMaterial color={new THREE.Color(0.05, 0.9, 1.0)} toneMapped={false} />
-        </lineSegments>
+      <group position={v(add(T, [0, HOUSE_BASE[1] / 2 - (1 - base) * 2.5, 0]))} scale={[base, 1, base]}>
+        <Glass size={HOUSE_BASE} edge={[0.05, 0.7, 0.85]} tint="#0b2434" opacity={0.78} />
       </group>
       {/* level 3: the four priorities */}
       {TRANSFORMATION_2030.priorities.map((_, i) => {
-        const t = tileIn(i);
+        const t = barIn(i);
         const p = priorityPos(i);
         const pc = i === 3;
-        const dim = pc ? 1 : 1 - 0.55 * hot;
-        const edge: V3 = pc ? lerp3([0.1, 1.2, 1.3], HDR.orange, hot) : [0.05 * dim, 0.9 * dim, 1.0 * dim];
+        const dim = pc ? 1 : 1 - 0.5 * hot;
+        const edge: V3 = pc ? lerp3(ice, HDR.orange, hot) : [ice[0] * dim, ice[1] * dim, ice[2] * dim];
         return (
-          <group key={i} position={[p[0], p[1] + lift(i) - (1 - t) * 3, p[2]]} scale={[t, 1, t]}>
-            <mesh material={tileMat}>
-              <boxGeometry args={v(HOUSE_TILE)} />
-            </mesh>
-            <lineSegments>
-              <edgesGeometry args={[new THREE.BoxGeometry(...HOUSE_TILE)]} />
-              <lineBasicMaterial color={new THREE.Color(...edge)} toneMapped={false} />
-            </lineSegments>
-            {pc && hot > 0 ? (
-              <mesh position={[0, 0.16, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[HOUSE_TILE[0] - 0.3, HOUSE_TILE[2] - 0.3]} />
-                <meshBasicMaterial color={new THREE.Color(1.6 * hot, 0.6 * hot, 0.02)} transparent opacity={0.3} toneMapped={false} />
-              </mesh>
-            ) : null}
+          <group key={i} position={[p[0], p[1] - (1 - t) * 2.5, p[2]]} scale={[t, t, 1]}>
+            <Glass size={HOUSE_BAR} edge={edge} tint={pc && hot > 0.5 ? "#5a2a04" : "#0f2f42"} opacity={pc ? 0.62 + 0.3 * hot : 0.62} fill={[1.0, 0.42, 0.04]} fillOpacity={pc ? 0.16 * hot : 0} />
           </group>
         );
       })}
@@ -458,83 +465,73 @@ export const TransformationSet: React.FC = () => {
         const t = slabIn(i);
         const p = objectivePos(i);
         return (
-          <group key={i} position={[p[0], p[1] - (1 - t) * 2.5, p[2]]} scale={[t, 1, t]}>
-            <mesh material={slabMat}>
-              <boxGeometry args={v(HOUSE_SLAB)} />
-            </mesh>
-            <lineSegments>
-              <edgesGeometry args={[new THREE.BoxGeometry(...HOUSE_SLAB)]} />
-              <lineBasicMaterial color={new THREE.Color(...HDR.ice)} toneMapped={false} />
-            </lineSegments>
+          <group key={i} position={[p[0], p[1] - (1 - t) * 2.5, p[2]]} scale={[t, t, 1]}>
+            <Glass size={HOUSE_SLAB} edge={ice} />
           </group>
         );
       })}
-      {/* level 1: the aspiration at the apex */}
-      {apex > 0 ? (
-        <group position={v(add(HOUSE_APEX, [0, (1 - apex) * 3, 0]))} scale={[apex, apex, apex]}>
-          <lineSegments rotation={[0, Math.PI / 4, 0]}>
-            <edgesGeometry args={[new THREE.ConeGeometry(5.2, 4, 4, 1, true)]} />
+      {/* level 1: the roof */}
+      {roof > 0 ? (
+        <group position={v(add(ROOF_BASE, [0, (1 - roof) * 3, -HOUSE_ROOF.d / 2]))} scale={[roof, roof, 1]}>
+          <mesh>
+            <extrudeGeometry args={[roofShape, { depth: HOUSE_ROOF.d, bevelEnabled: false }]} />
+            <meshStandardMaterial color="#10344a" metalness={0.45} roughness={0.18} transparent opacity={0.6} />
+          </mesh>
+          <lineSegments>
+            <edgesGeometry args={[new THREE.ExtrudeGeometry(roofShape, { depth: HOUSE_ROOF.d, bevelEnabled: false })]} />
             <lineBasicMaterial color={new THREE.Color(...HDR.orange)} toneMapped={false} />
           </lineSegments>
-          <Orb position={[0, 2.1, 0]} radius={0.32} color={HDR.white} />
-          <Ring position={[0, 2.1, 0]} radius={0.9 + 0.5 * Math.sin(frame * 0.05)} tube={0.03} color={HDR.orangeSoft} />
+          <Orb position={[0, HOUSE_ROOF.h, HOUSE_ROOF.d / 2]} radius={0.22} color={HDR.white} />
         </group>
       ) : null}
-      {apex > 0 ? <Beam position={add(HOUSE_APEX_TOP, [0, 0, 0])} height={12.4} radius={6.5} color={[1.0, 0.45, 0.05]} opacity={0.14 * apex} /> : null}
-      {/* the structure's lines: each tile feeds the objectives, each objective feeds the apex */}
+      {roof > 0 ? <Beam position={add(ROOF_APEX, [0, 0.2, 0])} height={17} radius={9} color={[1.0, 0.45, 0.05]} opacity={0.1 * roof} /> : null}
+      {/* the connectors of the published chart: roof → objectives, objectives → priorities */}
       <Links
-        count={12 + 3}
+        count={3 + 3}
         write={(i, o) => {
-          if (i < 12) {
-            const tile = Math.floor(i / 3);
-            const obj = i % 3;
-            const k = slabIn(obj) * tileIn(tile);
-            const a = add(priorityPos(tile), [0, 0.15 + lift(tile), 0]);
-            const b = objectivePos(obj);
+          if (i < 3) {
+            const b = add(objectivePos(i), [0, HOUSE_SLAB[1] / 2, 0]);
+            const a = add(ROOF_BASE, [(i - 1) * 7, 0, 0]);
+            const k = roof * slabIn(i);
             o.a.set(a[0], a[1], a[2]);
-            o.b.set(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - 0.15 - a[1]) * k, a[2] + (b[2] - a[2]) * k);
-            const pc = tile === 3;
-            const c = pc ? lerp3(HDR.dim, HDR.orangeSoft, hot) : HDR.dim;
-            o.c.setRGB(c[0] * 0.8, c[1] * 0.8, c[2] * 0.8);
+            o.b.set(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2]);
           } else {
-            const obj = i - 12;
-            const a = add(objectivePos(obj), [0, 0.15, 0]);
-            const b = add(HOUSE_APEX, [0, 0, 0]);
+            const j = i - 3;
+            const a = add(objectivePos(j), [0, -HOUSE_SLAB[1] / 2, 0]);
+            const b = add(T, [(j - 1) * 9.6, 6.1 + HOUSE_BAR[1] / 2, 0]);
+            const k = slabIn(j) * barIn(0);
             o.a.set(a[0], a[1], a[2]);
-            o.b.set(a[0] + (b[0] - a[0]) * apex, a[1] + (b[1] - a[1]) * apex, a[2] + (b[2] - a[2]) * apex);
-            o.c.setRGB(HDR.ice[0] * 0.5, HDR.ice[1] * 0.5, HDR.ice[2] * 0.5);
+            o.b.set(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2]);
           }
+          o.c.setRGB(HDR.orangeSoft[0] * 0.9, HDR.orangeSoft[1] * 0.9, HDR.orangeSoft[2] * 0.9);
         }}
       />
-      {/* energy rising through the structure once the apex is in place */}
+      {/* energy rising through the structure once the roof is on */}
       <GlowPoints
-        count={90}
+        count={70}
         write={(i, o) => {
-          const tile = i % 4;
-          const obj = Math.floor(hash(i, 61) * 3);
-          const u = ((frame - future) / 110 + hash(i, 62)) % 1;
-          const vis = apex * clamp(u * 6) * clamp((1 - u) * 6);
-          const a = add(priorityPos(tile), [(hash(i, 63) - 0.5) * 4, 0.2 + lift(tile), (hash(i, 64) - 0.5) * 2.5]);
-          const b = objectivePos(obj);
-          const c = HOUSE_APEX;
-          const p = u < 0.5 ? lerp3(a, b, u * 2) : lerp3(b, c, (u - 0.5) * 2);
-          o.p.set(p[0], p[1], p[2]);
-          const col = tile === 3 ? lerp3(HDR.ice, HDR.orange, hot) : HDR.ice;
-          o.c.setRGB(col[0] * vis, col[1] * vis, col[2] * vis);
-          o.size = 0.14 * vis;
+          const col = Math.floor(hash(i, 61) * 3);
+          const u = ((frame - future) / 120 + hash(i, 62)) % 1;
+          const vis = roof * clamp(u * 6) * clamp((1 - u) * 6);
+          const x = T[0] + (col - 1) * 9.6 + (hash(i, 63) - 0.5) * 3;
+          const y = T[1] + 2.2 + u * 13;
+          o.p.set(x, y, T[2] + 0.5 + (hash(i, 64) - 0.5) * 0.6);
+          const c = col === 2 && y > T[1] + 3 && y < T[1] + 6.5 ? lerp3(HDR.ice, HDR.orange, hot) : HDR.ice;
+          o.c.setRGB(c[0] * vis, c[1] * vis, c[2] * vis);
+          o.size = 0.12 * vis;
         }}
       />
-      {/* People & Culture lights; the outcome rises from it */}
-      {hot > 0 ? <Beam position={add(priorityPos(3), [0, 8 + lift(3), 0])} height={8} radius={3.2} color={[1.2, 0.5, 0.05]} opacity={0.28 * hot * (1 - 0.5 * rise)} /> : null}
-      <pointLight position={v(add(priorityPos(3), [0, 3, 0]))} intensity={22 * hot} distance={16} color="#ff9030" />
-      {rise > 0 ? (
-        <group>
-          <Orb position={orbPos} radius={0.42 * rise} color={HDR.orange} />
-          <Ring position={orbPos} radius={0.8 + 2.6 * pulse} tube={0.035} color={[HDR.orange[0] * (1 - pulse), HDR.orange[1] * (1 - pulse), 0.02]} />
-          <Ring position={add(priorityPos(3), [0, 0.2 + lift(3), 0])} radius={2.2 + 1.4 * Math.sin(frame * 0.06)} tube={0.03} color={HDR.orangeSoft} />
-          <pointLight position={v(orbPos)} intensity={30 * rise} distance={12} color="#ffb060" />
+      {/* People & Culture lights; the outcome slides out of it */}
+      <pointLight position={v(add(priorityPos(3), [0, 0, 4]))} intensity={9 * hot} distance={16} color="#ff9030" />
+      {slide > 0 ? (
+        <group position={v(goalPos)}>
+          <Glass size={HOUSE_GOAL} edge={HDR.orange} tint="#6a3004" opacity={0.94} fill={[1.0, 0.42, 0.04]} fillOpacity={0.2} />
+          <Ring position={[0, -HOUSE_GOAL[1] / 2 - 0.05, 0]} radius={1.2 + 4 * pulse} tube={0.03} color={[HDR.orange[0] * (1 - pulse), HDR.orange[1] * (1 - pulse), 0.02]} />
+          <pointLight position={[0, 0, 3]} intensity={7 * slide} distance={10} color="#ffb060" />
         </group>
       ) : null}
+      {/* the tie to Talent Management: a light line from the block down to the plinth face */}
+      {tie > 0 ? <Beam position={add(GOAL_POS, [0, -HOUSE_GOAL[1] / 2, 0.2])} height={2.4 * tie} radius={3.6} color={[1.0, 0.5, 0.08]} opacity={0.22 * tie} /> : null}
     </group>
   );
 };

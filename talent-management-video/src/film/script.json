@@ -22,7 +22,7 @@
       "id": "transformation",
       "name": "02 RPI 2030 Transformation",
       "leadIn": 2.4,
-      "tail": 1.6,
+      "tail": 1.8,
       "lines": [
         {
           "text": "OQ RPI 2030 Transformation has a clear direction: strengthening the core, while embracing the future.",
@@ -32,6 +32,10 @@
         {
           "text": "At its heart, the People and Culture pillar commits us to one outcome Talent Management exists to deliver: a future-ready organization.",
           "gap": 0.9
+        },
+        {
+          "text": "Every Talent Management programme in this film is part of that strategy.",
+          "gap": 0.7
         }
       ]
     },

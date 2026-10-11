@@ -31,17 +31,25 @@ export const programPos = (i: number): V3 => {
   return add(SET.ecosystem as V3, [x, y, z]);
 };
 
-/* 02 — the RPI 2030 Transformation house (levels 4 → 1, bottom to top) */
-export const HOUSE_BASE: V3 = [26, 0.5, 15];
-export const HOUSE_TILE: V3 = [9.2, 0.3, 5.8];
-export const HOUSE_SLAB: V3 = [7.2, 0.26, 2.6];
-/** level 3: the four strategic priorities, 2 × 2 on the base; 3 = People & Culture, front right */
-export const priorityPos = (i: number): V3 => add(SET.transformation as V3, [i % 2 ? 5.4 : -5.4, 0.7, i < 2 ? -3.6 : 3.6]);
-/** level 2: the three strategic objectives, floating above */
-export const objectivePos = (i: number): V3 => add(SET.transformation as V3, [(i - 1) * 8.4, 5.6, -0.4]);
-/** level 1: the aspiration, at the apex */
-export const HOUSE_APEX: V3 = add(SET.transformation as V3, [0, 10.6, -0.4]);
-export const HOUSE_APEX_TOP: V3 = add(SET.transformation as V3, [0, 12.6, -0.4]);
+/* 02 — the RPI 2030 Transformation house, upright and frontal (camera on +z) */
+export const HOUSE_BASE: V3 = [31, 1.7, 10];
+export const HOUSE_BAR: V3 = [11.6, 1.9, 0.7];
+export const HOUSE_SLAB: V3 = [8.6, 2.3, 0.7];
+export const HOUSE_GOAL: V3 = [8.2, 1.9, 0.9];
+export const HOUSE_ROOF = { w: 21, h: 5.4, d: 0.6 };
+const H0 = SET.transformation as V3;
+/** level 3: four priority bars, 2 × 2; 3 = People & Culture, bottom right */
+export const priorityPos = (i: number): V3 => add(H0, [i % 2 ? 6.3 : -6.3, i < 2 ? 6.1 : 3.7, 0]);
+/** the Future-ready organization block hangs off People & Culture, in front of the plinth edge */
+export const GOAL_POS: V3 = add(H0, [6.3, 1.65, 1.6]);
+/** level 2: three objective slabs in a row */
+export const objectivePos = (i: number): V3 => add(H0, [(i - 1) * 9.6, 9.1, 0]);
+/** level 1: the roof's base and apex */
+export const ROOF_BASE: V3 = add(H0, [0, 10.9, 0]);
+export const ROOF_APEX: V3 = add(H0, [0, 10.9 + HOUSE_ROOF.h, 0]);
+export const HOUSE_APEX_TOP = ROOF_APEX;
+/** level labels, left of the structure */
+export const levelLabelPos = (level: number): V3 => add(H0, [-17.6, [ROOF_BASE[1] - H0[1] + 2.6, 9.1, 4.9, 0.85][level - 1], 0]);
 
 /* 04 — talent DNA helix */
 export const HELIX = { radius: 1.6, height: 14, turns: 3.2 };

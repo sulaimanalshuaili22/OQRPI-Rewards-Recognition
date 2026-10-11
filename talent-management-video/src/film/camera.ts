@@ -66,12 +66,12 @@ const KEYS: Key[] = [
   k("opening", 19.0, O, [-5, 9, 40], [0, -3, 0], 40, { bokeh: 2.5 }),
   // 02 — the RPI 2030 Transformation structure: arrive low and wide, crane round it as it
   //      builds, then move in on People & Culture and the outcome rising from it
-  k("transformation", 0.5, T, [-19, 6, 24], [0, 3.5, 0], 40, { bokeh: 2.5, fog: 0.011 }),
-  k("transformation", 4.0, T, [-16, 8, 23], [0, 4.5, 0], 40, { bokeh: 2.5 }),
-  k("transformation", 9.0, T, [-4, 11, 25], [0, 6, 0], 40, { bokeh: 2.5 }),
-  k("transformation", 13.0, T, [17, 11, 22], [0, 5.5, 0], 40, { bokeh: 2.5 }),
-  k("transformation", 17.5, T, [17, 8.5, 19], [4, 3.6, 3], 38, { bokeh: 3 }),
-  k("transformation", 21.4, T, [13.5, 8, 16.5], [5.2, 3.9, 3.6], 37, { bokeh: 3.5 }),
+  k("transformation", 0.5, T, [-9, 5, 40], [0, 6.5, 0], 38, { bokeh: 2, fog: 0.009 }),
+  k("transformation", 6.0, T, [-5, 7.5, 37], [0, 7.5, 0], 38, { bokeh: 2 }),
+  k("transformation", 11.0, T, [6, 9.5, 35], [0, 8, 0], 38, { bokeh: 2 }),
+  k("transformation", 15.5, T, [10, 7.5, 31], [2.5, 5.5, 0], 38, { bokeh: 2.5 }),
+  k("transformation", 20.0, T, [10, 6, 26.5], [4.5, 3.8, 0.5], 37, { bokeh: 3 }),
+  k("transformation", 25.5, T, [9, 5.5, 24.5], [5, 3.2, 0.8], 36, { bokeh: 3 }),
   // 03 — dive down into the refinery digital twin
   k("why", 1.4, W, [-20, 6, 24], [0, 3, 0], 40, { bokeh: 3, fog: 0.013 }),
   k("why", 10, W, [-10, 8.5, 21], [3, 3.5, -3], 38, { bokeh: 3 }),

@@ -11,7 +11,7 @@ import {
   HBars,
   StatRows,
 } from "./Dash";
-import { add, EASE, ramp, type V3 } from "../math";
+import { add, EASE, lerp3, ramp, type V3 } from "../math";
 import { SET } from "../layout";
 import { at, cue, FPS, linesOf, SCENES, type SceneId } from "../timeline";
 import {
@@ -23,7 +23,14 @@ import {
   HOST,
   SEATS,
   SUCCESSION_FLOW,
-  HOUSE_APEX_TOP,
+  GOAL_POS,
+  HOUSE_BAR,
+  HOUSE_BASE,
+  HOUSE_GOAL,
+  HOUSE_ROOF,
+  HOUSE_SLAB,
+  ROOF_BASE,
+  levelLabelPos,
   objectivePos,
   priorityPos,
   TILE,
@@ -233,11 +240,19 @@ const ThemeFramework: React.FC = () => {
 
 /* 02 ---------------------------------------------------------------- */
 /**
- * Labels locked to the RPI 2030 structure, in the 9-box's AR language: level
- * names beside the structure, the objectives on their slabs, each priority
- * and its items on its tile, the aspiration at the apex; the People & Culture
- * tag on its cue, and the outcome tag on the orb that rises from it.
+ * Labels locked to the RPI 2030 house, as on the published chart: the level
+ * names down the left, the aspiration in the roof, the objectives and
+ * priorities on their glass, the plan on the plinth face. The Future-ready
+ * block carries its own name; on the Talent Management line it is tied to
+ * the programmes of this film.
  */
+const LEVELS = [
+  ["01", "ASPIRATION", "& VISION"],
+  ["02", "STRATEGIC", "OBJECTIVES"],
+  ["03", "STRATEGIC", "PRIORITIES"],
+  ["04", "EXECUTION", ""],
+] as const;
+
 const TransformationOverlay: React.FC = () => {
   const frame = useCurrentFrame();
   const S0 = SCENES.transformation.start;
@@ -247,17 +262,19 @@ const TransformationOverlay: React.FC = () => {
   const future = cue("transformation", 0, "embracing the future");
   const pillar = cue("transformation", 1, "People and Culture");
   const outcome = cue("transformation", 1, "a future-ready organization");
+  const tm = cue("transformation", 2, "Talent Management");
   const hot = ramp(frame, pillar, pillar + 24, EASE.out);
-  const rise = ramp(frame, outcome, outcome + 36, EASE.out);
-  const lift = (i: number) => (i === 3 ? hot * 1.1 : 0);
-  const head = ramp(frame, direction - 10, direction + 14) * (1 - ramp(frame, endT - 20, endT));
-  const label = (text: string, size = 15) => (
-    <div style={{ position: "absolute", transform: "translate(-50%,-50%)", fontFamily: FONT, fontSize: size, letterSpacing: 4, fontWeight: 700, color: COLORS.lightBlue, whiteSpace: "nowrap", textShadow: "0 0 10px #000" }}>{text}</div>
-  );
+  const slide = ramp(frame, outcome, outcome + 34, EASE.out);
+  // the headline leaves as the narration turns to the pillar, so it never meets the roof
+  const head = ramp(frame, direction - 10, direction + 14) * (1 - ramp(frame, pillar - 24, pillar - 4));
   const T = TRANSFORMATION_2030;
+  const levelAt = [future + 20, core + 16, S0 + 46, S0 + 24];
+  const goalPos = lerp3(priorityPos(3), GOAL_POS, slide);
+  const face = (text: string, size: number, width: number, color: string = COLORS.white) => (
+    <div style={{ position: "absolute", transform: "translate(-50%,-50%)", width, textAlign: "center", fontFamily: FONT, fontSize: size, fontWeight: 700, lineHeight: 1.18, textTransform: "uppercase", letterSpacing: 0.5, color, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>{text}</div>
+  );
   return (
     <>
-      {/* headline, top left, as the 9-box note sits in its scene */}
       <div style={{ position: "absolute", left: 96, top: 138, fontFamily: FONT, opacity: head }}>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ width: 44 * head, height: 3, background: COLORS.orange }} />
@@ -265,54 +282,52 @@ const TransformationOverlay: React.FC = () => {
         </div>
         <div style={{ fontSize: 44, fontWeight: 300, color: COLORS.white, marginTop: 10, letterSpacing: -0.5, translate: `0px ${(1 - head) * 14}px`, textShadow: "0 2px 18px rgba(0,0,0,0.7)" }}>{T.tagline}</div>
       </div>
-      {/* level names, left of the structure */}
-      <Anchored at={add(SET.transformation as V3, [-16.4, 0.9, 7.6])} from={S0 + 40} to={endT}>
-        {label("LEVEL 4 · EXECUTION")}
+      {/* the level names, down the left */}
+      {LEVELS.map(([n, a, b], i) => (
+        <Anchored key={n} at={levelLabelPos(i + 1)} from={levelAt[i]} to={endT} safeX={40}>
+          <div style={{ position: "absolute", transform: "translate(0,-50%)", display: "flex", alignItems: "center", gap: 14, fontFamily: FONT, whiteSpace: "nowrap", textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
+            <span style={{ fontSize: 40, fontWeight: 800, color: COLORS.lightBlue, letterSpacing: -1 }}>{n}</span>
+            <span style={{ width: 2, height: 40, background: COLORS.orange }} />
+            <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: 2, color: COLORS.white, lineHeight: 1.2 }}>
+              {a}
+              {b ? <br /> : null}
+              {b}
+            </span>
+          </div>
+        </Anchored>
+      ))}
+      {/* level 1: the aspiration in the roof */}
+      <Anchored at={add(ROOF_BASE, [0, 2.0, HOUSE_ROOF.d / 2 + 0.05])} from={future + 16} to={endT}>
+        {face(`${T.aspiration[0]} ${T.aspiration[1]}`, 18, 330)}
       </Anchored>
-      <Anchored at={add(SET.transformation as V3, [-16.6, 1.3, -1.5])} from={S0 + 70} to={endT}>
-        {label("LEVEL 3 · STRATEGIC PRIORITIES")}
-      </Anchored>
-      <Anchored at={add(objectivePos(0), [-7.6, 0.3, 0])} from={core + 24} to={endT}>
-        {label("LEVEL 2 · STRATEGIC OBJECTIVES")}
-      </Anchored>
-      {/* level 4: the plans, on the plinth's front edge */}
-      <Anchored at={add(SET.transformation as V3, [0, 0.2, 7.9])} from={S0 + 44} to={endT}>
-        <div style={{ position: "absolute", transform: "translate(-50%,0)", display: "flex", gap: 26, fontFamily: FONT, whiteSpace: "nowrap", textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
-          {T.execution.map((e) => (
-            <span key={e} style={{ fontSize: 16, fontWeight: 600, color: COLORS.white }}>{e}</span>
-          ))}
-        </div>
-      </Anchored>
-      {/* level 3: each priority on its tile */}
+      {/* level 2: the objectives on their slabs */}
+      {T.objectives.map((o, i) => (
+        <Anchored key={o} at={add(objectivePos(i), [0, 0, HOUSE_SLAB[2] / 2 + 0.05])} from={core + 10 + i * 8} to={endT}>
+          {face(o, 16, 230)}
+        </Anchored>
+      ))}
+      {/* level 3: the priorities on their bars */}
       {T.priorities.map((p, i) => {
         const pc = i === 3;
-        const dim = pc ? 1 : 1 - 0.55 * hot;
         return (
-          <Anchored key={p.title} at={add(priorityPos(i), [0, 0.3 + lift(i), 0])} from={S0 + 50 + i * 7} to={endT}>
-            <div style={{ position: "absolute", transform: "translate(-50%,-50%)", textAlign: "center", fontFamily: FONT, whiteSpace: "nowrap", opacity: dim, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
-              <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: 0.6, textTransform: "uppercase", color: pc && hot > 0.5 ? "#FFD9B0" : COLORS.white }}>{p.title}</div>
-            </div>
+          <Anchored key={p.title} at={add(priorityPos(i), [0, 0, HOUSE_BAR[2] / 2 + 0.05])} from={S0 + 44 + i * 7} to={endT}>
+            <div style={{ opacity: pc ? 1 : 1 - 0.45 * hot }}>{face(p.title, 20, 330, pc && hot > 0.5 ? "#FFE2C2" : COLORS.white)}</div>
           </Anchored>
         );
       })}
-      {/* level 2: the objectives on their slabs */}
-      {T.objectives.map((o, i) => (
-        <Anchored key={o} at={add(objectivePos(i), [0, 0.4, 0])} from={core + 10 + i * 8} to={endT}>
-          <div style={{ position: "absolute", transform: "translate(-50%,-100%)", width: 250, textAlign: "center", fontFamily: FONT, fontSize: 16, fontWeight: 700, lineHeight: 1.2, textTransform: "uppercase", letterSpacing: 0.4, color: COLORS.white, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>{o}</div>
-        </Anchored>
-      ))}
-      {/* level 1: the aspiration at the apex */}
-      <Anchored at={add(HOUSE_APEX_TOP, [5.8, -2.4, 0])} from={future + 16} to={endT} safeX={60}>
-        <div style={{ position: "absolute", transform: "translate(0,-50%)", textAlign: "left", fontFamily: FONT, whiteSpace: "nowrap", textShadow: "0 1px 10px rgba(0,0,0,0.9)" }}>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 4, color: COLORS.orange }}>LEVEL 1 · ASPIRATION AND VISION</div>
-          {T.aspiration.map((l) => (
-            <div key={l} style={{ fontSize: 19, fontWeight: 800, letterSpacing: 1, color: COLORS.white, lineHeight: 1.25 }}>{l}</div>
-          ))}
-        </div>
+      {/* level 4: the plan, on the plinth face */}
+      <Anchored at={add(SET.transformation as V3, [0, HOUSE_BASE[1] / 2, HOUSE_BASE[2] / 2 + 0.05])} from={S0 + 40} to={endT} safeX={400}>
+        {face(`${T.execution[0]}  ·  ${T.execution[1]}`, 16, 760)}
       </Anchored>
-      {/* the pillar, then the outcome that rises from it */}
-      <Tag at={add(priorityPos(3), [3.2, 0.3 + lift(3), 0])} from={pillar + 4} to={outcome + 14} label="People & Culture" sub="Strategic priority · the people pillar" icon="people" accent="orange" side="right" lift={54} />
-      <Tag at={add(priorityPos(3), [0, 1.1 + rise * 2.8, 0])} from={outcome + 18} to={endT} label="Future-ready organization" sub="Delivered by Talent Management" icon="leadership" accent="orange" side="left" lift={96} size={30} />
+      {/* the Future-ready block, carrying its own name as it slides out */}
+      {slide > 0 ? (
+        <Anchored at={add(goalPos, [0, 0, HOUSE_GOAL[2] / 2 + 0.05])} from={outcome + 6} to={endT}>
+          {face("Future-ready organization", 19, 240)}
+        </Anchored>
+      ) : null}
+      <Tag at={add(priorityPos(3), [HOUSE_BAR[0] / 2 - 0.3, -HOUSE_BAR[1] / 2 + 0.2, 0.4])} from={pillar + 4} to={outcome + 10} label="People & Culture" sub="The people pillar of the strategy" icon="people" accent="orange" side="right" lift={-46} />
+      {/* the tie: Talent Management programmes are part of the strategy */}
+      <Tag at={add(GOAL_POS, [HOUSE_GOAL[0] / 2 - 0.3, 0.1, 0.5])} from={tm + 26} to={endT} label="Talent Management programmes" sub="Part of the RPI 2030 Transformation strategy" icon="leadership" accent="orange" side="right" lift={44} size={26} />
     </>
   );
 };
