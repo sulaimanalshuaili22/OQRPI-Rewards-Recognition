@@ -31,6 +31,18 @@ export const programPos = (i: number): V3 => {
   return add(SET.ecosystem as V3, [x, y, z]);
 };
 
+/* 02 — the RPI 2030 Transformation house (levels 4 → 1, bottom to top) */
+export const HOUSE_BASE: V3 = [26, 0.5, 15];
+export const HOUSE_TILE: V3 = [9.2, 0.3, 5.8];
+export const HOUSE_SLAB: V3 = [7.2, 0.26, 2.6];
+/** level 3: the four strategic priorities, 2 × 2 on the base; 3 = People & Culture, front right */
+export const priorityPos = (i: number): V3 => add(SET.transformation as V3, [i % 2 ? 5.4 : -5.4, 0.7, i < 2 ? -3.6 : 3.6]);
+/** level 2: the three strategic objectives, floating above */
+export const objectivePos = (i: number): V3 => add(SET.transformation as V3, [(i - 1) * 8.4, 5.6, -0.4]);
+/** level 1: the aspiration, at the apex */
+export const HOUSE_APEX: V3 = add(SET.transformation as V3, [0, 10.6, -0.4]);
+export const HOUSE_APEX_TOP: V3 = add(SET.transformation as V3, [0, 12.6, -0.4]);
+
 /* 04 — talent DNA helix */
 export const HELIX = { radius: 1.6, height: 14, turns: 3.2 };
 export const helixPoint = (s: number, strand: 0 | 1, spin: number): V3 => {

@@ -30,6 +30,7 @@ import {
   RewardsSet,
   SecondmentSet,
   SuccessionSet,
+  TransformationSet,
   WhySet,
 } from "./Sets";
 import { SCENES, type SceneId } from "../timeline";
@@ -170,6 +171,9 @@ export const World: React.FC<{ readonly width: number; readonly height: number }
 
       <SetWindow id="opening" before={0} after={90}>
         <OpeningSet />
+      </SetWindow>
+      <SetWindow id="transformation">
+        <TransformationSet />
       </SetWindow>
       <SetWindow id="why">
         <WhySet />

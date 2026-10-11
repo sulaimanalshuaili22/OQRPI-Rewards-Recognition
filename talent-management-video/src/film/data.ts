@@ -29,6 +29,20 @@ export const COMMAND_CENTER = {
 
 export const WORKFORCE = { employees: 2883 };
 
+/** The RPI 2030 Transformation house, as published (levels 1–4). */
+export const TRANSFORMATION_2030 = {
+  tagline: "Strengthening the core, while embracing the future",
+  aspiration: ["PROFITABLE AND SUSTAINABLE BUSINESS", "CAPITALIZING ON NATIONAL RESOURCES"],
+  objectives: ["Profitable business resilient to market environment", "Competitive and sustainable operation", "Customer's preferred choice"],
+  priorities: [
+    { title: "Business Excellence", items: ["Safety and Operational Excellence focus", "Maximized margin capture and commercial excellence", "Financial discipline", "Digitalization driving productivity"] },
+    { title: "Flexibility & Profitability", items: ["Feed and yield flexibility, close to the market", "Broadened, differentiated value-add grades", "Strategic partnerships and innovation"] },
+    { title: "Sustainability & Compliance", items: ["Compliance with regulations", "Decarbonization and energy efficiency", "Sustainable business model aligned with the market"] },
+    { title: "People & Culture", items: ["Performance driven, customer centric culture", "Future-ready organization", "Strong collaboration and organizational agility"] },
+  ],
+  execution: ["Transformation Plan 2.0 · 2025–2027", "Transformation Plan 3.0 · 2028–2030"],
+} as const;
+
 export const PERFORMANCE = {
   rated2026: 680,
   ratedShare: "23.6%",

@@ -23,7 +23,9 @@ import {
   HOST,
   SEATS,
   SUCCESSION_FLOW,
-
+  HOUSE_APEX_TOP,
+  objectivePos,
+  priorityPos,
   TILE,
   heroAscent,
   helixPoint,
@@ -39,6 +41,7 @@ import {
   PERFORMANCE,
   SECONDMENT,
   SUCCESSION,
+  TRANSFORMATION_2030,
   WORKFORCE,
   fmt,
 } from "../data";
@@ -229,6 +232,100 @@ const ThemeFramework: React.FC = () => {
 };
 
 /* 02 ---------------------------------------------------------------- */
+/**
+ * Labels locked to the RPI 2030 structure, in the 9-box's AR language: level
+ * names beside the structure, the objectives on their slabs, each priority
+ * and its items on its tile, the aspiration at the apex; the People & Culture
+ * tag on its cue, and the outcome tag on the orb that rises from it.
+ */
+const TransformationOverlay: React.FC = () => {
+  const frame = useCurrentFrame();
+  const S0 = SCENES.transformation.start;
+  const endT = end("transformation", -6);
+  const direction = cue("transformation", 0, "clear direction");
+  const core = cue("transformation", 0, "strengthening the core");
+  const future = cue("transformation", 0, "embracing the future");
+  const pillar = cue("transformation", 1, "People and Culture");
+  const outcome = cue("transformation", 1, "a future-ready organization");
+  const hot = ramp(frame, pillar, pillar + 24, EASE.out);
+  const rise = ramp(frame, outcome, outcome + 36, EASE.out);
+  const lift = (i: number) => (i === 3 ? hot * 1.1 : 0);
+  const head = ramp(frame, direction - 10, direction + 14) * (1 - ramp(frame, endT - 20, endT));
+  const label = (text: string, size = 15) => (
+    <div style={{ position: "absolute", transform: "translate(-50%,-50%)", fontFamily: FONT, fontSize: size, letterSpacing: 4, fontWeight: 700, color: COLORS.lightBlue, whiteSpace: "nowrap", textShadow: "0 0 10px #000" }}>{text}</div>
+  );
+  const T = TRANSFORMATION_2030;
+  return (
+    <>
+      {/* headline, top left, as the 9-box note sits in its scene */}
+      <div style={{ position: "absolute", left: 96, top: 138, fontFamily: FONT, opacity: head }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44 * head, height: 3, background: COLORS.orange }} />
+          <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: 5, color: COLORS.orange }}>RPI 2030 TRANSFORMATION</div>
+        </div>
+        <div style={{ fontSize: 44, fontWeight: 300, color: COLORS.white, marginTop: 10, letterSpacing: -0.5, translate: `0px ${(1 - head) * 14}px`, textShadow: "0 2px 18px rgba(0,0,0,0.7)" }}>{T.tagline}</div>
+      </div>
+      {/* level names, left of the structure */}
+      <Anchored at={add(SET.transformation as V3, [-16.4, 0.9, 7.6])} from={S0 + 40} to={endT}>
+        {label("LEVEL 4 · EXECUTION")}
+      </Anchored>
+      <Anchored at={add(SET.transformation as V3, [-16.6, 1.3, -1.5])} from={S0 + 70} to={endT}>
+        {label("LEVEL 3 · STRATEGIC PRIORITIES")}
+      </Anchored>
+      <Anchored at={add(objectivePos(0), [-7.6, 0.3, 0])} from={core + 24} to={endT}>
+        {label("LEVEL 2 · STRATEGIC OBJECTIVES")}
+      </Anchored>
+      {/* level 4: the plans, on the plinth's front edge */}
+      <Anchored at={add(SET.transformation as V3, [0, 0.2, 7.9])} from={S0 + 44} to={endT}>
+        <div style={{ position: "absolute", transform: "translate(-50%,0)", display: "flex", gap: 26, fontFamily: FONT, whiteSpace: "nowrap", textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
+          {T.execution.map((e) => (
+            <span key={e} style={{ fontSize: 16, fontWeight: 600, color: COLORS.white }}>{e}</span>
+          ))}
+        </div>
+      </Anchored>
+      {/* level 3: each priority on its tile */}
+      {T.priorities.map((p, i) => {
+        const pc = i === 3;
+        const dim = pc ? 1 : 1 - 0.55 * hot;
+        return (
+          <Anchored key={p.title} at={add(priorityPos(i), [0, 0.3 + lift(i), 0])} from={S0 + 50 + i * 7} to={endT}>
+            <div style={{ position: "absolute", transform: "translate(-50%,-50%)", textAlign: "center", fontFamily: FONT, whiteSpace: "nowrap", opacity: dim, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>
+              <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: 0.5, textTransform: "uppercase", color: pc && hot > 0.5 ? "#FFD9B0" : COLORS.white }}>{p.title}</div>
+              {p.items.map((it) => {
+                const hotItem = pc && it === "Future-ready organization";
+                return (
+                  <div key={it} style={{ fontSize: hotItem ? 14 + 3 * rise : 13, fontWeight: hotItem ? 800 : 500, color: hotItem && rise > 0 ? COLORS.orange : hotItem && hot > 0.5 ? "#FFE2C2" : COLORS.lightBlue, marginTop: 2 }}>
+                    {it}
+                  </div>
+                );
+              })}
+            </div>
+          </Anchored>
+        );
+      })}
+      {/* level 2: the objectives on their slabs */}
+      {T.objectives.map((o, i) => (
+        <Anchored key={o} at={add(objectivePos(i), [0, 0.4, 0])} from={core + 10 + i * 8} to={endT}>
+          <div style={{ position: "absolute", transform: "translate(-50%,-100%)", width: 250, textAlign: "center", fontFamily: FONT, fontSize: 16, fontWeight: 700, lineHeight: 1.2, textTransform: "uppercase", letterSpacing: 0.4, color: COLORS.white, textShadow: "0 1px 8px rgba(0,0,0,0.9)" }}>{o}</div>
+        </Anchored>
+      ))}
+      {/* level 1: the aspiration at the apex */}
+      <Anchored at={add(HOUSE_APEX_TOP, [5.8, -2.4, 0])} from={future + 16} to={endT} safeX={60}>
+        <div style={{ position: "absolute", transform: "translate(0,-50%)", textAlign: "left", fontFamily: FONT, whiteSpace: "nowrap", textShadow: "0 1px 10px rgba(0,0,0,0.9)" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 4, color: COLORS.orange }}>LEVEL 1 · ASPIRATION AND VISION</div>
+          {T.aspiration.map((l) => (
+            <div key={l} style={{ fontSize: 19, fontWeight: 800, letterSpacing: 1, color: COLORS.white, lineHeight: 1.25 }}>{l}</div>
+          ))}
+        </div>
+      </Anchored>
+      {/* the pillar, then the outcome that rises from it */}
+      <Tag at={add(priorityPos(3), [3.2, 0.3 + lift(3), 0])} from={pillar + 4} to={outcome + 14} label="People & Culture" sub="Strategic priority · the people pillar" icon="people" accent="orange" side="right" lift={54} />
+      <Tag at={add(priorityPos(3), [0, 1.1 + rise * 2.8, 0])} from={outcome + 18} to={endT} label="Future-ready organization" sub="Delivered by Talent Management" icon="leadership" accent="orange" side="left" lift={96} size={30} />
+    </>
+  );
+};
+
+/* 03 ---------------------------------------------------------------- */
 const WhyOverlay: React.FC = () => {
   const cues = [cue("why", 0, "the right talent"), cue("why", 0, "in the right roles"), cue("why", 0, "at the right time")];
   const tags: Array<[string, string]> = [
@@ -739,6 +836,7 @@ export const Overlays: React.FC = () => {
   return (
     <AbsoluteFill>
       {inScene("opening") ? <OpeningOverlay /> : null}
+      {inScene("transformation") ? <TransformationOverlay /> : null}
       {inScene("why") ? <WhyOverlay /> : null}
       {inScene("performance") ? <PerformanceOverlay /> : null}
       {inScene("ninebox") ? <NineBoxOverlay /> : null}
