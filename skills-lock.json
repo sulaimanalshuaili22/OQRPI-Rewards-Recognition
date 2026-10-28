@@ -31,6 +31,12 @@
       "skillPath": "skills/infographic-template-updater/SKILL.md",
       "computedHash": "47f854278784079b04f3ab34bbf00a9072ce4ae1f1273bb26e9a41ba8785a21b"
     },
+    "karpathy-guidelines": {
+      "source": "multica-ai/andrej-karpathy-skills",
+      "sourceType": "github",
+      "skillPath": "skills/karpathy-guidelines/SKILL.md",
+      "computedHash": "41e8ca055bbde13d240776a14a076a59614057200340c243130a76ba4e64cac8"
+    },
     "remotion-best-practices": {
       "source": "remotion-dev/skills",
       "sourceType": "github",
