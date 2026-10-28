@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "infographic": {
+      "source": "amigoscode/infographics-skill",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "c7b664aac74b2f2abe5b927dd94fb2284608ddd126cd5cf98ca4718832d213db"
+    },
     "infographic-creator": {
       "source": "antvis/Infographic",
       "sourceType": "github",
